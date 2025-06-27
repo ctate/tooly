@@ -1,0 +1,532 @@
+---
+title: "@tooly/linear"
+description: Project management tools powered by Linear API for AI applications
+---
+
+The `@tooly/linear` package provides AI-ready project management functionality powered by the Linear API. Perfect for issue tracking, project management, and team collaboration in AI applications.
+
+## Installation
+
+```bash
+npm install @tooly/linear
+```
+
+## Quick Start
+
+```typescript
+import { createVercelAITools } from "@tooly/linear";
+
+const tools = createVercelAITools("your-linear-api-key");
+
+// Use with Vercel AI SDK
+const result = await generateText({
+  model: openai("gpt-4"),
+  messages: [
+    {
+      role: "user",
+      content: "Create a bug report for the login page not working properly"
+    }
+  ],
+  tools,
+});
+```
+
+## API Key Setup
+
+Get your Linear API key from [Linear Settings](https://linear.app/settings/api):
+
+```typescript
+// Using environment variables (recommended)
+const tools = createVercelAITools(process.env.LINEAR_API_KEY!);
+
+// Or directly (not recommended for production)
+const tools = createVercelAITools("lin_api_your_key_here");
+```
+
+## Available Tools
+
+### createIssue
+
+Create a new issue in Linear with full details and metadata.
+
+**Parameters:**
+- `title` (string): Issue title
+- `description` (string, optional): Issue description in markdown
+- `teamId` (string): Team ID where the issue should be created
+- `assigneeId` (string, optional): User ID to assign the issue to
+- `priority` (number, optional): Priority level (1-4, where 1 is urgent)
+- `labelIds` (string[], optional): Array of label IDs to apply
+
+**Example:**
+```typescript
+const result = await tools.executeFunction("createIssue", {
+  title: "Login page not responding",
+  description: "Users are unable to log in. The page hangs after entering credentials.",
+  teamId: "team-123",
+  priority: 2,
+});
+```
+
+### getIssue
+
+Retrieve detailed information about a specific issue.
+
+**Parameters:**
+- `issueId` (string): The Linear issue ID
+
+**Example:**
+```typescript
+const issue = await tools.executeFunction("getIssue", {
+  issueId: "ISS-123"
+});
+```
+
+### updateIssue
+
+Update an existing issue with new information or status changes.
+
+**Parameters:**
+- `issueId` (string): The Linear issue ID
+- `title` (string, optional): Updated title
+- `description` (string, optional): Updated description
+- `assigneeId` (string, optional): Updated assignee
+- `priority` (number, optional): Updated priority
+- `stateId` (string, optional): Updated workflow state
+
+**Example:**
+```typescript
+const result = await tools.executeFunction("updateIssue", {
+  issueId: "ISS-123",
+  title: "Updated: Login page authentication issue",
+  priority: 1, // Escalate to urgent
+});
+```
+
+### searchIssues
+
+Search for issues using various criteria and filters.
+
+**Parameters:**
+- `query` (string, optional): Search query text
+- `teamId` (string, optional): Filter by specific team
+- `assigneeId` (string, optional): Filter by assignee
+- `stateId` (string, optional): Filter by workflow state
+- `priority` (number, optional): Filter by priority level
+- `limit` (number, optional): Maximum number of results (default: 10)
+
+**Example:**
+```typescript
+const issues = await tools.executeFunction("searchIssues", {
+  query: "login bug",
+  teamId: "team-123",
+  limit: 5
+});
+```
+
+### createProject
+
+Create a new project to organize related issues and milestones.
+
+**Parameters:**
+- `name` (string): Project name
+- `description` (string, optional): Project description
+- `teamIds` (string[]): Array of team IDs that will work on this project
+- `leadId` (string, optional): User ID of the project lead
+- `targetDate` (string, optional): Target completion date (ISO format)
+
+**Example:**
+```typescript
+const project = await tools.executeFunction("createProject", {
+  name: "Q1 Security Improvements",
+  description: "Focus on authentication and authorization improvements",
+  teamIds: ["team-123", "team-456"],
+  targetDate: "2024-03-31T23:59:59Z"
+});
+```
+
+### getTeams
+
+Retrieve all teams in your Linear workspace.
+
+**Example:**
+```typescript
+const teams = await tools.executeFunction("getTeams", {});
+```
+
+### getUser
+
+Get information about a specific user by their email address.
+
+**Parameters:**
+- `email` (string): User's email address
+
+**Example:**
+```typescript
+const user = await tools.executeFunction("getUser", {
+  email: "developer@company.com"
+});
+```
+
+## AI Framework Integration
+
+### Vercel AI SDK
+
+```typescript
+import { generateText } from "ai";
+import { openai } from "@ai-sdk/openai";
+import { createVercelAITools } from "@tooly/linear";
+
+const tools = createVercelAITools(process.env.LINEAR_API_KEY!);
+
+const result = await generateText({
+  model: openai("gpt-4"),
+  messages: [
+    {
+      role: "user",
+      content: "Create a high-priority bug report for the payment system failing"
+    }
+  ],
+  tools,
+});
+```
+
+### OpenAI Function Calling
+
+```typescript
+import OpenAI from "openai";
+import { createOpenAIFunctions } from "@tooly/linear";
+
+const openai = new OpenAI();
+const { tools, executeFunction } = createOpenAIFunctions(process.env.LINEAR_API_KEY!);
+
+const completion = await openai.chat.completions.create({
+  model: "gpt-4",
+  messages: [
+    {
+      role: "user",
+      content: "Search for all open issues assigned to john@company.com"
+    }
+  ],
+  tools,
+});
+
+// Handle tool calls
+for (const toolCall of completion.choices[0].message.tool_calls || []) {
+  const result = await executeFunction(
+    toolCall.function.name,
+    JSON.parse(toolCall.function.arguments)
+  );
+  console.log("Linear operation result:", result);
+}
+```
+
+### Anthropic Claude
+
+```typescript
+import Anthropic from "@anthropic-ai/sdk";
+import { createAnthropicTools } from "@tooly/linear";
+
+const anthropic = new Anthropic();
+const { tools, executeFunction } = createAnthropicTools(process.env.LINEAR_API_KEY!);
+
+const message = await anthropic.messages.create({
+  model: "claude-3-sonnet-20240229",
+  messages: [
+    {
+      role: "user",
+      content: "Create a project for our upcoming mobile app redesign"
+    }
+  ],
+  tools,
+});
+
+// Handle tool use
+for (const toolUse of message.content.filter((c) => c.type === "tool_use")) {
+  const result = await executeFunction(toolUse.name, toolUse.input);
+  console.log("Project created:", result);
+}
+```
+
+## Direct Usage
+
+You can also use the package directly without AI frameworks:
+
+```typescript
+import { LinearTools } from "@tooly/linear";
+
+const linear = new LinearTools("your-api-key");
+
+// Create an issue directly
+const issue = await linear.executeFunction("createIssue", {
+  title: "Performance optimization needed",
+  description: "The dashboard loads slowly with large datasets",
+  teamId: "team-123",
+  priority: 3,
+});
+
+console.log("Issue created:", issue);
+```
+
+## Error Handling
+
+The package includes comprehensive error handling:
+
+```typescript
+try {
+  const result = await tools.executeFunction("createIssue", {
+    title: "", // This will cause a validation error
+    teamId: "invalid-team-id",
+  });
+} catch (error) {
+  if (error.name === "ZodError") {
+    console.log("Validation errors:", error.errors);
+  } else if (error.message.includes("Team not found")) {
+    console.log("Linear API error:", error.message);
+  } else {
+    console.log("Unexpected error:", error);
+  }
+}
+```
+
+## Working with Teams and Users
+
+### Getting Team Information
+
+```typescript
+// Get all teams
+const teams = await tools.executeFunction("getTeams", {});
+
+// Find a specific team
+const engineeringTeam = teams.nodes.find(team => 
+  team.name.toLowerCase().includes("engineering")
+);
+
+// Use team ID in issue creation
+await tools.executeFunction("createIssue", {
+  title: "New feature request",
+  teamId: engineeringTeam.id,
+});
+```
+
+### User Management
+
+```typescript
+// Find a user by email
+const user = await tools.executeFunction("getUser", {
+  email: "developer@company.com"
+});
+
+// Assign issue to user
+await tools.executeFunction("createIssue", {
+  title: "Code review needed",
+  teamId: "team-123",
+  assigneeId: user.id,
+});
+```
+
+## Priority and State Management
+
+### Priority Levels
+
+Linear uses numeric priority levels:
+- `1`: Urgent (🔴)
+- `2`: High (🟠)
+- `3`: Medium (🟡)
+- `4`: Low (🔵)
+
+```typescript
+await tools.executeFunction("createIssue", {
+  title: "Critical security vulnerability",
+  teamId: "team-123",
+  priority: 1, // Urgent
+});
+```
+
+### Workflow States
+
+Each team has its own workflow states. Get them from team information:
+
+```typescript
+const teams = await tools.executeFunction("getTeams", {});
+const team = teams.nodes[0];
+console.log("Available states:", team.states.nodes);
+
+// Update issue to specific state
+await tools.executeFunction("updateIssue", {
+  issueId: "ISS-123",
+  stateId: "state-in-progress",
+});
+```
+
+## Best Practices
+
+### 1. Environment Variables
+Always store API keys securely:
+
+```bash
+LINEAR_API_KEY=lin_api_your_key_here
+```
+
+### 2. Team ID Management
+Cache team IDs to avoid repeated API calls:
+
+```typescript
+const teamCache = new Map();
+
+async function getTeamId(teamName: string) {
+  if (teamCache.has(teamName)) {
+    return teamCache.get(teamName);
+  }
+  
+  const teams = await tools.executeFunction("getTeams", {});
+  const team = teams.nodes.find(t => 
+    t.name.toLowerCase() === teamName.toLowerCase()
+  );
+  
+  if (team) {
+    teamCache.set(teamName, team.id);
+    return team.id;
+  }
+  
+  throw new Error(`Team not found: ${teamName}`);
+}
+```
+
+### 3. Issue Templates
+Create reusable issue templates:
+
+```typescript
+const templates = {
+  bug: (title: string, description: string) => ({
+    title: `🐛 ${title}`,
+    description: `## Bug Report\n\n${description}\n\n## Steps to Reproduce\n\n1. \n2. \n3. \n\n## Expected Behavior\n\n## Actual Behavior\n\n## Environment\n\n`,
+    priority: 2,
+  }),
+  
+  feature: (title: string, description: string) => ({
+    title: `✨ ${title}`,
+    description: `## Feature Request\n\n${description}\n\n## Use Case\n\n## Acceptance Criteria\n\n- [ ] \n- [ ] \n- [ ] \n`,
+    priority: 3,
+  }),
+};
+
+// Use templates
+const bugReport = templates.bug(
+  "Login page timeout",
+  "Users experience timeouts when logging in during peak hours"
+);
+
+await tools.executeFunction("createIssue", {
+  ...bugReport,
+  teamId: "team-123",
+});
+```
+
+### 4. Batch Operations
+When creating multiple issues, be mindful of rate limits:
+
+```typescript
+async function createIssuesWithDelay(issues: any[], delay = 100) {
+  const results = [];
+  
+  for (const issue of issues) {
+    const result = await tools.executeFunction("createIssue", issue);
+    results.push(result);
+    
+    // Small delay to respect rate limits
+    await new Promise(resolve => setTimeout(resolve, delay));
+  }
+  
+  return results;
+}
+```
+
+## Common Use Cases
+
+### 1. Automated Bug Reporting
+```typescript
+// AI can automatically create bug reports from user feedback
+"Create a bug report for the shopping cart not calculating tax correctly"
+```
+
+### 2. Project Planning
+```typescript
+// AI can help create and organize projects
+"Create a project for the upcoming mobile app redesign with Q2 deadline"
+```
+
+### 3. Issue Triage
+```typescript
+// AI can search and organize existing issues
+"Find all high-priority issues assigned to the frontend team"
+```
+
+### 4. Status Updates
+```typescript
+// AI can update issue status based on progress
+"Update issue ISS-456 to mark it as completed and add completion notes"
+```
+
+## Troubleshooting
+
+### Common Issues
+
+**1. Invalid API Key**
+```
+Error: Unauthorized
+```
+Verify your API key from Linear Settings.
+
+**2. Team Not Found**
+```
+Error: Team not found
+```
+Use `getTeams()` to find valid team IDs.
+
+**3. User Not Found**
+```
+Error: User not found
+```
+Verify the email address or use Linear's user search.
+
+**4. Rate Limit Exceeded**
+```
+Error: Too many requests
+```
+Implement delays between requests or reduce concurrent operations.
+
+**5. Invalid Priority**
+```
+ZodError: Priority must be between 1 and 4
+```
+Use only valid priority numbers (1-4).
+
+## Integration Examples
+
+### Customer Support Bot
+```typescript
+// Create issues directly from customer support conversations
+const issue = await tools.executeFunction("createIssue", {
+  title: `Customer Issue: ${supportTicket.subject}`,
+  description: `**Customer:** ${supportTicket.customer}\n\n**Issue:**\n${supportTicket.description}`,
+  teamId: supportTeamId,
+  priority: supportTicket.severity === "critical" ? 1 : 3,
+});
+```
+
+### Development Workflow
+```typescript
+// Automatically create issues from code review comments
+const issue = await tools.executeFunction("createIssue", {
+  title: `Code Review: ${pullRequest.title}`,
+  description: `**PR:** ${pullRequest.url}\n\n**Feedback:**\n${review.comment}`,
+  teamId: engineeringTeamId,
+  assigneeId: pullRequest.authorId,
+});
+```
+
+## Next Steps
+
+- [📧 @tooly/resend](/docs/packages/resend) - Email functionality
+- [🔧 @tooly/core](/docs/packages/core) - Build your own packages
+- [💡 Examples](/docs/examples) - Real-world usage examples 

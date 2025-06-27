@@ -1,0 +1,373 @@
+---
+title: "@tooly/resend"
+description: Email tools powered by Resend API for AI applications
+---
+
+The `@tooly/resend` package provides AI-ready email functionality powered by the Resend API. Perfect for transactional emails, notifications, and automated communication in AI applications.
+
+## Installation
+
+```bash
+npm install @tooly/resend
+```
+
+## Quick Start
+
+```typescript
+import { createVercelAITools } from "@tooly/resend";
+
+const tools = createVercelAITools("your-resend-api-key");
+
+// Use with Vercel AI SDK
+const result = await generateText({
+  model: openai("gpt-4"),
+  messages: [
+    {
+      role: "user",
+      content: "Send a welcome email to new@user.com with the subject 'Welcome to our platform'"
+    }
+  ],
+  tools,
+});
+```
+
+## API Key Setup
+
+Get your Resend API key from the [Resend Dashboard](https://resend.com/api-keys):
+
+```typescript
+// Using environment variables (recommended)
+const tools = createVercelAITools(process.env.RESEND_API_KEY!);
+
+// Or directly (not recommended for production)
+const tools = createVercelAITools("re_your_api_key_here");
+```
+
+## Available Tools
+
+### sendEmail
+
+Send transactional emails with full HTML and text support.
+
+**Parameters:**
+- `to` (string): Recipient email address
+- `subject` (string): Email subject line
+- `html` (string, optional): HTML email content
+- `text` (string, optional): Plain text email content
+- `from` (string, optional): Sender email address (defaults to your domain)
+
+**Example:**
+```typescript
+const result = await tools.executeFunction("sendEmail", {
+  to: "user@example.com",
+  subject: "Welcome to our platform!",
+  html: "<h1>Welcome!</h1><p>Thanks for joining us.</p>",
+  text: "Welcome! Thanks for joining us.",
+});
+```
+
+### sendBulkEmails
+
+Send multiple emails in a single batch operation.
+
+**Parameters:**
+- `emails` (array): Array of email objects with `to`, `subject`, `html`, `text`, and optional `from`
+
+**Example:**
+```typescript
+const result = await tools.executeFunction("sendBulkEmails", {
+  emails: [
+    {
+      to: "user1@example.com",
+      subject: "Weekly Newsletter",
+      html: "<h1>This week's updates</h1>",
+    },
+    {
+      to: "user2@example.com", 
+      subject: "Weekly Newsletter",
+      html: "<h1>This week's updates</h1>",
+    }
+  ]
+});
+```
+
+### getEmailStatus
+
+Check the delivery status of a sent email.
+
+**Parameters:**
+- `emailId` (string): The ID returned from `sendEmail`
+
+**Example:**
+```typescript
+const status = await tools.executeFunction("getEmailStatus", {
+  emailId: "email-id-from-send-response"
+});
+```
+
+## AI Framework Integration
+
+### Vercel AI SDK
+
+```typescript
+import { generateText } from "ai";
+import { openai } from "@ai-sdk/openai";
+import { createVercelAITools } from "@tooly/resend";
+
+const tools = createVercelAITools(process.env.RESEND_API_KEY!);
+
+const result = await generateText({
+  model: openai("gpt-4"),
+  messages: [
+    {
+      role: "user",
+      content: "Send a password reset email to john@company.com"
+    }
+  ],
+  tools,
+});
+```
+
+### OpenAI Function Calling
+
+```typescript
+import OpenAI from "openai";
+import { createOpenAIFunctions } from "@tooly/resend";
+
+const openai = new OpenAI();
+const { tools, executeFunction } = createOpenAIFunctions(process.env.RESEND_API_KEY!);
+
+const completion = await openai.chat.completions.create({
+  model: "gpt-4",
+  messages: [
+    {
+      role: "user",
+      content: "Send a thank you email to customer@example.com"
+    }
+  ],
+  tools,
+});
+
+// Handle tool calls
+for (const toolCall of completion.choices[0].message.tool_calls || []) {
+  const result = await executeFunction(
+    toolCall.function.name,
+    JSON.parse(toolCall.function.arguments)
+  );
+  console.log("Email sent:", result);
+}
+```
+
+### Anthropic Claude
+
+```typescript
+import Anthropic from "@anthropic-ai/sdk";
+import { createAnthropicTools } from "@tooly/resend";
+
+const anthropic = new Anthropic();
+const { tools, executeFunction } = createAnthropicTools(process.env.RESEND_API_KEY!);
+
+const message = await anthropic.messages.create({
+  model: "claude-3-sonnet-20240229",
+  messages: [
+    {
+      role: "user",
+      content: "Send a promotional email to subscribers about our new product launch"
+    }
+  ],
+  tools,
+});
+
+// Handle tool use
+for (const toolUse of message.content.filter((c) => c.type === "tool_use")) {
+  const result = await executeFunction(toolUse.name, toolUse.input);
+  console.log("Email sent:", result);
+}
+```
+
+## Direct Usage
+
+You can also use the package directly without AI frameworks:
+
+```typescript
+import { ResendTools } from "@tooly/resend";
+
+const resend = new ResendTools("your-api-key");
+
+// Send an email directly
+const result = await resend.executeFunction("sendEmail", {
+  to: "user@example.com",
+  subject: "Direct email",
+  html: "<p>This was sent directly</p>",
+});
+
+console.log("Email sent:", result);
+```
+
+## Error Handling
+
+The package includes comprehensive error handling:
+
+```typescript
+try {
+  const result = await tools.executeFunction("sendEmail", {
+    to: "invalid-email", // This will cause a validation error
+    subject: "Test",
+    html: "<p>Test</p>"
+  });
+} catch (error) {
+  if (error.name === "ZodError") {
+    console.log("Validation errors:", error.errors);
+  } else if (error.status === 422) {
+    console.log("Resend API error:", error.message);
+  } else {
+    console.log("Unexpected error:", error);
+  }
+}
+```
+
+## Email Templates
+
+While the package doesn't include built-in templates, you can easily create reusable templates:
+
+```typescript
+const templates = {
+  welcome: (name: string) => ({
+    subject: `Welcome ${name}!`,
+    html: `
+      <h1>Welcome to our platform, ${name}!</h1>
+      <p>We're excited to have you on board.</p>
+      <p>Get started by exploring our features.</p>
+    `,
+    text: `Welcome to our platform, ${name}! We're excited to have you on board. Get started by exploring our features.`
+  }),
+  
+  passwordReset: (resetLink: string) => ({
+    subject: "Reset your password",
+    html: `
+      <h1>Password Reset Request</h1>
+      <p>Click the link below to reset your password:</p>
+      <a href="${resetLink}">Reset Password</a>
+      <p>This link expires in 24 hours.</p>
+    `,
+    text: `Password Reset Request\n\nClick this link to reset your password: ${resetLink}\n\nThis link expires in 24 hours.`
+  })
+};
+
+// Use with AI tools
+const welcomeEmail = templates.welcome("John Doe");
+await tools.executeFunction("sendEmail", {
+  to: "john@example.com",
+  ...welcomeEmail
+});
+```
+
+## Best Practices
+
+### 1. Environment Variables
+Always store API keys in environment variables:
+
+```bash
+RESEND_API_KEY=re_your_api_key_here
+```
+
+### 2. Email Validation
+The package validates email addresses, but consider additional validation:
+
+```typescript
+import { z } from "zod";
+
+const emailSchema = z.string().email().refine(
+  (email) => !email.includes("+"), // Block plus addressing if needed
+  "Plus addressing not allowed"
+);
+```
+
+### 3. Rate Limiting
+Be aware of Resend's rate limits:
+- Free tier: 100 emails/day
+- Paid tiers: Higher limits based on plan
+
+### 4. From Address
+Configure your domain with Resend and set a default from address:
+
+```typescript
+const tools = new ResendTools(apiKey, {
+  defaultFrom: "noreply@yourdomain.com"
+});
+```
+
+### 5. Error Monitoring
+Implement proper error monitoring for email delivery:
+
+```typescript
+try {
+  const result = await tools.executeFunction("sendEmail", emailData);
+  // Track successful delivery
+  analytics.track("email_sent", { emailId: result.id });
+} catch (error) {
+  // Track failed delivery
+  analytics.track("email_failed", { error: error.message });
+  throw error;
+}
+```
+
+## Common Use Cases
+
+### 1. User Onboarding
+```typescript
+// AI can automatically send welcome series
+"Send a welcome email to new users with setup instructions"
+```
+
+### 2. Notifications
+```typescript
+// AI can send various notifications
+"Send a notification email about the system maintenance scheduled for tomorrow"
+```
+
+### 3. Marketing Automation
+```typescript
+// AI can handle promotional emails
+"Send a promotional email about our Black Friday sale to all subscribers"
+```
+
+### 4. Transactional Emails
+```typescript
+// AI can send order confirmations, receipts, etc.
+"Send an order confirmation email with the receipt to the customer"
+```
+
+## Troubleshooting
+
+### Common Issues
+
+**1. Invalid API Key**
+```
+Error: Invalid API key
+```
+Verify your API key from the Resend dashboard.
+
+**2. Domain Not Verified**
+```
+Error: Domain not verified
+```
+Verify your sending domain in the Resend dashboard.
+
+**3. Rate Limit Exceeded**
+```
+Error: Too many requests
+```
+Implement rate limiting or upgrade your Resend plan.
+
+**4. Invalid Email Format**
+```
+ZodError: Invalid email
+```
+Ensure email addresses are properly formatted.
+
+## Next Steps
+
+- [📋 @tooly/linear](/docs/packages/linear) - Project management tools
+- [💡 Examples](/docs/examples) - Real-world usage examples
+- [🔧 Advanced Usage](/docs/advanced) - Customization and best practices 

@@ -1,0 +1,286 @@
+---
+title: "@tooly/core"
+description: Base abstractions and utilities for building AI tool packages
+---
+
+The `@tooly/core` package provides the foundational abstractions and utilities used by all Tooly packages. If you're building your own AI tool packages, this is where you'll start.
+
+## Installation
+
+```bash
+npm install @tooly/core
+```
+
+## Overview
+
+The core package provides:
+
+- **BaseToolManager**: Abstract class for creating tool managers
+- **Type Definitions**: Shared TypeScript interfaces
+- **AI Framework Helpers**: Utilities for OpenAI, Anthropic, and Vercel AI SDK
+- **Utility Functions**: Common helpers for tool development
+
+## BaseToolManager
+
+The `BaseToolManager` is an abstract class that provides the foundation for all Tooly packages.
+
+### Basic Usage
+
+```typescript
+import { BaseToolManager } from "@tooly/core";
+import { z } from "zod";
+
+// Define your tool schemas
+const toolSchemas = {
+  myTool: z.object({
+    message: z.string(),
+    urgent: z.boolean().optional(),
+  }),
+};
+
+// Define your tools
+const tools = [
+  {
+    name: "myTool",
+    description: "My custom tool",
+    parameters: {
+      type: "object",
+      properties: {
+        message: { type: "string", description: "Message to process" },
+        urgent: { type: "boolean", description: "Mark as urgent" },
+      },
+      required: ["message"],
+    },
+  },
+] as const;
+
+class MyToolManager extends BaseToolManager<typeof toolSchemas, typeof tools> {
+  constructor(apiKey: string) {
+    super(tools, toolSchemas);
+    // Initialize your API client here
+  }
+
+  protected async executeToolFunction(name: string, params: any): Promise<any> {
+    switch (name) {
+      case "myTool":
+        return this.handleMyTool(params);
+      default:
+        throw new Error(`Unknown tool: ${name}`);
+    }
+  }
+
+  private async handleMyTool(params: { message: string; urgent?: boolean }) {
+    // Your tool implementation
+    return { 
+      success: true, 
+      processed: params.message,
+      priority: params.urgent ? "high" : "normal"
+    };
+  }
+}
+```
+
+### Methods
+
+#### `getTools()`
+Returns the tool definitions for AI framework integration.
+
+```typescript
+const manager = new MyToolManager("api-key");
+const tools = manager.getTools();
+// Returns array of tool definitions
+```
+
+#### `getToolSchemas()`
+Returns the Zod schemas for parameter validation.
+
+```typescript
+const schemas = manager.getToolSchemas();
+// Returns object with schema for each tool
+```
+
+#### `executeFunction(name, parameters)`
+Executes a tool function with automatic parameter validation.
+
+```typescript
+const result = await manager.executeFunction("myTool", {
+  message: "Hello world",
+  urgent: true
+});
+```
+
+#### `executeToolFunction(name, params)` (Abstract)
+This method must be implemented by concrete classes to handle tool execution.
+
+## AI Framework Helpers
+
+The core package includes helper functions for integrating with different AI frameworks.
+
+### createVercelAITools
+
+Creates Vercel AI SDK compatible tools from a tool manager.
+
+```typescript
+import { createVercelAITools } from "@tooly/core";
+
+const vercelTools = createVercelAITools(
+  toolManager,
+  boundMethods,
+  toolDescriptions
+);
+
+// Use with Vercel AI SDK
+const result = await generateText({
+  model: openai("gpt-4"),
+  messages: [{ role: "user", content: "Use my tool" }],
+  tools: vercelTools,
+});
+```
+
+### createOpenAIFunctions
+
+Creates OpenAI function calling setup from a tool manager.
+
+```typescript
+import { createOpenAIFunctions } from "@tooly/core";
+
+const { tools, executeFunction } = createOpenAIFunctions(toolManager);
+
+// Use with OpenAI
+const completion = await openai.chat.completions.create({
+  model: "gpt-4",
+  messages: [{ role: "user", content: "Use my tool" }],
+  tools,
+});
+```
+
+### createAnthropicTools
+
+Creates Anthropic tool use setup from a tool manager.
+
+```typescript
+import { createAnthropicTools } from "@tooly/core";
+
+const { tools, executeFunction } = createAnthropicTools(toolManager);
+
+// Use with Anthropic
+const message = await anthropic.messages.create({
+  model: "claude-3-sonnet-20240229",
+  messages: [{ role: "user", content: "Use my tool" }],
+  tools,
+});
+```
+
+## Utilities
+
+### bindHandlerMethods
+
+Utility function to bind handler methods for tool execution.
+
+```typescript
+import { bindHandlerMethods } from "@tooly/core";
+
+const boundMethods = bindHandlerMethods(handlerInstance, [
+  "method1",
+  "method2",
+  "method3",
+]);
+```
+
+## Type Definitions
+
+The core package exports many useful TypeScript interfaces:
+
+```typescript
+import type {
+  ToolDefinition,
+  ToolDefinitions,
+  ToolParameterSchemas,
+  ToolManager,
+  VercelAITools,
+  OpenAIFunctionSetup,
+  AnthropicToolSetup,
+  BaseHandler,
+} from "@tooly/core";
+```
+
+## Building Your Own Package
+
+Here's a complete example of building a custom tool package:
+
+```typescript
+import { BaseToolManager, type ToolDefinitions, type ToolParameterSchemas } from "@tooly/core";
+import { z } from "zod";
+
+// 1. Define schemas
+const toolParameterSchemas = {
+  processData: z.object({
+    data: z.string(),
+    format: z.enum(["json", "csv", "xml"]).optional(),
+  }),
+} as const;
+
+// 2. Define tools
+const tools = [
+  {
+    name: "processData",
+    description: "Process data in different formats",
+    parameters: {
+      type: "object",
+      properties: {
+        data: { type: "string", description: "Data to process" },
+        format: { 
+          type: "string", 
+          enum: ["json", "csv", "xml"], 
+          description: "Output format" 
+        },
+      },
+      required: ["data"],
+    },
+  },
+] as const;
+
+// 3. Implement tool manager
+export class DataProcessor extends BaseToolManager<
+  typeof toolParameterSchemas,
+  typeof tools
+> {
+  constructor(apiKey: string) {
+    super(tools, toolParameterSchemas);
+    // Initialize your service
+  }
+
+  protected async executeToolFunction(name: string, params: any) {
+    switch (name) {
+      case "processData":
+        return this.processData(params);
+      default:
+        throw new Error(`Unknown tool: ${name}`);
+    }
+  }
+
+  private async processData(params: { data: string; format?: string }) {
+    // Your implementation
+    return { processed: true, format: params.format || "json" };
+  }
+}
+
+// 4. Export helper functions
+export function createVercelAITools(apiKey: string) {
+  // Implementation using core helpers
+}
+```
+
+## Best Practices
+
+1. **Type Safety**: Always define Zod schemas for parameter validation
+2. **Error Handling**: Implement proper error handling in your tool functions
+3. **Documentation**: Provide clear descriptions for all tools and parameters
+4. **Consistency**: Follow the same patterns as existing Tooly packages
+5. **Testing**: Write comprehensive tests for your tool implementations
+
+## Next Steps
+
+- [📧 @tooly/resend](/docs/packages/resend) - Email functionality example
+- [📋 @tooly/linear](/docs/packages/linear) - Project management example
+- [💡 Examples](/docs/examples) - See core package in action 

@@ -1,9 +1,10 @@
-# tooly
+# Tooly Documentation
 
-This is a Next.js application generated with
-[Create Fumadocs](https://github.com/fuma-nama/fumadocs).
+This is the documentation site for Tooly - AI-powered tool packages for modern applications. Built with Next.js and [Fumadocs](https://fumadocs.dev).
 
-Run development server:
+## Getting Started
+
+Run the development server:
 
 ```bash
 npm run dev
@@ -13,33 +14,48 @@ pnpm dev
 yarn dev
 ```
 
-Open http://localhost:3000 with your browser to see the result.
+Open http://localhost:3000 with your browser to see the documentation site.
 
-## Explore
+## Documentation Structure
 
-In the project, you can see:
+The documentation includes:
 
-- `lib/source.ts`: Code for content source adapter, [`loader()`](https://fumadocs.dev/docs/headless/source-api) provides the interface to access your content.
-- `app/layout.config.tsx`: Shared options for layouts, optional but preferred to keep.
+- **Introduction**: Overview of Tooly and its features
+- **Getting Started**: Quick setup guide for new users
+- **Packages**: Detailed documentation for each package
+  - `@tooly/core`: Base abstractions and utilities
+  - `@tooly/resend`: Email tools powered by Resend API
+  - `@tooly/linear`: Project management tools powered by Linear API
+- **Examples**: Real-world usage examples and patterns
 
-| Route                     | Description                                            |
-| ------------------------- | ------------------------------------------------------ |
-| `app/(home)`              | The route group for your landing page and other pages. |
-| `app/docs`                | The documentation layout and pages.                    |
-| `app/api/search/route.ts` | The Route Handler for search.                          |
+## Content Structure
 
-### Fumadocs MDX
+| Path                      | Description                              |
+| ------------------------- | ---------------------------------------- |
+| `content/docs/`           | Main documentation content in MDX format |
+| `content/docs/packages/`  | Package-specific documentation           |
+| `app/(home)`              | Landing page showcasing Tooly features   |
+| `app/docs`                | Documentation layout and routing         |
+| `app/api/search/route.ts` | Search functionality for documentation   |
 
-A `source.config.ts` config file has been included, you can customise different options like frontmatter schema.
+## File Organization
 
-Read the [Introduction](https://fumadocs.dev/docs/mdx) for further details.
+- `lib/source.ts`: Content source adapter configuration
+- `app/layout.config.tsx`: Shared layout options and navigation
+- `content/docs/`: All documentation content
+- `source.config.ts`: MDX configuration and frontmatter schema
+
+## Contributing
+
+To contribute to the documentation:
+
+1. Edit MDX files in `content/docs/`
+2. Add new package documentation in `content/docs/packages/`
+3. Update examples in `content/docs/examples.mdx`
+4. Test changes with `npm run dev`
 
 ## Learn More
 
-To learn more about Next.js and Fumadocs, take a look at the following
-resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js
-  features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-- [Fumadocs](https://fumadocs.vercel.app) - learn about Fumadocs
+- [Tooly Packages](https://github.com/yourusername/tooly) - Source code and packages
+- [Fumadocs](https://fumadocs.dev) - Documentation framework
+- [Next.js Documentation](https://nextjs.org/docs) - Web framework documentation

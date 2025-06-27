@@ -1,6 +1,6 @@
 {
   "name": "@tooly/resend",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Resend API tools for OpenAI, Anthropic, and Vercel AI SDK",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -8,6 +8,10 @@
     ".": "./dist/index.js",
     "./package.json": "./package.json"
   },
+  "files": [
+    "dist",
+    "README.md"
+  ],
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",
@@ -24,6 +28,15 @@
   ],
   "author": "Tooly",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/tooly.git",
+    "directory": "packages/resend"
+  },
+  "homepage": "https://github.com/yourusername/tooly#readme",
+  "publishConfig": {
+    "access": "public"
+  },
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",
     "@types/node": "^22.15.3",

@@ -1,13 +1,91 @@
 ---
-title: Hello World
-description: Your first document
+title: Introduction
+description: AI-powered tool packages for modern applications
 ---
 
-Welcome to the docs! You can start writing documents in `/content/docs`.
+Welcome to **Tooly** - a collection of AI-powered tool packages designed for seamless integration with OpenAI function calling, Anthropic tool use, and Vercel AI SDK.
 
-## What is Next?
+## What is Tooly?
+
+Tooly provides pre-built, type-safe packages that enable AI applications to interact with popular services like email providers and project management tools. Instead of building API integrations from scratch, you can use Tooly packages to add powerful functionality to your AI agents.
+
+## Key Features
+
+- **🤖 AI-First Design**: Built specifically for AI function calling and tool use
+- **📦 Modular Packages**: Install only what you need
+- **🔒 Type Safe**: Full TypeScript support with Zod validation
+- **🔧 Framework Agnostic**: Works with OpenAI, Anthropic, and Vercel AI SDK
+- **⚡ Easy Integration**: Simple setup with consistent APIs
+
+## Quick Start
+
+Get started in seconds by installing a Tooly package:
+
+```bash
+npm install @tooly/resend
+# or
+npm install @tooly/linear
+```
+
+Then use it with your preferred AI framework:
+
+```typescript
+import { createVercelAITools } from "@tooly/resend";
+
+const tools = createVercelAITools("your-api-key");
+
+// Use with Vercel AI SDK
+const result = await generateText({
+  model: openai("gpt-4"),
+  messages: [{ role: "user", content: "Send a welcome email" }],
+  tools,
+});
+```
+
+## Available Packages
 
 <Cards>
-  <Card title="Learn more about Next.js" href="https://nextjs.org/docs" />
-  <Card title="Learn more about Fumadocs" href="https://fumadocs.vercel.app" />
+  <Card 
+    title="@tooly/core" 
+    href="/docs/packages/core"
+    description="Base abstractions and utilities for building AI tool packages"
+  />
+  <Card 
+    title="@tooly/resend" 
+    href="/docs/packages/resend"
+    description="Email tools powered by Resend API"
+  />
+  <Card 
+    title="@tooly/linear" 
+    href="/docs/packages/linear"
+    description="Project management tools powered by Linear API"
+  />
 </Cards>
+
+## Why Tooly?
+
+### Before Tooly
+```typescript
+// Manual API integration
+const response = await fetch('https://api.resend.com/emails', {
+  method: 'POST',
+  headers: { 'Authorization': `Bearer ${apiKey}` },
+  body: JSON.stringify(emailData)
+});
+// Handle errors, validation, AI integration...
+```
+
+### With Tooly
+```typescript
+// AI-ready tools
+import { createOpenAIFunctions } from "@tooly/resend";
+
+const { tools, executeFunction } = createOpenAIFunctions(apiKey);
+// Ready for AI function calling!
+```
+
+## Next Steps
+
+- [📖 Learn about packages](/docs/packages) - Explore available packages
+- [🚀 Quick Start Guide](/docs/getting-started) - Get up and running in minutes  
+- [💡 Examples](/docs/examples) - See real-world usage examples
