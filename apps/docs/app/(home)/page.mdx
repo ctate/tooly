@@ -1,4 +1,10 @@
+---
+title: Home
+description: AI-powered tool packages for the AI SDK. Build intelligent applications with pre-built integrations for email, project management, and more.
+---
+
 import Link from "next/link";
+import { AiSdkLogo, OpenAiLogo, AnthropicLogo } from "@tooly/ui/logos";
 
 <div className="flex min-h-screen flex-col">
   <main className="flex-1">
@@ -72,15 +78,15 @@ Works with all major AI frameworks
       </div>
       <div className="mx-auto grid justify-center gap-4 sm:grid-cols-3 md:max-w-[48rem]">
         <div className="flex flex-col items-center justify-center p-6 text-center rounded-lg border bg-card text-card-foreground shadow-sm">
-          <img src="/logos/aisdk-logo.svg" alt="AI SDK" className="h-12 w-auto mb-2" />
+          <AiSdkLogo className="h-12 w-auto mb-2" />
           <div className="text-lg font-semibold">AI SDK</div>
         </div>
         <div className="flex flex-col items-center justify-center p-6 text-center rounded-lg border bg-card text-card-foreground shadow-sm">
-          <img src="/logos/openai-logo.svg" alt="OpenAI" className="h-12 w-auto mb-2" />
+          <OpenAiLogo className="h-12 w-auto mb-2" />
           <div className="text-lg font-semibold">OpenAI SDK</div>
         </div>
         <div className="flex flex-col items-center justify-center p-6 text-center rounded-lg border bg-card text-card-foreground shadow-sm">
-          <img src="/logos/anthropic-logo.svg" alt="Anthropic" className="h-12 w-auto mb-2" />
+          <AnthropicLogo className="h-12 w-auto mb-2" />
           <div className="text-lg font-semibold">Anthropic SDK</div>
         </div>
       </div>
