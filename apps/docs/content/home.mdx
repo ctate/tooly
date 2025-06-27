@@ -5,7 +5,7 @@ full: true
 ---
 
 import Link from 'next/link'
-import { AiSdkLogo } from '@tooly/ui/logos/ai'
+import { AiLogo } from '@tooly/ui/logos/ai'
 import { OpenAiLogo } from '@tooly/ui/logos/openai'
 import { AnthropicLogo } from '@tooly/ui/logos/anthropic'
 
@@ -14,9 +14,9 @@ import { AnthropicLogo } from '@tooly/ui/logos/anthropic'
     <section className="container flex flex-col items-center justify-center space-y-6 py-8 md:py-12 lg:py-24">
       <div className="mx-auto flex max-w-[58rem] flex-col items-center space-y-4 text-center">
 
-# Tooly
+# APIs as AI Tools
 
-AI-powered tools. Build intelligent applications with pre-built integrations for email, project management, and more.
+Tooly packages popular APIs into agent-ready tools — designed to work out of the box with OpenAI, Anthropic, and the Vercel AI SDK
 
 <div className="space-x-4">
   <Link
@@ -57,9 +57,9 @@ npm install @tooly/resend
 ```typescript
 import { generateText } from 'ai'
 import { openai } from '@ai-sdk/openai'
-import { createVercelAITools } from '@tooly/resend'
+import { createAITools } from '@tooly/resend'
 
-const tools = createVercelAITools('your-api-key')
+const tools = createAITools('your-api-key')
 
 const result = await generateText({
   model: openai('gpt-4.1-nano'),
@@ -81,7 +81,7 @@ Works with all major AI frameworks
       </div>
       <div className="mx-auto grid justify-center gap-4 sm:grid-cols-3 md:max-w-[48rem]">
         <div className="flex flex-col items-center justify-center p-6 text-center rounded-lg border bg-card text-card-foreground shadow-sm">
-          <AiSdkLogo className="h-12 w-auto mb-2" />
+          <AiLogo className="h-12 w-auto mb-2" />
           <div className="text-lg font-semibold">AI SDK</div>
         </div>
         <div className="flex flex-col items-center justify-center p-6 text-center rounded-lg border bg-card text-card-foreground shadow-sm">

@@ -1,0 +1,402 @@
+---
+title: Custom
+description: Base abstractions and utilities for building AI tool packages
+---
+
+The `@tooly/core` package provides the foundational abstractions and utilities used by all Tooly packages. If you're building your own AI tool packages, this is where you'll start.
+
+## Installation
+
+```bash
+npm install @tooly/core
+```
+
+## Overview
+
+The core package provides:
+
+- **BaseToolManager**: Abstract class for creating tool managers
+- **Type Definitions**: Shared TypeScript interfaces
+- **AI Framework Helpers**: Utilities for OpenAI, Anthropic, and AI SDK
+- **Utility Functions**: Common helpers for tool development
+
+## BaseToolManager
+
+The `BaseToolManager` is an abstract class that provides the foundation for all Tooly packages.
+
+### Basic Usage
+
+```typescript
+import { BaseToolManager } from '@tooly/core'
+import { z } from 'zod'
+
+// Define your tool schemas
+const toolSchemas = {
+  myTool: z.object({
+    message: z.string(),
+    urgent: z.boolean().optional(),
+  }),
+}
+
+// Define your tools
+const tools = [
+  {
+    name: 'myTool',
+    description: 'My custom tool',
+    parameters: {
+      type: 'object',
+      properties: {
+        message: { type: 'string', description: 'Message to process' },
+        urgent: { type: 'boolean', description: 'Mark as urgent' },
+      },
+      required: ['message'],
+    },
+  },
+] as const
+
+class MyToolManager extends BaseToolManager<typeof toolSchemas, typeof tools> {
+  constructor(apiKey: string) {
+    super(tools, toolSchemas)
+    // Initialize your API client here
+  }
+
+  protected async executeToolFunction(name: string, params: any): Promise<any> {
+    switch (name) {
+      case 'myTool':
+        return this.handleMyTool(params)
+      default:
+        throw new Error(`Unknown tool: ${name}`)
+    }
+  }
+
+  private async handleMyTool(params: { message: string; urgent?: boolean }) {
+    // Your tool implementation
+    return {
+      success: true,
+      processed: params.message,
+      priority: params.urgent ? 'high' : 'normal',
+    }
+  }
+}
+```
+
+### Methods
+
+#### `getTools()`
+
+Returns the tool definitions for AI framework integration.
+
+```typescript
+const manager = new MyToolManager('api-key')
+const tools = manager.getTools()
+// Returns array of tool definitions
+```
+
+#### `getToolSchemas()`
+
+Returns the Zod schemas for parameter validation.
+
+```typescript
+const schemas = manager.getToolSchemas()
+// Returns object with schema for each tool
+```
+
+#### `executeFunction(name, parameters)`
+
+Executes a tool function with automatic parameter validation.
+
+```typescript
+const result = await manager.executeFunction('myTool', {
+  message: 'Hello world',
+  urgent: true,
+})
+```
+
+#### `executeToolFunction(name, params)` (Abstract)
+
+This method must be implemented by concrete classes to handle tool execution.
+
+## AI Framework Helpers
+
+The core package includes helper functions for integrating with different AI frameworks.
+
+### createAITools
+
+Creates AI SDK compatible tools from a tool manager.
+
+```typescript
+import { createAITools } from '@tooly/core'
+
+const vercelTools = createAITools(toolManager, boundMethods, toolDescriptions)
+
+// Use with AI SDK
+const result = await generateText({
+  model: openai('gpt-4'),
+  messages: [{ role: 'user', content: 'Use my tool' }],
+  tools: vercelTools,
+})
+```
+
+### createOpenAIFunctions
+
+Creates OpenAI function calling setup from a tool manager.
+
+```typescript
+import { createOpenAIFunctions } from '@tooly/core'
+
+const { tools, executeFunction } = createOpenAIFunctions(toolManager)
+
+// Use with OpenAI
+const completion = await openai.chat.completions.create({
+  model: 'gpt-4.1-nano',
+  messages: [{ role: 'user', content: 'Use my tool' }],
+  tools,
+})
+```
+
+### createAnthropicTools
+
+Creates Anthropic tool use setup from a tool manager.
+
+```typescript
+import { createAnthropicTools } from '@tooly/core'
+
+const { tools, executeFunction } = createAnthropicTools(toolManager)
+
+// Use with Anthropic
+const message = await anthropic.messages.create({
+  model: 'claude-sonnet-4-20250514',
+  messages: [{ role: 'user', content: 'Use my tool' }],
+  tools,
+})
+```
+
+## Utilities
+
+### bindHandlerMethods
+
+Utility function to bind handler methods for tool execution.
+
+```typescript
+import { bindHandlerMethods } from '@tooly/core'
+
+const boundMethods = bindHandlerMethods(handlerInstance, ['method1', 'method2', 'method3'])
+```
+
+## Type Definitions
+
+The core package exports many useful TypeScript interfaces:
+
+```typescript
+import type {
+  ToolDefinition,
+  ToolDefinitions,
+  ToolParameterSchemas,
+  ToolManager,
+  VercelAITools,
+  OpenAIFunctionSetup,
+  AnthropicToolSetup,
+  BaseHandler,
+} from '@tooly/core'
+```
+
+## Building Your Own Package
+
+Here's a complete example of building a custom tool package:
+
+```typescript
+import { BaseToolManager, type ToolDefinitions, type ToolParameterSchemas } from '@tooly/core'
+import { z } from 'zod'
+
+// 1. Define schemas
+const toolParameterSchemas = {
+  processData: z.object({
+    data: z.string(),
+    format: z.enum(['json', 'csv', 'xml']).optional(),
+  }),
+} as const
+
+// 2. Define tools
+const tools = [
+  {
+    name: 'processData',
+    description: 'Process data in different formats',
+    parameters: {
+      type: 'object',
+      properties: {
+        data: { type: 'string', description: 'Data to process' },
+        format: {
+          type: 'string',
+          enum: ['json', 'csv', 'xml'],
+          description: 'Output format',
+        },
+      },
+      required: ['data'],
+    },
+  },
+] as const
+
+// 3. Implement tool manager
+export class DataProcessor extends BaseToolManager<typeof toolParameterSchemas, typeof tools> {
+  constructor(apiKey: string) {
+    super(tools, toolParameterSchemas)
+    // Initialize your service
+  }
+
+  protected async executeToolFunction(name: string, params: any) {
+    switch (name) {
+      case 'processData':
+        return this.processData(params)
+      default:
+        throw new Error(`Unknown tool: ${name}`)
+    }
+  }
+
+  private async processData(params: { data: string; format?: string }) {
+    // Your implementation
+    return { processed: true, format: params.format || 'json' }
+  }
+}
+
+// 4. Export framework helpers
+export function createAITools(apiKey: string) {
+  const manager = new DataProcessor(apiKey)
+  return createAITools(manager, {}, tools)
+}
+
+export function createOpenAIFunctions(apiKey: string) {
+  const manager = new DataProcessor(apiKey)
+  return createOpenAIFunctions(manager)
+}
+
+export function createAnthropicTools(apiKey: string) {
+  const manager = new DataProcessor(apiKey)
+  return createAnthropicTools(manager)
+}
+```
+
+## Error Handling
+
+The core package provides robust error handling:
+
+```typescript
+import { ToolExecutionError, ValidationError } from '@tooly/core'
+
+try {
+  await manager.executeFunction('myTool', invalidParams)
+} catch (error) {
+  if (error instanceof ValidationError) {
+    console.log('Parameter validation failed:', error.details)
+  } else if (error instanceof ToolExecutionError) {
+    console.log('Tool execution failed:', error.message)
+  }
+}
+```
+
+## Testing
+
+Test your custom tools easily:
+
+```typescript
+import { describe, it, expect } from 'vitest'
+import { DataProcessor } from './my-tool'
+
+describe('DataProcessor', () => {
+  const processor = new DataProcessor('test-api-key')
+
+  it('should process data correctly', async () => {
+    const result = await processor.executeFunction('processData', {
+      data: 'test data',
+      format: 'json',
+    })
+
+    expect(result.processed).toBe(true)
+    expect(result.format).toBe('json')
+  })
+
+  it('should validate parameters', async () => {
+    await expect(
+      processor.executeFunction('processData', {
+        // Missing required 'data' parameter
+        format: 'json',
+      }),
+    ).rejects.toThrow()
+  })
+})
+```
+
+## Advanced Patterns
+
+### Middleware Support
+
+Add middleware for logging, caching, or custom logic:
+
+```typescript
+class AdvancedToolManager extends BaseToolManager<typeof schemas, typeof tools> {
+  private middleware: Array<(name: string, params: any, next: Function) => any> = []
+
+  addMiddleware(fn: (name: string, params: any, next: Function) => any) {
+    this.middleware.push(fn)
+  }
+
+  protected async executeToolFunction(name: string, params: any) {
+    const execute = async (index: number): Promise<any> => {
+      if (index >= this.middleware.length) {
+        return this.handleTool(name, params)
+      }
+
+      return this.middleware[index](name, params, () => execute(index + 1))
+    }
+
+    return execute(0)
+  }
+
+  private async handleTool(name: string, params: any) {
+    // Your tool logic here
+  }
+}
+
+// Usage
+const manager = new AdvancedToolManager('api-key')
+
+// Add logging middleware
+manager.addMiddleware(async (name, params, next) => {
+  console.log(`Executing tool: ${name}`, params)
+  const result = await next()
+  console.log(`Tool completed: ${name}`, result)
+  return result
+})
+```
+
+### Caching
+
+Implement caching for expensive operations:
+
+```typescript
+import { LRUCache } from 'lru-cache'
+
+class CachedToolManager extends BaseToolManager<typeof schemas, typeof tools> {
+  private cache = new LRUCache<string, any>({ max: 100, ttl: 1000 * 60 * 5 }) // 5 minutes
+
+  protected async executeToolFunction(name: string, params: any) {
+    const cacheKey = `${name}:${JSON.stringify(params)}`
+
+    // Check cache first
+    if (this.cache.has(cacheKey)) {
+      return this.cache.get(cacheKey)
+    }
+
+    // Execute and cache result
+    const result = await this.handleTool(name, params)
+    this.cache.set(cacheKey, result)
+
+    return result
+  }
+}
+```
+
+## Next Steps
+
+- [📧 Resend Package](/docs/tools/resend) - Email automation example
+- [📋 Linear Package](/docs/tools/linear) - Project management example
+- [💡 Examples](/docs/getting-started/examples) - See core package in action

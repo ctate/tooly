@@ -1,0 +1,12 @@
+{
+  "pages": [
+    "---Getting Started---",
+    "index",
+    "quick-start",
+    "examples",
+    "---Tools---",
+    "tools/linear",
+    "tools/resend",
+    "tools/custom"
+  ]
+}

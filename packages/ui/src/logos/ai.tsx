@@ -1,6 +1,6 @@
-export const AiLogo = () => {
+export const AiLogo = ({ className }: { className?: string }) => {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" height="16" viewBox="0 0 16 16" width="16">
+    <svg xmlns="http://www.w3.org/2000/svg" height="16" viewBox="0 0 16 16" width="16" className={className}>
       <title>AI SDK</title>
       <path
         d="M2.5 0.5V0H3.5V0.5C3.5 1.60457 4.39543 2.5 5.5 2.5H6V3V3.5H5.5C4.39543 3.5 3.5 4.39543 3.5 5.5V6H3H2.5V5.5C2.5 4.39543 1.60457 3.5 0.5 3.5H0V3V2.5H0.5C1.60457 2.5 2.5 1.60457 2.5 0.5Z"

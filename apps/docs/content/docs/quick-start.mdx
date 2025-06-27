@@ -1,0 +1,161 @@
+---
+title: Quick Start
+description: Set up your first AI tool with Tooly in minutes
+---
+
+Get up and running with Tooly in just a few steps. This guide will walk you through installing your first package and integrating it with the AI SDK.
+
+## Installation
+
+Choose the package that best fits your needs:
+
+```bash
+# For email functionality
+npm install @tooly/resend
+
+# For project management
+npm install @tooly/linear
+
+# For building your own tools
+npm install @tooly/core
+```
+
+## Basic Usage with AI SDK
+
+The AI SDK is the recommended way to use Tooly packages. Here's how to get started:
+
+### Email Example
+
+```typescript
+import { generateText } from 'ai'
+import { openai } from '@ai-sdk/openai'
+import { createAITools } from '@tooly/resend'
+
+// Create AI-ready tools
+const tools = createAITools('your-resend-api-key')
+
+// Use with AI
+const result = await generateText({
+  model: openai('gpt-4.1-nano'),
+  messages: [
+    {
+      role: 'user',
+      content: 'Send a welcome email to user@example.com',
+    },
+  ],
+  tools,
+})
+
+console.log(result.text)
+```
+
+### Project Management Example
+
+```typescript
+import { generateText } from 'ai'
+import { openai } from '@ai-sdk/openai'
+import { createAITools } from '@tooly/linear'
+
+const tools = createAITools('your-linear-api-key')
+
+const result = await generateText({
+  model: openai('gpt-4.1-nano'),
+  messages: [
+    {
+      role: 'user',
+      content: 'Create a bug report for the login page timeout issue',
+    },
+  ],
+  tools,
+})
+
+console.log(result.text)
+```
+
+## Alternative: OpenAI SDK
+
+If you prefer using the OpenAI SDK directly:
+
+```typescript
+import OpenAI from 'openai'
+import { createOpenAIFunctions } from '@tooly/resend'
+
+const openai = new OpenAI()
+const { tools, executeFunction } = createOpenAIFunctions('your-resend-api-key')
+
+const completion = await openai.chat.completions.create({
+  model: 'gpt-4.1-nano',
+  messages: [
+    {
+      role: 'user',
+      content: 'Send a notification email about system maintenance',
+    },
+  ],
+  tools,
+})
+
+// Execute any tool calls
+for (const toolCall of completion.choices[0].message.tool_calls || []) {
+  const result = await executeFunction(toolCall.function.name, JSON.parse(toolCall.function.arguments))
+  console.log('Tool result:', result)
+}
+```
+
+## Alternative: Anthropic SDK
+
+For Claude users:
+
+```typescript
+import Anthropic from '@anthropic-ai/sdk'
+import { createAnthropicTools } from '@tooly/linear'
+
+const anthropic = new Anthropic()
+const { tools, executeFunction } = createAnthropicTools('your-linear-api-key')
+
+const message = await anthropic.messages.create({
+  model: 'claude-sonnet-4-20250514',
+  messages: [
+    {
+      role: 'user',
+      content: 'Create a bug report for the login issue',
+    },
+  ],
+  tools,
+})
+
+// Execute any tool calls
+for (const toolUse of message.content.filter((c) => c.type === 'tool_use')) {
+  const result = await executeFunction(toolUse.name, toolUse.input)
+  console.log('Tool result:', result)
+}
+```
+
+## Configuration
+
+### API Keys
+
+Each package requires API credentials from the respective service:
+
+- **Resend**: Get your API key from [Resend Dashboard](https://resend.com/api-keys)
+- **Linear**: Generate a personal API key from [Linear Settings](https://linear.app/settings/api)
+
+Store your API keys securely using environment variables:
+
+```bash
+RESEND_API_KEY=your_resend_api_key_here
+LINEAR_API_KEY=your_linear_api_key_here
+```
+
+### Environment Setup
+
+```typescript
+import { createAITools } from '@tooly/resend'
+
+const tools = createAITools(process.env.RESEND_API_KEY!)
+```
+
+## Next Steps
+
+- [💡 Examples](/docs/getting-started/examples) - See real-world usage examples
+- [📖 Tools](/docs/tools) - Explore available packages
+- [🔧 Core Package](/docs/tools/core) - Build your own tools

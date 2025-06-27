@@ -1,5 +1,5 @@
 import type { BaseLayoutProps } from 'fumadocs-ui/layouts/shared'
-import { ToolyLogo } from './logos/tooly'
+import { ToolyLogo } from '@tooly/ui/logos/tooly'
 
 /**
  * Shared layout configurations
@@ -21,12 +21,12 @@ export const baseOptions: BaseLayoutProps = {
   },
   links: [
     {
-      text: 'Packages',
-      url: '/docs/packages',
+      text: 'Tools',
+      url: '/docs/tools',
     },
     {
       text: 'Examples',
-      url: '/docs/examples',
+      url: '/docs/getting-started/examples',
     },
     {
       text: 'GitHub',

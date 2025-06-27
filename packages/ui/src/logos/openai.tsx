@@ -1,4 +1,4 @@
-export const OpenAILogo = () => {
+export const OpenAiLogo = ({ className }: { className?: string }) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -6,6 +6,7 @@ export const OpenAILogo = () => {
       height="260"
       preserveAspectRatio="xMidYMid"
       viewBox="0 0 256 260"
+      className={className}
     >
       <title>OpenAI</title>
       <path

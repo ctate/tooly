@@ -1,0 +1,481 @@
+---
+title: Linear
+description: Project management tools powered by Linear API
+---
+
+The `@tooly/linear` package provides AI-ready tools for Linear project management. Create issues, manage projects, and automate your development workflow with AI assistance.
+
+## Installation
+
+```bash
+npm install @tooly/linear
+```
+
+## Quick Start
+
+```typescript
+import { generateText } from 'ai'
+import { openai } from '@ai-sdk/openai'
+import { createAITools } from '@tooly/linear'
+
+const tools = createAITools(process.env.LINEAR_API_KEY!)
+
+const result = await generateText({
+  model: openai('gpt-4.1-nano'),
+  messages: [
+    {
+      role: 'user',
+      content: 'Create a bug report for the login timeout issue',
+    },
+  ],
+  tools,
+})
+
+console.log(result.text)
+```
+
+## Setup
+
+### 1. Get Your Linear API Key
+
+1. Go to [Linear Settings](https://linear.app/settings/api)
+2. Create a new personal API key
+3. Copy the key for use in your application
+
+### 2. Environment Variables
+
+Store your API key securely:
+
+```bash
+LINEAR_API_KEY=your_linear_api_key_here
+```
+
+### 3. Initialize the Tools
+
+```typescript
+import { createAITools } from '@tooly/linear'
+
+const tools = createAITools(process.env.LINEAR_API_KEY!)
+```
+
+## Available Tools
+
+The Linear package provides the following AI tools:
+
+### createIssue
+
+Creates a new issue in Linear with the specified details.
+
+**Parameters:**
+
+- `title` (string, required): Issue title
+- `description` (string, optional): Issue description
+- `priority` (string, optional): Issue priority (No priority, Urgent, High, Medium, Low)
+- `teamId` (string, optional): Team ID to assign the issue to
+- `assigneeId` (string, optional): User ID to assign the issue to
+- `labelIds` (array, optional): Array of label IDs to add to the issue
+- `projectId` (string, optional): Project ID to add the issue to
+
+**Example:**
+
+```typescript
+const result = await generateText({
+  model: openai('gpt-4.1-nano'),
+  messages: [
+    {
+      role: 'user',
+      content: 'Create a high priority bug report for the user login system with detailed steps to reproduce',
+    },
+  ],
+  tools,
+})
+```
+
+### updateIssue
+
+Updates an existing issue in Linear.
+
+**Parameters:**
+
+- `issueId` (string, required): ID of the issue to update
+- `title` (string, optional): New issue title
+- `description` (string, optional): New issue description
+- `priority` (string, optional): New issue priority
+- `stateId` (string, optional): New state ID (e.g., "In Progress", "Done")
+- `assigneeId` (string, optional): New assignee user ID
+- `labelIds` (array, optional): New array of label IDs
+
+**Example:**
+
+```typescript
+const result = await generateText({
+  model: openai('gpt-4.1-nano'),
+  messages: [
+    {
+      role: 'user',
+      content: 'Update issue LIN-123 to mark it as in progress and assign it to John',
+    },
+  ],
+  tools,
+})
+```
+
+### searchIssues
+
+Searches for issues in Linear based on various criteria.
+
+**Parameters:**
+
+- `query` (string, optional): Text search query
+- `teamId` (string, optional): Filter by team ID
+- `assigneeId` (string, optional): Filter by assignee user ID
+- `stateId` (string, optional): Filter by state ID
+- `priority` (string, optional): Filter by priority
+- `labelIds` (array, optional): Filter by label IDs
+
+**Example:**
+
+```typescript
+const result = await generateText({
+  model: openai('gpt-4.1-nano'),
+  messages: [
+    {
+      role: 'user',
+      content: 'Find all high priority bugs assigned to me',
+    },
+  ],
+  tools,
+})
+```
+
+### createProject
+
+Creates a new project in Linear.
+
+**Parameters:**
+
+- `name` (string, required): Project name
+- `description` (string, optional): Project description
+- `teamId` (string, required): Team ID to create the project in
+- `leadId` (string, optional): User ID of the project lead
+- `targetDate` (string, optional): Target completion date (ISO format)
+
+**Example:**
+
+```typescript
+const result = await generateText({
+  model: openai('gpt-4.1-nano'),
+  messages: [
+    {
+      role: 'user',
+      content: 'Create a new project for the mobile app redesign with a target date of next month',
+    },
+  ],
+  tools,
+})
+```
+
+### getTeams
+
+Retrieves all teams in the Linear workspace.
+
+**Parameters:** None
+
+**Example:**
+
+```typescript
+const result = await generateText({
+  model: openai('gpt-4.1-nano'),
+  messages: [
+    {
+      role: 'user',
+      content: 'Show me all teams in our workspace',
+    },
+  ],
+  tools,
+})
+```
+
+### getUsers
+
+Retrieves all users in the Linear workspace.
+
+**Parameters:** None
+
+**Example:**
+
+```typescript
+const result = await generateText({
+  model: openai('gpt-4.1-nano'),
+  messages: [
+    {
+      role: 'user',
+      content: 'List all users in our organization',
+    },
+  ],
+  tools,
+})
+```
+
+## AI Framework Integration
+
+### AI SDK (Recommended)
+
+```typescript
+import { generateText } from 'ai'
+import { openai } from '@ai-sdk/openai'
+import { createAITools } from '@tooly/linear'
+
+const tools = createAITools(process.env.LINEAR_API_KEY!)
+
+const result = await generateText({
+  model: openai('gpt-4.1-nano'),
+  messages: [
+    {
+      role: 'user',
+      content: 'Create a sprint planning session with 5 user stories for the mobile app',
+    },
+  ],
+  tools,
+})
+```
+
+### OpenAI SDK
+
+```typescript
+import OpenAI from 'openai'
+import { createOpenAIFunctions } from '@tooly/linear'
+
+const openai = new OpenAI()
+const { tools, executeFunction } = createOpenAIFunctions(process.env.LINEAR_API_KEY!)
+
+const completion = await openai.chat.completions.create({
+  model: 'gpt-4.1-nano',
+  messages: [
+    {
+      role: 'user',
+      content: 'Create a bug report for the payment processing issue',
+    },
+  ],
+  tools,
+})
+
+// Execute any tool calls
+for (const toolCall of completion.choices[0].message.tool_calls || []) {
+  const result = await executeFunction(toolCall.function.name, JSON.parse(toolCall.function.arguments))
+  console.log('Tool result:', result)
+}
+```
+
+### Anthropic SDK
+
+```typescript
+import Anthropic from '@anthropic-ai/sdk'
+import { createAnthropicTools } from '@tooly/linear'
+
+const anthropic = new Anthropic()
+const { tools, executeFunction } = createAnthropicTools(process.env.LINEAR_API_KEY!)
+
+const message = await anthropic.messages.create({
+  model: 'claude-sonnet-4-20250514',
+  messages: [
+    {
+      role: 'user',
+      content: 'Organize our backlog and create a development roadmap',
+    },
+  ],
+  tools,
+})
+
+// Execute any tool calls
+for (const toolUse of message.content.filter((c) => c.type === 'tool_use')) {
+  const result = await executeFunction(toolUse.name, toolUse.input)
+  console.log('Tool result:', result)
+}
+```
+
+## Common Use Cases
+
+### Bug Report Automation
+
+```typescript
+import { generateText } from 'ai'
+import { openai } from '@ai-sdk/openai'
+import { createAITools } from '@tooly/linear'
+
+const tools = createAITools(process.env.LINEAR_API_KEY!)
+
+async function createBugReport(userFeedback: string, severity: string) {
+  const result = await generateText({
+    model: openai('gpt-4.1-nano'),
+    messages: [
+      {
+        role: 'user',
+        content: `Create a ${severity} priority bug report based on this user feedback: "${userFeedback}". Include steps to reproduce and expected vs actual behavior.`,
+      },
+    ],
+    tools,
+  })
+
+  return result.text
+}
+
+// Usage
+await createBugReport('The login button is not working on mobile devices', 'high')
+```
+
+### Sprint Planning
+
+```typescript
+async function planSprint(teamId: string, sprintGoal: string, backlogItems: string[]) {
+  const result = await generateText({
+    model: openai('gpt-4.1-nano'),
+    messages: [
+      {
+        role: 'user',
+        content: `Plan a 2-week sprint for team ${teamId} with the goal: "${sprintGoal}". Create issues for these backlog items: ${backlogItems.join(', ')}. Estimate story points and assign priorities.`,
+      },
+    ],
+    tools,
+  })
+
+  return result.text
+}
+
+// Usage
+await planSprint('team_123', 'Improve user onboarding', [
+  'User registration flow',
+  'Email verification',
+  'Welcome tutorial',
+  'Profile setup',
+])
+```
+
+### Feature Request Processing
+
+```typescript
+async function processFeatureRequest(request: string, requester: string) {
+  const result = await generateText({
+    model: openai('gpt-4.1-nano'),
+    messages: [
+      {
+        role: 'user',
+        content: `Process this feature request from ${requester}: "${request}". Create a detailed issue with user story format, acceptance criteria, and technical considerations.`,
+      },
+    ],
+    tools,
+  })
+
+  return result.text
+}
+
+// Usage
+await processFeatureRequest('I want to be able to export my data as PDF', 'user@example.com')
+```
+
+## Error Handling
+
+The Linear package includes comprehensive error handling:
+
+```typescript
+import { generateText } from 'ai'
+import { ZodError } from 'zod'
+
+try {
+  const result = await generateText({
+    model: openai('gpt-4.1-nano'),
+    messages: [{ role: 'user', content: 'Create an invalid issue' }],
+    tools,
+  })
+} catch (error) {
+  if (error instanceof ZodError) {
+    console.log('Validation error:', error.errors)
+  } else if (error.message.includes('Linear API')) {
+    console.log('Linear API error:', error.message)
+  } else {
+    console.log('Unexpected error:', error)
+  }
+}
+```
+
+## TypeScript Support
+
+Full TypeScript support with proper types:
+
+```typescript
+import type { LinearTools } from '@tooly/linear'
+
+// Type-safe tool manager
+const tools: LinearTools = createAITools(process.env.LINEAR_API_KEY!)
+
+// Typed responses
+interface IssueCreated {
+  id: string
+  title: string
+  url: string
+  identifier: string
+}
+```
+
+## Rate Limiting
+
+The Linear API has rate limits. The package handles this automatically with:
+
+- Exponential backoff retry logic
+- Request queuing
+- Proper error messages for rate limit exceeded
+
+## Advanced Usage
+
+### Custom Tool Manager
+
+For more control, you can use the base tool manager:
+
+```typescript
+import { LinearTools } from '@tooly/linear'
+
+const linearTools = new LinearTools(process.env.LINEAR_API_KEY!)
+
+// Get available tools
+const tools = linearTools.getTools()
+
+// Execute tools directly
+const result = await linearTools.executeFunction('createIssue', {
+  title: 'Bug in login system',
+  description: 'Users cannot log in with their credentials',
+  priority: 'High',
+})
+
+console.log('Issue created:', result)
+```
+
+### Webhooks Integration
+
+Combine with Linear webhooks for real-time AI responses:
+
+```typescript
+// Example webhook handler
+export async function POST(request: Request) {
+  const webhook = await request.json()
+
+  if (webhook.type === 'Issue' && webhook.action === 'create') {
+    // Auto-categorize and assign new issues with AI
+    const result = await generateText({
+      model: openai('gpt-4.1-nano'),
+      messages: [
+        {
+          role: 'user',
+          content: `Analyze this new issue and update it with appropriate labels and assignee: ${webhook.data.title} - ${webhook.data.description}`,
+        },
+      ],
+      tools,
+    })
+  }
+}
+```
+
+## Next Steps
+
+- [📧 Resend Package](/docs/tools/resend) - Email automation
+- [🔧 Core Package](/docs/tools/core) - Build your own tools
+- [💡 Examples](/docs/getting-started/examples) - See Linear in action

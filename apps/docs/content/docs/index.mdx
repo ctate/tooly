@@ -30,61 +30,31 @@ npm install @tooly/linear
 Then use it with the AI SDK:
 
 ```typescript
-import { generateText } from "ai";
-import { openai } from "@ai-sdk/openai";
-import { createVercelAITools } from "@tooly/resend";
+import { generateText } from 'ai'
+import { openai } from '@ai-sdk/openai'
+import { createAITools } from '@tooly/resend'
 
-const tools = createVercelAITools("your-resend-api-key");
+const tools = createAITools('your-resend-api-key')
 
 // Use with AI SDK
 const result = await generateText({
-  model: openai("gpt-4.1-nano"),
-  messages: [{ role: "user", content: "Send a welcome email" }],
+  model: openai('gpt-4.1-nano'),
+  messages: [{ role: 'user', content: 'Send a welcome email' }],
   tools,
-});
+})
 ```
 
 ## Available Packages
 
 <Cards>
-  <Card 
-    title="@tooly/core" 
-    href="/docs/packages/core"
+  <Card
+    title="@tooly/core"
+    href="/docs/tools/core"
     description="Base abstractions and utilities for building AI tool packages"
   />
-  <Card 
-    title="@tooly/resend" 
-    href="/docs/packages/resend"
-    description="Email tools powered by Resend API"
-  />
-  <Card 
-    title="@tooly/linear" 
-    href="/docs/packages/linear"
-    description="Project management tools powered by Linear API"
-  />
+  <Card title="@tooly/resend" href="/docs/tools/resend" description="Email tools powered by Resend API" />
+  <Card title="@tooly/linear" href="/docs/tools/linear" description="Project management tools powered by Linear API" />
 </Cards>
-
-## Why Tooly?
-
-### Before Tooly
-```typescript
-// Manual API integration + custom tool definitions
-const response = await fetch('https://api.resend.com/emails', {
-  method: 'POST',
-  headers: { 'Authorization': `Bearer ${apiKey}` },
-  body: JSON.stringify(emailData)
-});
-// Handle errors, validation, AI tool integration...
-```
-
-### With Tooly
-```typescript
-// AI-ready tools for AI SDK
-import { createVercelAITools } from "@tooly/resend";
-
-const tools = createVercelAITools(apiKey);
-// Ready for AI SDK immediately!
-```
 
 ## Framework Support
 
@@ -96,6 +66,6 @@ While Tooly is built for the AI SDK, it also supports:
 
 ## Next Steps
 
-- [🚀 Getting Started](/docs/getting-started) - Set up your first AI tool
-- [📖 Learn about packages](/docs/packages) - Explore available packages
-- [💡 Examples](/docs/examples) - See real-world usage examples
+- [🚀 Quick Start](/docs/getting-started/quick-start) - Set up your first AI tool
+- [📖 Learn about tools](/docs/tools) - Explore available packages
+- [💡 Examples](/docs/getting-started/examples) - See real-world usage examples

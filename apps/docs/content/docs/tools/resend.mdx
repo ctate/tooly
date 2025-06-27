@@ -1,0 +1,498 @@
+---
+title: Resend
+description: Email tools powered by Resend API
+---
+
+The `@tooly/resend` package provides AI-ready email tools powered by the Resend API. Send transactional emails, newsletters, and automated communications with AI assistance.
+
+## Installation
+
+```bash
+npm install @tooly/resend
+```
+
+## Quick Start
+
+```typescript
+import { generateText } from 'ai'
+import { openai } from '@ai-sdk/openai'
+import { createAITools } from '@tooly/resend'
+
+const tools = createAITools(process.env.RESEND_API_KEY!)
+
+const result = await generateText({
+  model: openai('gpt-4.1-nano'),
+  messages: [
+    {
+      role: 'user',
+      content: 'Send a welcome email to user@example.com',
+    },
+  ],
+  tools,
+})
+
+console.log(result.text)
+```
+
+## Setup
+
+### 1. Get Your Resend API Key
+
+1. Sign up at [Resend](https://resend.com)
+2. Go to your [API Keys](https://resend.com/api-keys) page
+3. Create a new API key
+4. Copy the key for use in your application
+
+### 2. Verify Your Domain
+
+To send emails from your domain:
+
+1. Go to [Domains](https://resend.com/domains) in your Resend dashboard
+2. Add your domain
+3. Configure the required DNS records
+4. Wait for verification
+
+### 3. Environment Variables
+
+Store your API key securely:
+
+```bash
+RESEND_API_KEY=re_your_api_key_here
+```
+
+### 4. Initialize the Tools
+
+```typescript
+import { createAITools } from '@tooly/resend'
+
+const tools = createAITools(process.env.RESEND_API_KEY!)
+```
+
+## Available Tools
+
+The Resend package provides the following AI tools:
+
+### sendEmail
+
+Sends an email using the Resend API.
+
+**Parameters:**
+
+- `to` (string or array, required): Recipient email address(es)
+- `from` (string, required): Sender email address
+- `subject` (string, required): Email subject
+- `html` (string, optional): HTML email content
+- `text` (string, optional): Plain text email content
+- `cc` (string or array, optional): CC recipients
+- `bcc` (string or array, optional): BCC recipients
+- `replyTo` (string, optional): Reply-to email address
+
+**Example:**
+
+```typescript
+const result = await generateText({
+  model: openai('gpt-4.1-nano'),
+  messages: [
+    {
+      role: 'user',
+      content: 'Send a welcome email to john@example.com from support@myapp.com with a friendly message',
+    },
+  ],
+  tools,
+})
+```
+
+### sendBulkEmail
+
+Sends emails to multiple recipients efficiently.
+
+**Parameters:**
+
+- `emails` (array, required): Array of email objects, each containing:
+  - `to` (string, required): Recipient email
+  - `from` (string, required): Sender email
+  - `subject` (string, required): Email subject
+  - `html` (string, optional): HTML content
+  - `text` (string, optional): Plain text content
+
+**Example:**
+
+```typescript
+const result = await generateText({
+  model: openai('gpt-4.1-nano'),
+  messages: [
+    {
+      role: 'user',
+      content: 'Send a newsletter about AI updates to our subscriber list: user1@example.com, user2@example.com',
+    },
+  ],
+  tools,
+})
+```
+
+### createEmailTemplate
+
+Creates a reusable email template.
+
+**Parameters:**
+
+- `name` (string, required): Template name
+- `subject` (string, required): Email subject template
+- `html` (string, optional): HTML template
+- `text` (string, optional): Plain text template
+
+**Example:**
+
+```typescript
+const result = await generateText({
+  model: openai('gpt-4.1-nano'),
+  messages: [
+    {
+      role: 'user',
+      content: 'Create a welcome email template for new users with placeholders for name and company',
+    },
+  ],
+  tools,
+})
+```
+
+## AI Framework Integration
+
+### AI SDK (Recommended)
+
+```typescript
+import { generateText } from 'ai'
+import { openai } from '@ai-sdk/openai'
+import { createAITools } from '@tooly/resend'
+
+const tools = createAITools(process.env.RESEND_API_KEY!)
+
+const result = await generateText({
+  model: openai('gpt-4.1-nano'),
+  messages: [
+    {
+      role: 'user',
+      content: 'Send a password reset email to user@example.com with secure instructions',
+    },
+  ],
+  tools,
+})
+```
+
+### OpenAI SDK
+
+```typescript
+import OpenAI from 'openai'
+import { createOpenAIFunctions } from '@tooly/resend'
+
+const openai = new OpenAI()
+const { tools, executeFunction } = createOpenAIFunctions(process.env.RESEND_API_KEY!)
+
+const completion = await openai.chat.completions.create({
+  model: 'gpt-4.1-nano',
+  messages: [
+    {
+      role: 'user',
+      content: 'Send a notification email about system maintenance',
+    },
+  ],
+  tools,
+})
+
+// Execute any tool calls
+for (const toolCall of completion.choices[0].message.tool_calls || []) {
+  const result = await executeFunction(toolCall.function.name, JSON.parse(toolCall.function.arguments))
+  console.log('Tool result:', result)
+}
+```
+
+### Anthropic SDK
+
+```typescript
+import Anthropic from '@anthropic-ai/sdk'
+import { createAnthropicTools } from '@tooly/resend'
+
+const anthropic = new Anthropic()
+const { tools, executeFunction } = createAnthropicTools(process.env.RESEND_API_KEY!)
+
+const message = await anthropic.messages.create({
+  model: 'claude-sonnet-4-20250514',
+  messages: [
+    {
+      role: 'user',
+      content: 'Send a product update email to our customers',
+    },
+  ],
+  tools,
+})
+
+// Execute any tool calls
+for (const toolUse of message.content.filter((c) => c.type === 'tool_use')) {
+  const result = await executeFunction(toolUse.name, toolUse.input)
+  console.log('Tool result:', result)
+}
+```
+
+## Common Use Cases
+
+### Welcome Email Automation
+
+```typescript
+import { generateText } from 'ai'
+import { openai } from '@ai-sdk/openai'
+import { createAITools } from '@tooly/resend'
+
+const tools = createAITools(process.env.RESEND_API_KEY!)
+
+async function sendWelcomeEmail(userEmail: string, userName: string) {
+  const result = await generateText({
+    model: openai('gpt-4.1-nano'),
+    messages: [
+      {
+        role: 'user',
+        content: `Send a welcome email to ${userEmail} for user ${userName}. Make it friendly and include getting started tips.`,
+      },
+    ],
+    tools,
+  })
+
+  return result.text
+}
+
+// Usage
+await sendWelcomeEmail('new-user@example.com', 'John Doe')
+```
+
+### Newsletter Campaign
+
+```typescript
+async function sendNewsletter(topic: string, subscriberEmails: string[]) {
+  const result = await generateText({
+    model: openai('gpt-4.1-nano'),
+    messages: [
+      {
+        role: 'user',
+        content: `Create and send a newsletter about ${topic} to these subscribers: ${subscriberEmails.join(', ')}. Include recent updates and actionable insights.`,
+      },
+    ],
+    tools,
+  })
+
+  return result.text
+}
+
+// Usage
+await sendNewsletter('AI Development Trends', ['subscriber1@example.com', 'subscriber2@example.com'])
+```
+
+### Notification System
+
+```typescript
+async function sendNotification(type: 'info' | 'warning' | 'error', message: string, recipients: string[]) {
+  const result = await generateText({
+    model: openai('gpt-4.1-nano'),
+    messages: [
+      {
+        role: 'user',
+        content: `Send a ${type} notification email with this message: "${message}" to: ${recipients.join(', ')}. Format appropriately for the notification type.`,
+      },
+    ],
+    tools,
+  })
+
+  return result.text
+}
+
+// Usage
+await sendNotification('error', 'Database maintenance scheduled for tonight', ['admin@example.com', 'ops@example.com'])
+```
+
+### Transactional Emails
+
+```typescript
+async function sendTransactionalEmail(
+  type: 'order_confirmation' | 'password_reset' | 'account_verification',
+  userEmail: string,
+  data: Record<string, any>,
+) {
+  const result = await generateText({
+    model: openai('gpt-4.1-nano'),
+    messages: [
+      {
+        role: 'user',
+        content: `Send a ${type} email to ${userEmail} with this data: ${JSON.stringify(data)}. Follow best practices for transactional emails.`,
+      },
+    ],
+    tools,
+  })
+
+  return result.text
+}
+
+// Usage
+await sendTransactionalEmail('order_confirmation', 'customer@example.com', {
+  orderId: 'ORD-12345',
+  total: '$99.99',
+  items: ['Product A', 'Product B'],
+})
+```
+
+## Error Handling
+
+The Resend package includes comprehensive error handling:
+
+```typescript
+import { generateText } from 'ai'
+import { ZodError } from 'zod'
+
+try {
+  const result = await generateText({
+    model: openai('gpt-4.1-nano'),
+    messages: [{ role: 'user', content: 'Send invalid email' }],
+    tools,
+  })
+} catch (error) {
+  if (error instanceof ZodError) {
+    console.log('Validation error:', error.errors)
+  } else if (error.message.includes('Resend API')) {
+    console.log('Resend API error:', error.message)
+  } else {
+    console.log('Unexpected error:', error)
+  }
+}
+```
+
+## TypeScript Support
+
+Full TypeScript support with proper types:
+
+```typescript
+import type { ResendTools } from '@tooly/resend'
+
+// Type-safe tool manager
+const tools: ResendTools = createAITools(process.env.RESEND_API_KEY!)
+
+// Typed email parameters
+interface EmailData {
+  to: string
+  subject: string
+  html: string
+}
+```
+
+## Rate Limiting
+
+Resend has generous rate limits, but the package handles rate limiting gracefully:
+
+- Automatic retry with exponential backoff
+- Queue management for bulk operations
+- Proper error messages for rate limit exceeded
+
+## Advanced Usage
+
+### Custom Tool Manager
+
+For more control, you can use the base tool manager:
+
+```typescript
+import { ResendTools } from '@tooly/resend'
+
+const resendTools = new ResendTools(process.env.RESEND_API_KEY!)
+
+// Get available tools
+const tools = resendTools.getTools()
+
+// Execute tools directly
+const result = await resendTools.executeFunction('sendEmail', {
+  to: 'user@example.com',
+  from: 'noreply@myapp.com',
+  subject: 'Welcome!',
+  html: '<h1>Welcome to our platform!</h1>',
+})
+
+console.log('Email sent:', result)
+```
+
+### Email Templates
+
+Use Resend's template system:
+
+```typescript
+// Create a template
+await generateText({
+  model: openai('gpt-4.1-nano'),
+  messages: [
+    {
+      role: 'user',
+      content: 'Create a welcome email template with variables for {{name}} and {{company}}',
+    },
+  ],
+  tools,
+})
+
+// Use the template
+await generateText({
+  model: openai('gpt-4.1-nano'),
+  messages: [
+    {
+      role: 'user',
+      content:
+        'Send welcome email using template "welcome-template" to john@example.com with name "John" and company "Acme Corp"',
+    },
+  ],
+  tools,
+})
+```
+
+### Webhook Integration
+
+Handle email events with webhooks:
+
+```typescript
+// Example webhook handler
+export async function POST(request: Request) {
+  const webhook = await request.json()
+
+  if (webhook.type === 'email.bounced') {
+    // Handle bounced emails with AI assistance
+    const result = await generateText({
+      model: openai('gpt-4.1-nano'),
+      messages: [
+        {
+          role: 'user',
+          content: `Handle bounced email for ${webhook.data.email}. Update user status and send alternative communication.`,
+        },
+      ],
+      tools,
+    })
+  }
+}
+```
+
+## Best Practices
+
+### Email Deliverability
+
+1. **Verify your domain** - Always use a verified domain for better deliverability
+2. **Use proper from addresses** - Use recognizable sender addresses
+3. **Include text versions** - Provide both HTML and plain text content
+4. **Monitor bounce rates** - Handle bounced emails appropriately
+
+### Content Guidelines
+
+1. **Personalization** - Use AI to personalize content based on user data
+2. **Clear CTAs** - Include clear calls-to-action
+3. **Mobile optimization** - Ensure emails look good on mobile devices
+4. **Unsubscribe links** - Always include unsubscribe options
+
+### Security
+
+1. **API key security** - Store API keys securely in environment variables
+2. **Input validation** - The package validates all inputs automatically
+3. **Rate limiting** - Respect API rate limits to avoid service disruption
+
+## Next Steps
+
+- [📋 Linear Package](/docs/tools/linear) - Project management
+- [🔧 Core Package](/docs/tools/core) - Build your own tools
+- [💡 Examples](/docs/getting-started/examples) - See Resend in action

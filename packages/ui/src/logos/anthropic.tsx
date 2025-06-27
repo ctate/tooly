@@ -1,4 +1,4 @@
-export const AnthropicLogo = () => {
+export const AnthropicLogo = ({ className }: { className?: string }) => {
   return (
     <svg
       fillRule="evenodd"
@@ -6,6 +6,7 @@ export const AnthropicLogo = () => {
       viewBox="0 0 24 24"
       width="1em"
       xmlns="http://www.w3.org/2000/svg"
+      className={className}
     >
       <title>Anthropic</title>
       <path

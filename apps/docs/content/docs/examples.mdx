@@ -1,942 +1,329 @@
 ---
 title: Examples
-description: Real-world usage examples and common patterns
+description: Real-world examples of using Tooly packages
 ---
 
-Explore practical examples of using Tooly packages with the AI SDK and other AI frameworks. These examples demonstrate common patterns and best practices for AI-powered applications.
+This page contains practical examples of using Tooly packages in real-world scenarios. Each example includes complete code and explanations.
 
-## Email Automation with AI SDK
+## Email Examples
 
-### Customer Onboarding Flow
+### Welcome Email Automation
 
-```typescript
-import { generateText } from "ai";
-import { openai } from "@ai-sdk/openai";
-import { createVercelAITools } from "@tooly/resend";
-
-const emailTools = createVercelAITools(process.env.RESEND_API_KEY!);
-
-// AI-powered customer onboarding
-const result = await generateText({
-  model: openai("gpt-4.1-nano"),
-  messages: [
-    {
-      role: "system",
-      content: "You help with customer onboarding by sending appropriate welcome emails based on user signup data."
-    },
-    {
-      role: "user",
-      content: `New user signed up: 
-        - Name: Sarah Johnson
-        - Email: sarah@startup.com  
-        - Plan: Pro
-        - Industry: SaaS
-        
-        Send a personalized welcome email with next steps for Pro plan users.`
-    }
-  ],
-  tools: emailTools,
-});
-
-console.log("Onboarding email sent:", result.text);
-```
-
-### Support Ticket Notifications with Streaming
+Automatically send welcome emails to new users using the Resend package.
 
 ```typescript
-import { streamText } from "ai";
-import { openai } from "@ai-sdk/openai";
-import { createVercelAITools } from "@tooly/resend";
+import { generateText } from 'ai'
+import { openai } from '@ai-sdk/openai'
+import { createAITools } from '@tooly/resend'
 
-const tools = createVercelAITools(process.env.RESEND_API_KEY!);
+const tools = createAITools(process.env.RESEND_API_KEY!)
 
-async function notifySupport(ticket: any) {
-  const { textStream, toolCallStream } = await streamText({
-    model: openai("gpt-4.1-nano"),
-    messages: [
-      {
-        role: "system",
-        content: "Send notification emails to support team based on ticket priority and type."
-      },
-      {
-        role: "user",
-        content: `High priority ticket received:
-          - Customer: ${ticket.customer}
-          - Issue: ${ticket.subject}
-          - Priority: ${ticket.priority}
-          
-          Send urgent notification to support team.`
-      }
-    ],
-    tools,
-  });
-
-  // Stream the response while handling tool calls
-  for await (const textPart of textStream) {
-    process.stdout.write(textPart);
-  }
-
-  // Process tool calls
-  for await (const toolCall of toolCallStream) {
-    console.log("Email sent:", toolCall);
-  }
-}
-```
-
-### Bulk Email Campaigns
-
-```typescript
-import { generateText } from "ai";
-import { anthropic } from "@ai-sdk/anthropic";
-import { createVercelAITools } from "@tooly/resend";
-
-const tools = createVercelAITools(process.env.RESEND_API_KEY!);
-
-// AI can handle bulk email campaigns intelligently
-const result = await generateText({
-  model: anthropic("claude-sonnet-4-20250514"),
-  messages: [
-    {
-      role: "system",
-      content: "You manage email marketing campaigns. Create personalized emails based on user segments."
-    },
-    {
-      role: "user",
-      content: `Send a promotional email about our Black Friday sale to:
-      - Pro users: 30% discount
-      - Enterprise users: Custom pricing consultation
-      - Trial users: Extended trial + 20% discount
-      
-      Make it personalized and compelling.`
-    }
-  ],
-  tools,
-});
-```
-
-## Project Management with AI SDK
-
-### Automated Bug Reporting
-
-```typescript
-import { generateText } from "ai";
-import { openai } from "@ai-sdk/openai";
-import { createVercelAITools } from "@tooly/linear";
-
-const linearTools = createVercelAITools(process.env.LINEAR_API_KEY!);
-
-// AI creates structured bug reports from user feedback
-async function processBugReport(userFeedback: string) {
+async function sendWelcomeEmail(userEmail: string, userName: string) {
   const result = await generateText({
-    model: openai("gpt-4.1-nano"),
+    model: openai('gpt-4.1-nano'),
     messages: [
       {
-        role: "system",
-        content: `You analyze user feedback and create structured bug reports in Linear. 
-        Always include:
-        - Clear title with 🐛 emoji
-        - Detailed description
-        - Steps to reproduce
-        - Expected vs actual behavior
-        - Appropriate priority (1-4) based on severity
-        - Find the right team automatically`
+        role: 'user',
+        content: `Send a welcome email to ${userEmail} for user ${userName}. Make it friendly and professional.`,
       },
-      {
-        role: "user",
-        content: `User feedback: "${userFeedback}"
-        
-        Create a bug report for the appropriate engineering team.`
-      }
-    ],
-    tools: linearTools,
-  });
-
-  return result;
-}
-
-// Example usage
-await processBugReport(
-  "The checkout page keeps crashing when I try to apply a discount code. This happens every time on Chrome and affects our whole team."
-);
-```
-
-### Sprint Planning Assistant
-
-```typescript
-import { streamText } from "ai";
-import { openai } from "@ai-sdk/openai";
-import { createVercelAITools } from "@tooly/linear";
-
-const tools = createVercelAITools(process.env.LINEAR_API_KEY!);
-
-async function planSprint(requirements: string[]) {
-  const { textStream, toolCallStream } = await streamText({
-    model: openai("gpt-4.1-nano"),
-    messages: [
-      {
-        role: "system",
-        content: `You're a sprint planning assistant. Create well-structured issues with:
-        - Clear titles and descriptions
-        - Appropriate priority levels
-        - Team assignments based on expertise
-        - Dependencies and relationships`
-      },
-      {
-        role: "user",
-        content: `Plan our next sprint by creating issues for these requirements:
-        
-        ${requirements.map((req, i) => `${i + 1}. ${req}`).join('\n')}
-        
-        Create appropriately prioritized issues with detailed descriptions and acceptance criteria.`
-      }
     ],
     tools,
-  });
+  })
 
-  // Stream planning thoughts
-  for await (const textPart of textStream) {
-    process.stdout.write(textPart);
-  }
+  console.log('Email sent:', result.text)
+  return result
+}
 
-  // Execute issue creation
-  for await (const toolCall of toolCallStream) {
-    console.log("Issue created:", toolCall);
+// Usage
+await sendWelcomeEmail('user@example.com', 'John Doe')
+```
+
+### Newsletter Campaign
+
+Create and send newsletter campaigns with AI-generated content.
+
+```typescript
+import { streamText } from 'ai'
+import { openai } from '@ai-sdk/openai'
+import { createAITools } from '@tooly/resend'
+
+const tools = createAITools(process.env.RESEND_API_KEY!)
+
+async function sendNewsletter(topic: string, subscriberEmails: string[]) {
+  const { textStream } = await streamText({
+    model: openai('gpt-4.1-nano'),
+    messages: [
+      {
+        role: 'user',
+        content: `Create and send a newsletter about ${topic} to the following emails: ${subscriberEmails.join(', ')}. Include current trends and actionable insights.`,
+      },
+    ],
+    tools,
+  })
+
+  for await (const chunk of textStream) {
+    process.stdout.write(chunk)
   }
 }
 
-// Example usage
-await planSprint([
-  "User authentication with OAuth",
-  "File upload with drag & drop",
-  "Real-time dashboard updates",
-  "Mobile responsive improvements"
-]);
+// Usage
+await sendNewsletter('AI Development', ['user1@example.com', 'user2@example.com'])
 ```
 
-### Project Creation and Management
+## Project Management Examples
+
+### Bug Report Automation
+
+Automatically create bug reports in Linear based on user feedback.
 
 ```typescript
-import { generateText } from "ai";
-import { openai } from "@ai-sdk/openai";
-import { createVercelAITools } from "@tooly/linear";
+import { generateText } from 'ai'
+import { openai } from '@ai-sdk/openai'
+import { createAITools } from '@tooly/linear'
 
-const tools = createVercelAITools(process.env.LINEAR_API_KEY!);
+const tools = createAITools(process.env.LINEAR_API_KEY!)
 
-// AI can create entire project structures
-const result = await generateText({
-  model: openai("gpt-4.1-nano"),
-  messages: [
-    {
-      role: "system",
-      content: `You're a project manager. When creating projects:
-      - Set realistic timelines
-      - Assign appropriate teams
-      - Create initial project structure
-      - Set up milestones and dependencies`
-    },
-    {
-      role: "user",
-      content: `Create a project for our Q2 mobile app redesign:
-      - Timeline: 3 months
-      - Teams: Design, Frontend, Backend, QA
-      - Key features: New UI, Performance improvements, Offline support
-      - Target: App store release by end of Q2`
-    }
-  ],
-  tools,
-});
+async function createBugReport(userFeedback: string, priority: 'low' | 'medium' | 'high' = 'medium') {
+  const result = await generateText({
+    model: openai('gpt-4.1-nano'),
+    messages: [
+      {
+        role: 'user',
+        content: `Create a bug report with ${priority} priority based on this user feedback: "${userFeedback}". Include steps to reproduce and expected vs actual behavior.`,
+      },
+    ],
+    tools,
+  })
+
+  console.log('Bug report created:', result.text)
+  return result
+}
+
+// Usage
+await createBugReport("The login button doesn't work on mobile devices", 'high')
 ```
 
-## Multi-Tool Integration with AI SDK
+### Feature Request Processing
 
-### Complete Customer Support Flow
-
-Combine both email and project management tools for comprehensive customer support:
+Convert user feature requests into properly formatted Linear issues.
 
 ```typescript
-import { generateText } from "ai";
-import { openai } from "@ai-sdk/openai";
-import { createVercelAITools as createEmailTools } from "@tooly/resend";
-import { createVercelAITools as createLinearTools } from "@tooly/linear";
+import { generateText } from 'ai'
+import { openai } from '@ai-sdk/openai'
+import { createAITools } from '@tooly/linear'
 
-const emailTools = createEmailTools(process.env.RESEND_API_KEY!);
-const linearTools = createLinearTools(process.env.LINEAR_API_KEY!);
+const tools = createAITools(process.env.LINEAR_API_KEY!)
 
-// Combine tools for comprehensive AI workflows
+async function processFeatureRequest(request: string, requesterEmail: string) {
+  const result = await generateText({
+    model: openai('gpt-4.1-nano'),
+    messages: [
+      {
+        role: 'user',
+        content: `Process this feature request from ${requesterEmail}: "${request}". Create a detailed Linear issue with user story format, acceptance criteria, and technical considerations.`,
+      },
+    ],
+    tools,
+  })
+
+  console.log('Feature request processed:', result.text)
+  return result
+}
+
+// Usage
+await processFeatureRequest('I would like to be able to export my data as PDF', 'user@example.com')
+```
+
+## Multi-Package Integration
+
+### Customer Support Automation
+
+Combine multiple packages for comprehensive customer support automation.
+
+```typescript
+import { generateText } from 'ai'
+import { openai } from '@ai-sdk/openai'
+import { createAITools as createResendTools } from '@tooly/resend'
+import { createAITools as createLinearTools } from '@tooly/linear'
+
+// Combine tools from multiple packages
+const emailTools = createResendTools(process.env.RESEND_API_KEY!)
+const projectTools = createLinearTools(process.env.LINEAR_API_KEY!)
+
 const allTools = {
   ...emailTools,
-  ...linearTools,
-};
+  ...projectTools,
+}
 
-async function handleCustomerIssue(customerData: any, issueDescription: string) {
+async function handleCustomerIssue(
+  customerEmail: string,
+  issueDescription: string,
+  severity: 'low' | 'medium' | 'high',
+) {
   const result = await generateText({
-    model: openai("gpt-4.1-nano"),
+    model: openai('gpt-4.1-nano'),
     messages: [
       {
-        role: "system",
-        content: `You handle customer support by:
-        1. Creating internal bug reports/feature requests in Linear
-        2. Sending appropriate emails to customers
-        3. Escalating urgent issues appropriately
-        4. Following up with timeline expectations
-        
-        Always acknowledge the customer issue and provide clear next steps.`
+        role: 'user',
+        content: `Handle this ${severity} severity customer issue from ${customerEmail}: "${issueDescription}". 
+        1. Send an acknowledgment email to the customer
+        2. Create a tracking issue in our project management system
+        3. If it's high severity, also send an alert to the support team`,
       },
-      {
-        role: "user",
-        content: `Customer ${customerData.email} (${customerData.plan} plan) reported: 
-        "${issueDescription}"
-        
-        Handle this support request completely.`
-      }
     ],
     tools: allTools,
-  });
+  })
 
-  return result;
+  console.log('Customer issue handled:', result.text)
+  return result
 }
 
-// Example usage
-await handleCustomerIssue(
-  { 
-    email: "customer@company.com", 
-    name: "John Smith",
-    plan: "Enterprise"
-  },
-  "Our team can't access the dashboard since yesterday. Multiple users affected and it's blocking our work."
-);
+// Usage
+await handleCustomerIssue('customer@example.com', 'Payment processing is failing for premium subscriptions', 'high')
 ```
 
-### DevOps Incident Response
+## Advanced Examples
+
+### AI-Powered Sprint Planning
+
+Use AI to help organize and plan development sprints.
 
 ```typescript
-import { streamText } from "ai";
-import { openai } from "@ai-sdk/openai";
-import { createVercelAITools as createEmailTools } from "@tooly/resend";
-import { createVercelAITools as createLinearTools } from "@tooly/linear";
+import { generateText } from 'ai'
+import { openai } from '@ai-sdk/openai'
+import { createAITools } from '@tooly/linear'
 
-async function handleIncident(incident: {
-  severity: "low" | "medium" | "high" | "critical";
-  description: string;
-  affectedServices: string[];
-}) {
-  const tools = {
-    ...createEmailTools(process.env.RESEND_API_KEY!),
-    ...createLinearTools(process.env.LINEAR_API_KEY!),
-  };
+const tools = createAITools(process.env.LINEAR_API_KEY!)
 
-  const { textStream, toolCallStream } = await streamText({
-    model: openai("gpt-4.1-nano"),
-    messages: [
-      {
-        role: "system",
-        content: `You're an incident response system. For incidents:
-        
-        - Create Linear issues for tracking resolution
-        - Send status emails to stakeholders
-        - Escalate critical issues immediately
-        - Follow incident response playbook
-        
-        Severity levels:
-        - Critical/High: Notify immediately + create urgent Linear issue
-        - Medium: Standard notification + normal Linear issue
-        - Low: Create ticket only`
-      },
-      {
-        role: "user",
-        content: `INCIDENT ALERT:
-        Severity: ${incident.severity}
-        Description: ${incident.description}
-        Affected Services: ${incident.affectedServices.join(', ')}
-        
-        Execute incident response protocol.`
-      }
-    ],
-    tools,
-  });
-
-  // Stream incident response
-  for await (const textPart of textStream) {
-    process.stdout.write(textPart);
-  }
-
-  // Execute response actions
-  for await (const toolCall of toolCallStream) {
-    console.log("Response action:", toolCall);
-  }
-}
-```
-
-### AI-Powered Development Workflow
-
-```typescript
-import { generateText } from "ai";
-import { openai } from "@ai-sdk/openai";
-import { createVercelAITools as createEmailTools } from "@tooly/resend";
-import { createVercelAITools as createLinearTools } from "@tooly/linear";
-
-const tools = {
-  ...createEmailTools(process.env.RESEND_API_KEY!),
-  ...createLinearTools(process.env.LINEAR_API_KEY!),
-};
-
-// AI can handle complex development workflows
-async function processCodeReview(pullRequest: any, reviewComments: string[]) {
+async function planSprint(teamVelocity: number, backlogItems: string[], sprintGoal: string) {
   const result = await generateText({
-    model: openai("gpt-4.1-nano"),
+    model: openai('gpt-4.1-nano'),
     messages: [
       {
-        role: "system",
-        content: `You manage development workflows. When processing code reviews:
-        1. Create Linear issues for significant feedback
-        2. Send summary emails to stakeholders
-        3. Prioritize issues based on severity
-        4. Track follow-up actions`
+        role: 'user',
+        content: `Plan a 2-week sprint for a team with velocity ${teamVelocity} story points. 
+        Sprint goal: "${sprintGoal}"
+        Backlog items: ${backlogItems.join(', ')}
+        
+        Create appropriately sized and prioritized issues in Linear, ensuring we don't overcommit.`,
       },
-      {
-        role: "user",
-        content: `Process code review for PR "${pullRequest.title}":
-        
-        Review comments:
-        ${reviewComments.map((comment, i) => `${i + 1}. ${comment}`).join('\n')}
-        
-        Create appropriate issues and notifications.`
-      }
     ],
     tools,
-  });
+  })
 
-  return result;
-}
-```
-
-## AI Agent Patterns with AI SDK
-
-### Smart Email Assistant
-
-```typescript
-import { generateText } from "ai";
-import { openai } from "@ai-sdk/openai";
-import { createVercelAITools } from "@tooly/resend";
-
-class EmailAssistant {
-  private tools;
-
-  constructor(apiKey: string) {
-    this.tools = createVercelAITools(apiKey);
-  }
-
-  async processRequest(request: string, context?: any) {
-    const result = await generateText({
-      model: openai("gpt-4.1-nano"),
-      messages: [
-        {
-          role: "system",
-          content: `You're an intelligent email assistant. You can:
-          - Send transactional emails
-          - Check email delivery status
-          - Send bulk email campaigns
-          - Generate personalized content
-          - Handle email templates intelligently
-          
-          Always create compelling, personalized content based on context.`
-        },
-        {
-          role: "user",
-          content: context 
-            ? `Context: ${JSON.stringify(context)}\n\nRequest: ${request}`
-            : request
-        }
-      ],
-      tools: this.tools,
-    });
-
-    return result;
-  }
-
-  async handleBatch(requests: Array<{request: string, context?: any}>) {
-    // Process multiple requests efficiently
-    const results = await Promise.all(
-      requests.map(({request, context}) => this.processRequest(request, context))
-    );
-    return results;
-  }
+  console.log('Sprint planned:', result.text)
+  return result
 }
 
 // Usage
-const assistant = new EmailAssistant(process.env.RESEND_API_KEY!);
-
-await assistant.processRequest(
-  "Send password reset emails to all users who requested it today",
-  { 
-    resetRequests: [
-      { email: "john@example.com", name: "John Doe", requestTime: "2024-01-15T10:30:00Z" },
-      { email: "jane@example.com", name: "Jane Smith", requestTime: "2024-01-15T14:15:00Z" }
-    ]
-  }
-);
+await planSprint(
+  25,
+  ['User authentication system', 'Dashboard redesign', 'API rate limiting', 'Mobile responsiveness'],
+  'Improve user onboarding experience',
+)
 ```
 
-### Project Management Agent
+### Automated Release Notes
+
+Generate and distribute release notes automatically.
 
 ```typescript
-import { streamText } from "ai";
-import { openai } from "@ai-sdk/openai";
-import { createVercelAITools } from "@tooly/linear";
+import { generateText } from 'ai'
+import { openai } from '@ai-sdk/openai'
+import { createAITools as createResendTools } from '@tooly/resend'
+import { createAITools as createLinearTools } from '@tooly/linear'
 
-class ProjectAgent {
-  private tools;
+const emailTools = createResendTools(process.env.RESEND_API_KEY!)
+const projectTools = createLinearTools(process.env.LINEAR_API_KEY!)
 
-  constructor(apiKey: string) {
-    this.tools = createVercelAITools(apiKey);
-  }
-
-  async executeCommand(command: string, context?: any) {
-    const { textStream, toolCallStream } = await streamText({
-      model: openai("gpt-4.1-nano"),
-      messages: [
-        {
-          role: "system",
-          content: `You're an intelligent project management assistant. You can:
-          - Create and update issues with rich context
-          - Search for existing issues intelligently
-          - Create projects with proper structure
-          - Manage team assignments and workload
-          - Track project progress and dependencies
-          - Generate reports and insights
-          
-          Always use descriptive titles, detailed descriptions, and appropriate metadata.`
-        },
-        {
-          role: "user",
-          content: context 
-            ? `Context: ${JSON.stringify(context)}\n\nCommand: ${command}`
-            : command
-        }
-      ],
-      tools: this.tools,
-    });
-
-    // Collect response and actions
-    let response = "";
-    const actions = [];
-
-    for await (const textPart of textStream) {
-      response += textPart;
-    }
-
-    for await (const toolCall of toolCallStream) {
-      actions.push(toolCall);
-    }
-
-    return { response, actions };
-  }
-
-  async generateReport(teamId?: string) {
-    return this.executeCommand(
-      `Generate a comprehensive project status report${teamId ? ` for team ${teamId}` : ''} including:
-      - Active issues and their status
-      - Recent project progress
-      - Upcoming deadlines
-      - Team workload distribution
-      - Key blockers and recommendations`
-    );
-  }
-}
-
-// Usage
-const agent = new ProjectAgent(process.env.LINEAR_API_KEY!);
-
-const result = await agent.executeCommand(
-  "Analyze our current sprint and create optimization recommendations",
-  { 
-    sprintData: { currentSprint: "Sprint 23", endDate: "2024-02-01" },
-    concerns: ["Backend team overloaded", "Frontend blocked on API"]
-  }
-);
-```
-
-## Advanced Error Handling Patterns
-
-### Robust Multi-Tool Operations
-
-```typescript
-import { generateText } from "ai";
-import { openai } from "@ai-sdk/openai";
-import { createVercelAITools as createEmailTools } from "@tooly/resend";
-import { createVercelAITools as createLinearTools } from "@tooly/linear";
-
-async function robustWorkflow(request: string) {
-  const emailTools = createEmailTools(process.env.RESEND_API_KEY!);
-  const linearTools = createLinearTools(process.env.LINEAR_API_KEY!);
-
-  const maxRetries = 3;
-  let attempt = 0;
-
-  while (attempt < maxRetries) {
-    try {
-      const result = await generateText({
-        model: openai("gpt-4.1-nano"),
-        messages: [
-          {
-            role: "system",
-            content: `Handle requests using available tools. If one tool fails, gracefully use alternatives or partial completion.`
-          },
-          {
-            role: "user",
-            content: request
-          }
-        ],
-        tools: { ...emailTools, ...linearTools },
-      });
-
-      return {
-        success: true,
-        result: result.text,
-        attempt: attempt + 1
-      };
-
-    } catch (error) {
-      attempt++;
-      
-      if (error.name === "ZodError") {
-        // Validation error - don't retry
-        throw new Error(`Validation failed: ${error.message}`);
-      }
-      
-      if (error.status === 429) {
-        // Rate limit - exponential backoff
-        const delay = Math.pow(2, attempt) * 1000;
-        console.log(`Rate limited, retrying in ${delay}ms...`);
-        await new Promise(resolve => setTimeout(resolve, delay));
-        continue;
-      }
-      
-      if (attempt === maxRetries) {
-        // Try fallback approach
-        return await fallbackWorkflow(request);
-      }
-      
-      console.log(`Attempt ${attempt} failed, retrying...`);
-    }
-  }
-}
-
-async function fallbackWorkflow(request: string) {
-  // Simplified workflow with just logging
-  console.log(`Fallback: Could not complete "${request}" - logged for manual processing`);
-  return {
-    success: false,
-    fallback: true,
-    message: "Request logged for manual processing"
-  };
-}
-```
-
-### Graceful Degradation
-
-```typescript
-import { generateText } from "ai";
-import { openai } from "@ai-sdk/openai";
-import { createVercelAITools } from "@tooly/resend";
-
-async function emailWithFallback(emailRequest: string) {
-  const emailTools = createVercelAITools(process.env.RESEND_API_KEY!);
-
-  try {
-    // Primary: AI-powered email
-    const result = await generateText({
-      model: openai("gpt-4.1-nano"),
-      messages: [
-        {
-          role: "user",
-          content: emailRequest
-        }
-      ],
-      tools: emailTools,
-    });
-
-    return {
-      method: "ai-powered",
-      result: result.text
-    };
-
-  } catch (error) {
-    console.warn("AI email failed, using template fallback:", error.message);
-    
-    // Fallback: Simple template email
-    return {
-      method: "template-fallback",
-      result: "Email request logged and will be processed manually"
-    };
-  }
-}
-```
-
-## Testing Patterns
-
-### Mock AI Responses for Testing
-
-```typescript
-import { generateText } from "ai";
-import { openai } from "@ai-sdk/openai";
-
-// Mock for testing
-function createMockTools() {
-  return {
-    sendEmail: {
-      description: "Send an email",
-      parameters: { /* schema */ },
-      execute: async (args: any) => ({
-        id: "mock-email-123",
-        success: true,
-        ...args
-      })
-    }
-  };
-}
-
-// Test AI workflow without actual API calls
-async function testEmailWorkflow() {
-  const mockTools = createMockTools();
-  
-  // Simulate AI response
-  const mockResult = {
-    text: "I'll send that email for you.",
-    toolCalls: [
+async function generateReleaseNotes(version: string, completedIssues: string[]) {
+  const result = await generateText({
+    model: openai('gpt-4.1-nano'),
+    messages: [
       {
-        toolName: "sendEmail",
-        args: {
-          to: "test@example.com",
-          subject: "Test Email",
-          html: "<p>Test content</p>"
-        }
-      }
-    ]
-  };
+        role: 'user',
+        content: `Generate release notes for version ${version} and send them to our user mailing list.
+        
+        Completed items: ${completedIssues.join(', ')}
+        
+        Format the notes with:
+        1. New features
+        2. Bug fixes  
+        3. Improvements
+        4. Breaking changes (if any)
+        
+        Make it user-friendly and highlight the value to customers.`,
+      },
+    ],
+    tools: { ...emailTools, ...projectTools },
+  })
 
-  console.log("Mock test result:", mockResult);
-  return mockResult;
-}
-```
-
-## Production Deployment Patterns
-
-### Environment Configuration
-
-```typescript
-// config/tooly.ts
-export const toolyConfig = {
-  resend: {
-    apiKey: process.env.RESEND_API_KEY!,
-    defaultFrom: process.env.DEFAULT_FROM_EMAIL || "noreply@yourdomain.com",
-  },
-  linear: {
-    apiKey: process.env.LINEAR_API_KEY!,
-    defaultTeamId: process.env.LINEAR_DEFAULT_TEAM_ID,
-  },
-  ai: {
-    provider: process.env.AI_PROVIDER || "openai",
-    model: process.env.AI_MODEL || "gpt-4.1-nano",
-    maxRetries: parseInt(process.env.AI_MAX_RETRIES || "3"),
-  }
-};
-
-// Initialize tools with config
-import { createVercelAITools as createEmailTools } from "@tooly/resend";
-import { createVercelAITools as createLinearTools } from "@tooly/linear";
-
-export const emailTools = createEmailTools(toolyConfig.resend.apiKey);
-export const linearTools = createLinearTools(toolyConfig.linear.apiKey);
-```
-
-### Monitoring and Analytics
-
-```typescript
-import { generateText } from "ai";
-import { openai } from "@ai-sdk/openai";
-import { createVercelAITools } from "@tooly/resend";
-
-// Wrap tools with monitoring
-function createMonitoredTools(apiKey: string) {
-  const tools = createVercelAITools(apiKey);
-  
-  return new Proxy(tools, {
-    get(target, prop) {
-      if (typeof target[prop] === 'function') {
-        return async function(...args: any[]) {
-          const start = Date.now();
-          const toolName = String(prop);
-          
-          try {
-            const result = await target[prop].apply(target, args);
-            const duration = Date.now() - start;
-            
-            // Log successful operations
-            console.log(`✅ ${toolName} completed in ${duration}ms`);
-            
-            // Track metrics
-            analytics.track('tool_success', {
-              tool: toolName,
-              duration,
-              timestamp: new Date().toISOString()
-            });
-            
-            return result;
-          } catch (error) {
-            const duration = Date.now() - start;
-            
-            // Log failures
-            console.error(`❌ ${toolName} failed after ${duration}ms:`, error.message);
-            
-            // Track errors
-            analytics.track('tool_error', {
-              tool: toolName,
-              error: error.message,
-              duration,
-              timestamp: new Date().toISOString()
-            });
-            
-            throw error;
-          }
-        };
-      }
-      return target[prop];
-    }
-  });
+  console.log('Release notes generated and sent:', result.text)
+  return result
 }
 
 // Usage
-const monitoredTools = createMonitoredTools(process.env.RESEND_API_KEY!);
+await generateReleaseNotes('v2.1.0', [
+  'Added dark mode support',
+  'Fixed login redirect issue',
+  'Improved search performance',
+  'Added export functionality',
+])
 ```
 
-### Rate Limiting and Queue Management
+## Error Handling
+
+### Robust Error Handling Example
 
 ```typescript
-import { generateText } from "ai";
-import { openai } from "@ai-sdk/openai";
-import { createVercelAITools } from "@tooly/resend";
+import { generateText } from 'ai'
+import { openai } from '@ai-sdk/openai'
+import { createAITools } from '@tooly/resend'
+import { ZodError } from 'zod'
 
-class QueuedEmailProcessor {
-  private tools;
-  private queue: Array<any> = [];
-  private processing = false;
-  private rateLimitDelay = 1000; // 1 second between requests
+const tools = createAITools(process.env.RESEND_API_KEY!)
 
-  constructor(apiKey: string) {
-    this.tools = createVercelAITools(apiKey);
-  }
+async function robustEmailSending(to: string, subject: string, content: string) {
+  try {
+    const result = await generateText({
+      model: openai('gpt-4.1-nano'),
+      messages: [
+        {
+          role: 'user',
+          content: `Send an email to ${to} with subject "${subject}" and content: ${content}`,
+        },
+      ],
+      tools,
+      maxRetries: 3,
+    })
 
-  async addToQueue(request: string, context?: any) {
-    this.queue.push({ request, context, timestamp: Date.now() });
-    
-    if (!this.processing) {
-      this.processQueue();
+    return { success: true, result: result.text }
+  } catch (error) {
+    if (error instanceof ZodError) {
+      console.error('Validation error:', error.errors)
+      return { success: false, error: 'Invalid parameters provided' }
+    } else if (error.message.includes('rate limit')) {
+      console.error('Rate limit exceeded, retrying later...')
+      return { success: false, error: 'Rate limit exceeded' }
+    } else {
+      console.error('Unexpected error:', error)
+      return { success: false, error: 'An unexpected error occurred' }
     }
-  }
-
-  private async processQueue() {
-    this.processing = true;
-
-    while (this.queue.length > 0) {
-      const item = this.queue.shift()!;
-      
-      try {
-        const result = await generateText({
-          model: openai("gpt-4.1-nano"),
-          messages: [
-            {
-              role: "user",
-              content: item.context 
-                ? `Context: ${JSON.stringify(item.context)}\n\nRequest: ${item.request}`
-                : item.request
-            }
-          ],
-          tools: this.tools,
-        });
-
-        console.log(`✅ Processed: ${item.request.substring(0, 50)}...`);
-        
-        // Rate limiting
-        await new Promise(resolve => setTimeout(resolve, this.rateLimitDelay));
-        
-      } catch (error) {
-        console.error(`❌ Failed to process: ${item.request}`, error.message);
-        
-        // Could implement retry logic here
-      }
-    }
-
-    this.processing = false;
   }
 }
 
-// Usage
-const processor = new QueuedEmailProcessor(process.env.RESEND_API_KEY!);
+// Usage with error handling
+const result = await robustEmailSending('user@example.com', 'Welcome!', 'Thank you for signing up')
 
-// Add multiple requests
-processor.addToQueue("Send welcome email to new users");
-processor.addToQueue("Send weekly newsletter");
-processor.addToQueue("Send payment reminder emails");
-```
-
-## Alternative: OpenAI SDK Examples
-
-For users who prefer OpenAI SDK directly:
-
-```typescript
-import OpenAI from "openai";
-import { createOpenAIFunctions } from "@tooly/resend";
-
-const openai = new OpenAI();
-const { tools, executeFunction } = createOpenAIFunctions(process.env.RESEND_API_KEY!);
-
-async function processWithOpenAI(prompt: string) {
-  const completion = await openai.chat.completions.create({
-    model: "gpt-4.1-nano",
-    messages: [{ role: "user", content: prompt }],
-    tools,
-  });
-
-  // Execute tool calls
-  for (const toolCall of completion.choices[0].message.tool_calls || []) {
-    const result = await executeFunction(
-      toolCall.function.name,
-      JSON.parse(toolCall.function.arguments)
-    );
-    console.log("Tool result:", result);
-  }
-}
-```
-
-## Alternative: Anthropic SDK Examples
-
-For Claude users:
-
-```typescript
-import Anthropic from "@anthropic-ai/sdk";
-import { createAnthropicTools } from "@tooly/linear";
-
-const anthropic = new Anthropic();
-const { tools, executeFunction } = createAnthropicTools(process.env.LINEAR_API_KEY!);
-
-async function processWithAnthropic(prompt: string) {
-  const message = await anthropic.messages.create({
-    model: "claude-sonnet-4-20250514",
-    messages: [{ role: "user", content: prompt }],
-    tools,
-  });
-
-  // Execute tool calls
-  for (const toolUse of message.content.filter((c) => c.type === "tool_use")) {
-    const result = await executeFunction(toolUse.name, toolUse.input);
-    console.log("Tool result:", result);
-  }
+if (result.success) {
+  console.log('Email sent successfully:', result.result)
+} else {
+  console.error('Failed to send email:', result.error)
 }
 ```
 
 ## Next Steps
 
-- [🚀 Getting Started](/docs/getting-started) - Basic setup guide with AI SDK
-- [📦 Packages](/docs/packages) - Detailed package documentation
-- [🔧 Advanced Usage](/docs/advanced) - Advanced patterns and customization 
+- [🔧 Core Package](/docs/tools/core) - Build your own tools
+- [📧 Resend Package](/docs/tools/resend) - Email automation
+- [📋 Linear Package](/docs/tools/linear) - Project management
