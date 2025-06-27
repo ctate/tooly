@@ -1,5 +1,13 @@
 # @tooly/resend
 
+## 0.0.4
+
+### Patch Changes
+
+- updates license
+- Updated dependencies
+  - @tooly/core@0.0.4
+
 ## 0.0.3
 
 ### Patch Changes
