@@ -21,12 +21,8 @@ export const baseOptions: BaseLayoutProps = {
   },
   links: [
     {
-      text: 'Tools',
-      url: '/docs/tools',
-    },
-    {
-      text: 'Examples',
-      url: '/docs/getting-started/examples',
+      text: 'Docs',
+      url: '/docs',
     },
     {
       text: 'GitHub',
