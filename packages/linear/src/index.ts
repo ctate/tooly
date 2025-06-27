@@ -2,7 +2,7 @@ import { LinearHandlers } from './handlers.js'
 import { linearTools, toolParameterSchemas } from './tools.js'
 import {
   BaseToolManager,
-  createVercelAITools as coreCreateVercelAITools,
+  createAITools as coreCreateVercelAITools,
   createOpenAIFunctions as coreCreateOpenAIFunctions,
   createAnthropicTools as coreCreateAnthropicTools,
   bindHandlerMethods,
@@ -58,7 +58,7 @@ export class LinearTools extends BaseToolManager<typeof toolParameterSchemas, ty
 /**
  * Create AI SDK compatible tools
  */
-export function createVercelAITools(apiKey: string) {
+export function createAITools(apiKey: string) {
   const linearTools = new LinearTools(apiKey)
   const handlers = linearTools.getHandlers()
 

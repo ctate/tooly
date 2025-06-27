@@ -19,9 +19,9 @@ npm install @tooly/resend
 # Use with AI SDK
 import { generateText } from "ai";
 import { openai } from "@ai-sdk/openai";
-import { createVercelAITools } from "@tooly/resend";
+import { createAITools } from "@tooly/resend";
 
-const tools = createVercelAITools("your-api-key");
+const tools = createAITools("your-api-key");
 
 const result = await generateText({
   model: openai("gpt-4.1-nano"),

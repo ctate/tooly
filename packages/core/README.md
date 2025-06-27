@@ -80,12 +80,12 @@ class MyToolManager extends BaseToolManager<typeof toolSchemas, typeof tools> {
 ### Using with AI Frameworks
 
 ```typescript
-import { createVercelAITools, createOpenAIFunctions, createAnthropicTools } from '@tooly/core'
+import { createAITools, createOpenAIFunctions, createAnthropicTools } from '@tooly/core'
 
 const toolManager = new MyToolManager('your-api-key')
 
 // AI SDK
-const vercelTools = createVercelAITools(toolManager)
+const vercelTools = createAITools(toolManager)
 
 // OpenAI Function Calling
 const openaiSetup = createOpenAIFunctions(toolManager)
@@ -108,7 +108,7 @@ Abstract base class that provides common functionality for tool managers.
 
 ### Helper Functions
 
-- `createVercelAITools(toolManager)`: Creates AI SDK compatible tools
+- `createAITools(toolManager)`: Creates AI SDK compatible tools
 - `createOpenAIFunctions(toolManager)`: Creates OpenAI function calling setup
 - `createAnthropicTools(toolManager)`: Creates Anthropic tool use setup
 

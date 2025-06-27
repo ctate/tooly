@@ -119,9 +119,9 @@ if (message.content.some((content) => content.type === 'tool_use')) {
 ```typescript
 import { generateText } from 'ai'
 import { openai } from '@ai-sdk/openai'
-import { createVercelAITools } from '@tooly/resend'
+import { createAITools } from '@tooly/resend'
 
-const tools = createVercelAITools('your-resend-api-key')
+const tools = createAITools('your-resend-api-key')
 
 const { text } = await generateText({
   model: openai('gpt-4.1-nano'),

@@ -21,4 +21,4 @@ export type {
 
 export { BaseToolManager } from './base-tool-manager.js'
 
-export { createVercelAITools, createOpenAIFunctions, createAnthropicTools, bindHandlerMethods } from './ai-helpers.js'
+export { createAITools, createOpenAIFunctions, createAnthropicTools, bindHandlerMethods } from './ai-helpers.js'

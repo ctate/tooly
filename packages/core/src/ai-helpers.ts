@@ -9,7 +9,7 @@ import {
 /**
  * Create AI SDK compatible tools from a tool manager
  */
-export function createVercelAITools<TManager extends ToolManager>(
+export function createAITools<TManager extends ToolManager>(
   toolManager: TManager,
   handlers: BaseHandler,
   toolDescriptions: Record<string, string>,

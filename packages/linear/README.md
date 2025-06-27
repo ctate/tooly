@@ -39,9 +39,9 @@ const result = await linear.executeFunction('createIssue', {
 ### AI SDK
 
 ```typescript
-import { createVercelAITools } from '@tooly/linear'
+import { createAITools } from '@tooly/linear'
 
-const tools = createVercelAITools('your-linear-api-key')
+const tools = createAITools('your-linear-api-key')
 
 // Use with generateText
 import { generateText } from 'ai'
