@@ -1,6 +1,12 @@
 import { ResendHandlers } from "./handlers.js";
 import { resendTools, toolParameterSchemas } from "./tools.js";
-import { z } from "zod";
+import {
+  BaseToolManager,
+  createVercelAITools as coreCreateVercelAITools,
+  createOpenAIFunctions as coreCreateOpenAIFunctions,
+  createAnthropicTools as coreCreateAnthropicTools,
+  bindHandlerMethods,
+} from "@tooly/core";
 
 export * from "./types.js";
 export * from "./tools.js";
@@ -9,44 +15,32 @@ export * from "./handlers.js";
 /**
  * Main Resend Tools class for AI SDK integration
  */
-export class ResendTools {
+export class ResendTools extends BaseToolManager<
+  typeof toolParameterSchemas,
+  typeof resendTools
+> {
   private handlers: ResendHandlers;
 
   constructor(apiKey: string) {
+    super(resendTools, toolParameterSchemas);
     this.handlers = new ResendHandlers(apiKey);
   }
 
   /**
-   * Get all tool definitions for OpenAI/Anthropic
+   * Execute tool function implementation
    */
-  getTools() {
-    return resendTools;
-  }
-
-  /**
-   * Execute a tool function by name
-   */
-  async executeFunction(name: string, parameters: any) {
-    // Validate parameters based on tool name
-    const schema =
-      toolParameterSchemas[name as keyof typeof toolParameterSchemas];
-    if (!schema) {
-      throw new Error(`Unknown tool: ${name}`);
-    }
-
-    const validatedParams = schema.parse(parameters);
-
+  protected async executeToolFunction(name: string, params: any): Promise<any> {
     switch (name) {
       case "sendEmail":
-        return this.handlers.sendEmail(validatedParams as any);
+        return this.handlers.sendEmail(params);
       case "sendBatchEmails":
-        return this.handlers.sendBatchEmails(validatedParams as any);
+        return this.handlers.sendBatchEmails(params);
       case "retrieveEmail":
-        return this.handlers.retrieveEmail(validatedParams as any);
+        return this.handlers.retrieveEmail(params);
       case "updateEmail":
-        return this.handlers.updateEmail(validatedParams as any);
+        return this.handlers.updateEmail(params);
       case "cancelEmail":
-        return this.handlers.cancelEmail(validatedParams as any);
+        return this.handlers.cancelEmail(params);
       default:
         throw new Error(`Unknown tool: ${name}`);
     }
@@ -67,33 +61,23 @@ export function createVercelAITools(apiKey: string) {
   const resendTools = new ResendTools(apiKey);
   const handlers = resendTools.getHandlers();
 
-  return {
-    sendEmail: {
-      description: "Send a single email using Resend",
-      parameters: toolParameterSchemas.sendEmail,
-      execute: handlers.sendEmail.bind(handlers),
-    },
-    sendBatchEmails: {
-      description: "Send up to 100 batch emails at once using Resend",
-      parameters: toolParameterSchemas.sendBatchEmails,
-      execute: handlers.sendBatchEmails.bind(handlers),
-    },
-    retrieveEmail: {
-      description: "Retrieve details of a single email by ID",
-      parameters: toolParameterSchemas.retrieveEmail,
-      execute: handlers.retrieveEmail.bind(handlers),
-    },
-    updateEmail: {
-      description: "Update a scheduled email",
-      parameters: toolParameterSchemas.updateEmail,
-      execute: handlers.updateEmail.bind(handlers),
-    },
-    cancelEmail: {
-      description: "Cancel a scheduled email",
-      parameters: toolParameterSchemas.cancelEmail,
-      execute: handlers.cancelEmail.bind(handlers),
-    },
+  const toolDescriptions = {
+    sendEmail: "Send a single email using Resend",
+    sendBatchEmails: "Send up to 100 batch emails at once using Resend",
+    retrieveEmail: "Retrieve details of a single email by ID",
+    updateEmail: "Update a scheduled email",
+    cancelEmail: "Cancel a scheduled email",
   };
+
+  const boundMethods = bindHandlerMethods(handlers, [
+    "sendEmail",
+    "sendBatchEmails",
+    "retrieveEmail",
+    "updateEmail",
+    "cancelEmail",
+  ]);
+
+  return coreCreateVercelAITools(resendTools, boundMethods, toolDescriptions);
 }
 
 /**
@@ -101,11 +85,7 @@ export function createVercelAITools(apiKey: string) {
  */
 export function createOpenAIFunctions(apiKey: string) {
   const resendTools = new ResendTools(apiKey);
-
-  return {
-    tools: resendTools.getTools(),
-    executeFunction: resendTools.executeFunction.bind(resendTools),
-  };
+  return coreCreateOpenAIFunctions(resendTools);
 }
 
 /**
@@ -113,22 +93,7 @@ export function createOpenAIFunctions(apiKey: string) {
  */
 export function createAnthropicTools(apiKey: string) {
   const resendTools = new ResendTools(apiKey);
-
-  // Convert OpenAI-style tools to Anthropic format
-  const anthropicTools = resendTools.getTools().map((tool) => ({
-    name: tool.name,
-    description: tool.description,
-    input_schema: {
-      type: "object",
-      properties: tool.parameters.properties,
-      required: tool.parameters.required,
-    },
-  }));
-
-  return {
-    tools: anthropicTools,
-    executeFunction: resendTools.executeFunction.bind(resendTools),
-  };
+  return coreCreateAnthropicTools(resendTools);
 }
 
 // Default export

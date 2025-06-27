@@ -1,6 +1,12 @@
 import { LinearHandlers } from "./handlers.js";
 import { linearTools, toolParameterSchemas } from "./tools.js";
-import { z } from "zod";
+import {
+  BaseToolManager,
+  createVercelAITools as coreCreateVercelAITools,
+  createOpenAIFunctions as coreCreateOpenAIFunctions,
+  createAnthropicTools as coreCreateAnthropicTools,
+  bindHandlerMethods,
+} from "@tooly/core";
 
 export * from "./types.js";
 export * from "./tools.js";
@@ -9,48 +15,36 @@ export * from "./handlers.js";
 /**
  * Main Linear Tools class for AI SDK integration
  */
-export class LinearTools {
+export class LinearTools extends BaseToolManager<
+  typeof toolParameterSchemas,
+  typeof linearTools
+> {
   private handlers: LinearHandlers;
 
   constructor(apiKey: string) {
+    super(linearTools, toolParameterSchemas);
     this.handlers = new LinearHandlers(apiKey);
   }
 
   /**
-   * Get all tool definitions for OpenAI/Anthropic
+   * Execute tool function implementation
    */
-  getTools() {
-    return linearTools;
-  }
-
-  /**
-   * Execute a tool function by name
-   */
-  async executeFunction(name: string, parameters: any) {
-    // Validate parameters based on tool name
-    const schema =
-      toolParameterSchemas[name as keyof typeof toolParameterSchemas];
-    if (!schema) {
-      throw new Error(`Unknown tool: ${name}`);
-    }
-
-    const validatedParams = schema.parse(parameters);
-
+  protected async executeToolFunction(name: string, params: any): Promise<any> {
     switch (name) {
       case "createIssue":
-        return this.handlers.createIssue(validatedParams as any);
+        return this.handlers.createIssue(params);
       case "getIssue":
-        return this.handlers.getIssue(validatedParams as any);
+        return this.handlers.getIssue(params);
       case "updateIssue":
-        return this.handlers.updateIssue(validatedParams as any);
+        return this.handlers.updateIssue(params);
       case "searchIssues":
-        return this.handlers.searchIssues(validatedParams as any);
+        return this.handlers.searchIssues(params);
       case "createProject":
-        return this.handlers.createProject(validatedParams as any);
+        return this.handlers.createProject(params);
       case "getTeams":
-        return this.handlers.getTeams(validatedParams as any);
+        return this.handlers.getTeams(params);
       case "getUser":
-        return this.handlers.getUser(validatedParams as any);
+        return this.handlers.getUser(params);
       default:
         throw new Error(`Unknown tool: ${name}`);
     }
@@ -71,43 +65,27 @@ export function createVercelAITools(apiKey: string) {
   const linearTools = new LinearTools(apiKey);
   const handlers = linearTools.getHandlers();
 
-  return {
-    createIssue: {
-      description: "Create a new issue in Linear",
-      parameters: toolParameterSchemas.createIssue,
-      execute: handlers.createIssue.bind(handlers),
-    },
-    getIssue: {
-      description: "Get details of a specific issue by ID or identifier",
-      parameters: toolParameterSchemas.getIssue,
-      execute: handlers.getIssue.bind(handlers),
-    },
-    updateIssue: {
-      description: "Update an existing issue",
-      parameters: toolParameterSchemas.updateIssue,
-      execute: handlers.updateIssue.bind(handlers),
-    },
-    searchIssues: {
-      description: "Search for issues using various filters",
-      parameters: toolParameterSchemas.searchIssues,
-      execute: handlers.searchIssues.bind(handlers),
-    },
-    createProject: {
-      description: "Create a new project in Linear",
-      parameters: toolParameterSchemas.createProject,
-      execute: handlers.createProject.bind(handlers),
-    },
-    getTeams: {
-      description: "Get all teams in the Linear workspace",
-      parameters: toolParameterSchemas.getTeams,
-      execute: handlers.getTeams.bind(handlers),
-    },
-    getUser: {
-      description: "Get user details (current user if no ID provided)",
-      parameters: toolParameterSchemas.getUser,
-      execute: handlers.getUser.bind(handlers),
-    },
+  const toolDescriptions = {
+    createIssue: "Create a new issue in Linear",
+    getIssue: "Get details of a specific issue by ID or identifier",
+    updateIssue: "Update an existing issue",
+    searchIssues: "Search for issues using various filters",
+    createProject: "Create a new project in Linear",
+    getTeams: "Get all teams in the Linear workspace",
+    getUser: "Get user details (current user if no ID provided)",
   };
+
+  const boundMethods = bindHandlerMethods(handlers, [
+    "createIssue",
+    "getIssue",
+    "updateIssue",
+    "searchIssues",
+    "createProject",
+    "getTeams",
+    "getUser",
+  ]);
+
+  return coreCreateVercelAITools(linearTools, boundMethods, toolDescriptions);
 }
 
 /**
@@ -115,11 +93,7 @@ export function createVercelAITools(apiKey: string) {
  */
 export function createOpenAIFunctions(apiKey: string) {
   const linearTools = new LinearTools(apiKey);
-
-  return {
-    tools: linearTools.getTools(),
-    executeFunction: linearTools.executeFunction.bind(linearTools),
-  };
+  return coreCreateOpenAIFunctions(linearTools);
 }
 
 /**
@@ -127,22 +101,7 @@ export function createOpenAIFunctions(apiKey: string) {
  */
 export function createAnthropicTools(apiKey: string) {
   const linearTools = new LinearTools(apiKey);
-
-  // Convert OpenAI-style tools to Anthropic format
-  const anthropicTools = linearTools.getTools().map((tool) => ({
-    name: tool.name,
-    description: tool.description,
-    input_schema: {
-      type: "object",
-      properties: tool.parameters.properties,
-      required: tool.parameters.required,
-    },
-  }));
-
-  return {
-    tools: anthropicTools,
-    executeFunction: linearTools.executeFunction.bind(linearTools),
-  };
+  return coreCreateAnthropicTools(linearTools);
 }
 
 // Default export
