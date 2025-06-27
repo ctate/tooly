@@ -21,78 +21,75 @@ Get your Linear API key from your [Linear settings](https://linear.app/settings/
 ### Basic Usage
 
 ```typescript
-import { LinearTools } from "@tooly/linear";
+import { LinearTools } from '@tooly/linear'
 
-const linear = new LinearTools("your-linear-api-key");
+const linear = new LinearTools('your-linear-api-key')
 
 // Get available tools for function calling
-const tools = linear.getTools();
+const tools = linear.getTools()
 
 // Execute a function
-const result = await linear.executeFunction("createIssue", {
-  title: "New bug report",
-  description: "Bug description here",
-  teamId: "team-id-here",
-});
+const result = await linear.executeFunction('createIssue', {
+  title: 'New bug report',
+  description: 'Bug description here',
+  teamId: 'team-id-here',
+})
 ```
 
 ### Vercel AI SDK
 
 ```typescript
-import { createVercelAITools } from "@tooly/linear";
+import { createVercelAITools } from '@tooly/linear'
 
-const tools = createVercelAITools("your-linear-api-key");
+const tools = createVercelAITools('your-linear-api-key')
 
 // Use with generateText
-import { generateText } from "ai";
+import { generateText } from 'ai'
 
 const result = await generateText({
-  model: openai("gpt-4.1-nano"),
-  messages: [{ role: "user", content: "Create a new issue" }],
+  model: openai('gpt-4.1-nano'),
+  messages: [{ role: 'user', content: 'Create a new issue' }],
   tools,
-});
+})
 ```
 
 ### OpenAI Function Calling
 
 ```typescript
-import { createOpenAIFunctions } from "@tooly/linear";
+import { createOpenAIFunctions } from '@tooly/linear'
 
-const { tools, executeFunction } = createOpenAIFunctions("your-linear-api-key");
+const { tools, executeFunction } = createOpenAIFunctions('your-linear-api-key')
 
 // Use with OpenAI client
 const completion = await openai.chat.completions.create({
-  model: "gpt-4.1-nano",
-  messages: [{ role: "user", content: "List my assigned issues" }],
+  model: 'gpt-4.1-nano',
+  messages: [{ role: 'user', content: 'List my assigned issues' }],
   tools,
-});
+})
 
 // Execute function calls
 for (const toolCall of completion.choices[0].message.tool_calls || []) {
-  const result = await executeFunction(
-    toolCall.function.name,
-    JSON.parse(toolCall.function.arguments)
-  );
+  const result = await executeFunction(toolCall.function.name, JSON.parse(toolCall.function.arguments))
 }
 ```
 
 ### Anthropic Tool Use
 
 ```typescript
-import { createAnthropicTools } from "@tooly/linear";
+import { createAnthropicTools } from '@tooly/linear'
 
-const { tools, executeFunction } = createAnthropicTools("your-linear-api-key");
+const { tools, executeFunction } = createAnthropicTools('your-linear-api-key')
 
 // Use with Anthropic client
 const message = await anthropic.messages.create({
-  model: "claude-sonnet-4-20250514",
-  messages: [{ role: "user", content: "Create a new project" }],
+  model: 'claude-sonnet-4-20250514',
+  messages: [{ role: 'user', content: 'Create a new project' }],
   tools,
-});
+})
 
 // Execute tool calls
-for (const toolUse of message.content.filter((c) => c.type === "tool_use")) {
-  const result = await executeFunction(toolUse.name, toolUse.input);
+for (const toolUse of message.content.filter((c) => c.type === 'tool_use')) {
+  const result = await executeFunction(toolUse.name, toolUse.input)
 }
 ```
 

@@ -28,8 +28,8 @@ This package provides:
 ### Creating a Tool Manager
 
 ```typescript
-import { BaseToolManager } from "@tooly/core";
-import { z } from "zod";
+import { BaseToolManager } from '@tooly/core'
+import { z } from 'zod'
 
 // Define your tool schemas
 const toolSchemas = {
@@ -37,42 +37,42 @@ const toolSchemas = {
     param1: z.string(),
     param2: z.number().optional(),
   }),
-};
+}
 
 // Define your tools
 const tools = [
   {
-    name: "myTool",
-    description: "My custom tool",
+    name: 'myTool',
+    description: 'My custom tool',
     parameters: {
-      type: "object",
+      type: 'object',
       properties: {
-        param1: { type: "string", description: "First parameter" },
-        param2: { type: "number", description: "Optional second parameter" },
+        param1: { type: 'string', description: 'First parameter' },
+        param2: { type: 'number', description: 'Optional second parameter' },
       },
-      required: ["param1"],
+      required: ['param1'],
     },
   },
-] as const;
+] as const
 
 class MyToolManager extends BaseToolManager<typeof toolSchemas, typeof tools> {
   constructor(apiKey: string) {
-    super(tools, toolSchemas);
+    super(tools, toolSchemas)
     // Initialize your handlers
   }
 
   protected async executeToolFunction(name: string, params: any): Promise<any> {
     switch (name) {
-      case "myTool":
-        return this.handleMyTool(params);
+      case 'myTool':
+        return this.handleMyTool(params)
       default:
-        throw new Error(`Unknown tool: ${name}`);
+        throw new Error(`Unknown tool: ${name}`)
     }
   }
 
   private async handleMyTool(params: { param1: string; param2?: number }) {
     // Your tool implementation
-    return { result: `Processed ${params.param1}` };
+    return { result: `Processed ${params.param1}` }
   }
 }
 ```
@@ -80,22 +80,18 @@ class MyToolManager extends BaseToolManager<typeof toolSchemas, typeof tools> {
 ### Using with AI Frameworks
 
 ```typescript
-import {
-  createVercelAITools,
-  createOpenAIFunctions,
-  createAnthropicTools,
-} from "@tooly/core";
+import { createVercelAITools, createOpenAIFunctions, createAnthropicTools } from '@tooly/core'
 
-const toolManager = new MyToolManager("your-api-key");
+const toolManager = new MyToolManager('your-api-key')
 
 // Vercel AI SDK
-const vercelTools = createVercelAITools(toolManager);
+const vercelTools = createVercelAITools(toolManager)
 
 // OpenAI Function Calling
-const openaiSetup = createOpenAIFunctions(toolManager);
+const openaiSetup = createOpenAIFunctions(toolManager)
 
 // Anthropic Tool Use
-const anthropicSetup = createAnthropicTools(toolManager);
+const anthropicSetup = createAnthropicTools(toolManager)
 ```
 
 ## API Reference

@@ -1,4 +1,4 @@
-import { LinearClient } from "@linear/sdk";
+import { LinearClient } from '@linear/sdk'
 import {
   type CreateIssueParams,
   type GetIssueParams,
@@ -12,13 +12,13 @@ import {
   type SearchResults,
   type Team,
   type LinearUser,
-} from "./types.js";
+} from './types.js'
 
 export class LinearHandlers {
-  private client: LinearClient;
+  private client: LinearClient
 
   constructor(apiKey: string) {
-    this.client = new LinearClient({ apiKey });
+    this.client = new LinearClient({ apiKey })
   }
 
   /**
@@ -37,18 +37,18 @@ export class LinearHandlers {
         labelIds: params.labelIds,
         estimate: params.estimate,
         dueDate: params.dueDate ? new Date(params.dueDate) : undefined,
-      });
+      })
 
-      const issue = await issuePayload.issue;
+      const issue = await issuePayload.issue
       if (!issue) {
-        throw new Error("Failed to create issue");
+        throw new Error('Failed to create issue')
       }
 
       // Await related objects
-      const state = issue.state ? await issue.state : undefined;
-      const assignee = issue.assignee ? await issue.assignee : undefined;
-      const creator = issue.creator ? await issue.creator : undefined;
-      const team = issue.team ? await issue.team : undefined;
+      const state = issue.state ? await issue.state : undefined
+      const assignee = issue.assignee ? await issue.assignee : undefined
+      const creator = issue.creator ? await issue.creator : undefined
+      const team = issue.team ? await issue.team : undefined
 
       return {
         id: issue.id,
@@ -89,11 +89,9 @@ export class LinearHandlers {
         updatedAt: issue.updatedAt.toISOString(),
         estimate: issue.estimate || undefined,
         dueDate: issue.dueDate?.toISOString(),
-      };
+      }
     } catch (error) {
-      throw new Error(
-        `Failed to create issue: ${error instanceof Error ? error.message : String(error)}`
-      );
+      throw new Error(`Failed to create issue: ${error instanceof Error ? error.message : String(error)}`)
     }
   }
 
@@ -102,16 +100,16 @@ export class LinearHandlers {
    */
   async getIssue(params: GetIssueParams): Promise<IssueResponse> {
     try {
-      const issue = await this.client.issue(params.id);
+      const issue = await this.client.issue(params.id)
       if (!issue) {
-        throw new Error(`Issue not found: ${params.id}`);
+        throw new Error(`Issue not found: ${params.id}`)
       }
 
       // Await related objects
-      const state = issue.state ? await issue.state : undefined;
-      const assignee = issue.assignee ? await issue.assignee : undefined;
-      const creator = issue.creator ? await issue.creator : undefined;
-      const team = issue.team ? await issue.team : undefined;
+      const state = issue.state ? await issue.state : undefined
+      const assignee = issue.assignee ? await issue.assignee : undefined
+      const creator = issue.creator ? await issue.creator : undefined
+      const team = issue.team ? await issue.team : undefined
 
       return {
         id: issue.id,
@@ -152,11 +150,9 @@ export class LinearHandlers {
         updatedAt: issue.updatedAt.toISOString(),
         estimate: issue.estimate || undefined,
         dueDate: issue.dueDate?.toISOString(),
-      };
+      }
     } catch (error) {
-      throw new Error(
-        `Failed to get issue: ${error instanceof Error ? error.message : String(error)}`
-      );
+      throw new Error(`Failed to get issue: ${error instanceof Error ? error.message : String(error)}`)
     }
   }
 
@@ -165,7 +161,7 @@ export class LinearHandlers {
    */
   async updateIssue(params: UpdateIssueParams): Promise<IssueResponse> {
     try {
-      const { id, ...updateData } = params;
+      const { id, ...updateData } = params
       const issuePayload = await this.client.updateIssue(id, {
         title: updateData.title,
         description: updateData.description,
@@ -176,18 +172,18 @@ export class LinearHandlers {
         labelIds: updateData.labelIds,
         estimate: updateData.estimate,
         dueDate: updateData.dueDate ? new Date(updateData.dueDate) : undefined,
-      });
+      })
 
-      const issue = await issuePayload.issue;
+      const issue = await issuePayload.issue
       if (!issue) {
-        throw new Error("Failed to update issue");
+        throw new Error('Failed to update issue')
       }
 
       // Await related objects
-      const state = issue.state ? await issue.state : undefined;
-      const assignee = issue.assignee ? await issue.assignee : undefined;
-      const creator = issue.creator ? await issue.creator : undefined;
-      const team = issue.team ? await issue.team : undefined;
+      const state = issue.state ? await issue.state : undefined
+      const assignee = issue.assignee ? await issue.assignee : undefined
+      const creator = issue.creator ? await issue.creator : undefined
+      const team = issue.team ? await issue.team : undefined
 
       return {
         id: issue.id,
@@ -228,11 +224,9 @@ export class LinearHandlers {
         updatedAt: issue.updatedAt.toISOString(),
         estimate: issue.estimate || undefined,
         dueDate: issue.dueDate?.toISOString(),
-      };
+      }
     } catch (error) {
-      throw new Error(
-        `Failed to update issue: ${error instanceof Error ? error.message : String(error)}`
-      );
+      throw new Error(`Failed to update issue: ${error instanceof Error ? error.message : String(error)}`)
     }
   }
 
@@ -241,28 +235,26 @@ export class LinearHandlers {
    */
   async searchIssues(params: SearchIssuesParams): Promise<SearchResults> {
     try {
-      const filter: any = {};
+      const filter: any = {}
 
-      if (params.teamId) filter.team = { id: { eq: params.teamId } };
-      if (params.assigneeId)
-        filter.assignee = { id: { eq: params.assigneeId } };
-      if (params.stateId) filter.state = { id: { eq: params.stateId } };
-      if (params.projectId) filter.project = { id: { eq: params.projectId } };
-      if (params.priority !== undefined)
-        filter.priority = { eq: params.priority };
+      if (params.teamId) filter.team = { id: { eq: params.teamId } }
+      if (params.assigneeId) filter.assignee = { id: { eq: params.assigneeId } }
+      if (params.stateId) filter.state = { id: { eq: params.stateId } }
+      if (params.projectId) filter.project = { id: { eq: params.projectId } }
+      if (params.priority !== undefined) filter.priority = { eq: params.priority }
 
       const issuesConnection = await this.client.issues({
         filter: Object.keys(filter).length > 0 ? filter : undefined,
         first: params.limit || 25,
-      });
+      })
 
       const issues = await Promise.all(
         issuesConnection.nodes.map(async (issue) => {
           // Await related objects
-          const state = issue.state ? await issue.state : undefined;
-          const assignee = issue.assignee ? await issue.assignee : undefined;
-          const creator = issue.creator ? await issue.creator : undefined;
-          const team = issue.team ? await issue.team : undefined;
+          const state = issue.state ? await issue.state : undefined
+          const assignee = issue.assignee ? await issue.assignee : undefined
+          const creator = issue.creator ? await issue.creator : undefined
+          const team = issue.team ? await issue.team : undefined
 
           return {
             id: issue.id,
@@ -303,20 +295,16 @@ export class LinearHandlers {
             updatedAt: issue.updatedAt.toISOString(),
             estimate: issue.estimate || undefined,
             dueDate: issue.dueDate?.toISOString(),
-          };
-        })
-      );
+          }
+        }),
+      )
 
       return {
         issues,
-        totalCount: issuesConnection.pageInfo.hasNextPage
-          ? params.limit || 25
-          : issues.length,
-      };
+        totalCount: issuesConnection.pageInfo.hasNextPage ? params.limit || 25 : issues.length,
+      }
     } catch (error) {
-      throw new Error(
-        `Failed to search issues: ${error instanceof Error ? error.message : String(error)}`
-      );
+      throw new Error(`Failed to search issues: ${error instanceof Error ? error.message : String(error)}`)
     }
   }
 
@@ -332,21 +320,21 @@ export class LinearHandlers {
         memberIds: params.memberIds,
         teamIds: [], // Required parameter - empty array for now
         targetDate: params.targetDate ? new Date(params.targetDate) : undefined,
-      });
+      })
 
-      const project = await projectPayload.project;
+      const project = await projectPayload.project
       if (!project) {
-        throw new Error("Failed to create project");
+        throw new Error('Failed to create project')
       }
 
       // Await related objects
-      const lead = project.lead ? await project.lead : undefined;
+      const lead = project.lead ? await project.lead : undefined
 
       return {
         id: project.id,
         name: project.name,
         description: project.description || undefined,
-        status: "planned", // Default status since Linear doesn't have a status field
+        status: 'planned', // Default status since Linear doesn't have a status field
         lead: lead
           ? {
               id: lead.id,
@@ -357,11 +345,9 @@ export class LinearHandlers {
         createdAt: project.createdAt.toISOString(),
         updatedAt: project.updatedAt.toISOString(),
         targetDate: project.targetDate?.toISOString(),
-      };
+      }
     } catch (error) {
-      throw new Error(
-        `Failed to create project: ${error instanceof Error ? error.message : String(error)}`
-      );
+      throw new Error(`Failed to create project: ${error instanceof Error ? error.message : String(error)}`)
     }
   }
 
@@ -372,18 +358,16 @@ export class LinearHandlers {
     try {
       const teamsConnection = await this.client.teams({
         first: params.limit || 50,
-      });
+      })
 
       return teamsConnection.nodes.map((team) => ({
         id: team.id,
         name: team.name,
         key: team.key,
         description: team.description || undefined,
-      }));
+      }))
     } catch (error) {
-      throw new Error(
-        `Failed to get teams: ${error instanceof Error ? error.message : String(error)}`
-      );
+      throw new Error(`Failed to get teams: ${error instanceof Error ? error.message : String(error)}`)
     }
   }
 
@@ -392,26 +376,24 @@ export class LinearHandlers {
    */
   async getUser(params: GetUserParams = {}): Promise<LinearUser> {
     try {
-      let user;
+      let user
       if (params.id) {
-        user = await this.client.user(params.id);
+        user = await this.client.user(params.id)
       } else {
-        user = await this.client.viewer;
+        user = await this.client.viewer
       }
 
       if (!user) {
-        throw new Error("User not found");
+        throw new Error('User not found')
       }
 
       return {
         id: user.id,
         name: user.name,
         email: user.email,
-      };
+      }
     } catch (error) {
-      throw new Error(
-        `Failed to get user: ${error instanceof Error ? error.message : String(error)}`
-      );
+      throw new Error(`Failed to get user: ${error instanceof Error ? error.message : String(error)}`)
     }
   }
 }

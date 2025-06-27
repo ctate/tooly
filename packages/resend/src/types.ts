@@ -1,11 +1,8 @@
-import { z } from "zod";
+import { z } from 'zod'
 
 // Base types
-export const EmailAddressSchema = z.string().email();
-export const EmailAddressesSchema = z.union([
-  EmailAddressSchema,
-  z.array(EmailAddressSchema).max(50),
-]);
+export const EmailAddressSchema = z.string().email()
+export const EmailAddressesSchema = z.union([EmailAddressSchema, z.array(EmailAddressSchema).max(50)])
 
 // Attachment schema
 export const AttachmentSchema = z.object({
@@ -13,7 +10,7 @@ export const AttachmentSchema = z.object({
   filename: z.string(),
   path: z.string().optional(),
   content_type: z.string().optional(),
-});
+})
 
 // Tag schema
 export const TagSchema = z.object({
@@ -25,7 +22,7 @@ export const TagSchema = z.object({
     .string()
     .max(256)
     .regex(/^[a-zA-Z0-9_-]+$/),
-});
+})
 
 // Send Email schema
 export const SendEmailSchema = z.object({
@@ -42,23 +39,23 @@ export const SendEmailSchema = z.object({
   headers: z.record(z.string()).optional(),
   attachments: z.array(AttachmentSchema).optional(),
   tags: z.array(TagSchema).optional(),
-});
+})
 
 // Send Batch Emails schema
-export const SendBatchEmailsSchema = z.array(SendEmailSchema).max(100);
+export const SendBatchEmailsSchema = z.array(SendEmailSchema).max(100)
 
 // Update Email schema
 export const UpdateEmailSchema = z.object({
   scheduled_at: z.string().optional(),
-});
+})
 
 // Response types
 export const EmailResponseSchema = z.object({
   id: z.string(),
-});
+})
 
 export const EmailDetailsSchema = z.object({
-  object: z.literal("email"),
+  object: z.literal('email'),
   id: z.string(),
   to: z.array(z.string()),
   from: z.string(),
@@ -70,35 +67,35 @@ export const EmailDetailsSchema = z.object({
   cc: z.array(z.string().nullable()),
   reply_to: z.array(z.string().nullable()),
   last_event: z.string(),
-});
+})
 
 export const BatchEmailResponseSchema = z.object({
   data: z.array(EmailResponseSchema),
-});
+})
 
 // Export inferred types
-export type EmailAddress = z.infer<typeof EmailAddressSchema>;
-export type EmailAddresses = z.infer<typeof EmailAddressesSchema>;
-export type Attachment = z.infer<typeof AttachmentSchema>;
-export type Tag = z.infer<typeof TagSchema>;
-export type SendEmailInput = z.infer<typeof SendEmailSchema>;
-export type SendBatchEmailsInput = z.infer<typeof SendBatchEmailsSchema>;
-export type UpdateEmailInput = z.infer<typeof UpdateEmailSchema>;
-export type EmailResponse = z.infer<typeof EmailResponseSchema>;
-export type EmailDetails = z.infer<typeof EmailDetailsSchema>;
-export type BatchEmailResponse = z.infer<typeof BatchEmailResponseSchema>;
+export type EmailAddress = z.infer<typeof EmailAddressSchema>
+export type EmailAddresses = z.infer<typeof EmailAddressesSchema>
+export type Attachment = z.infer<typeof AttachmentSchema>
+export type Tag = z.infer<typeof TagSchema>
+export type SendEmailInput = z.infer<typeof SendEmailSchema>
+export type SendBatchEmailsInput = z.infer<typeof SendBatchEmailsSchema>
+export type UpdateEmailInput = z.infer<typeof UpdateEmailSchema>
+export type EmailResponse = z.infer<typeof EmailResponseSchema>
+export type EmailDetails = z.infer<typeof EmailDetailsSchema>
+export type BatchEmailResponse = z.infer<typeof BatchEmailResponseSchema>
 
 // Tool parameter types
 export interface SendEmailParams extends SendEmailInput {}
 export interface SendBatchEmailsParams {
-  emails: SendBatchEmailsInput;
+  emails: SendBatchEmailsInput
 }
 export interface RetrieveEmailParams {
-  id: string;
+  id: string
 }
 export interface UpdateEmailParams extends UpdateEmailInput {
-  id: string;
+  id: string
 }
 export interface CancelEmailParams {
-  id: string;
+  id: string
 }

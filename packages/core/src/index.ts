@@ -1,11 +1,11 @@
 // Export types
-export * from "./types.js";
+export * from './types.js'
 
 // Export base class
-export * from "./base-tool-manager.js";
+export * from './base-tool-manager.js'
 
 // Export AI framework helpers
-export * from "./ai-helpers.js";
+export * from './ai-helpers.js'
 
 // Re-export commonly used types for convenience
 export type {
@@ -17,13 +17,8 @@ export type {
   OpenAIFunctionSetup,
   AnthropicToolSetup,
   BaseHandler,
-} from "./types.js";
+} from './types.js'
 
-export { BaseToolManager } from "./base-tool-manager.js";
+export { BaseToolManager } from './base-tool-manager.js'
 
-export {
-  createVercelAITools,
-  createOpenAIFunctions,
-  createAnthropicTools,
-  bindHandlerMethods,
-} from "./ai-helpers.js";
+export { createVercelAITools, createOpenAIFunctions, createAnthropicTools, bindHandlerMethods } from './ai-helpers.js'
