@@ -1,3 +1,12 @@
-@import 'tailwindcss';
-@import 'fumadocs-ui/css/neutral.css';
-@import 'fumadocs-ui/css/preset.css';
+@import "tailwindcss";
+@import "fumadocs-ui/css/neutral.css";
+@import "fumadocs-ui/css/preset.css";
+
+:root {
+  --font-sans:
+    var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif,
+    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --font-mono:
+    var(--font-geist-mono), ui-monospace, SFMono-Regular, "SF Mono", Consolas,
+    "Liberation Mono", Menlo, monospace;
+}
