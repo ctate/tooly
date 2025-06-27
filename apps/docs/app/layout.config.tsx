@@ -12,7 +12,9 @@ export const baseOptions: BaseLayoutProps = {
   nav: {
     title: (
       <>
-        <ToolyLogo />
+        <div className="text-card-foreground">
+          <ToolyLogo className="h-6 w-auto" />
+        </div>
         Tooly
       </>
     ),
