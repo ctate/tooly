@@ -56,6 +56,6 @@ To contribute to the documentation:
 
 ## Learn More
 
-- [Tooly Packages](https://github.com/yourusername/tooly) - Source code and packages
+- [Tooly Packages](https://github.com/ctate/tool) - Source code and packages
 - [Fumadocs](https://fumadocs.dev) - Documentation framework
 - [Next.js Documentation](https://nextjs.org/docs) - Web framework documentation

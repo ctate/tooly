@@ -47,7 +47,7 @@ const tools = createVercelAITools("your-linear-api-key");
 import { generateText } from "ai";
 
 const result = await generateText({
-  model: openai("gpt-4"),
+  model: openai("gpt-4.1-nano"),
   messages: [{ role: "user", content: "Create a new issue" }],
   tools,
 });
@@ -62,7 +62,7 @@ const { tools, executeFunction } = createOpenAIFunctions("your-linear-api-key");
 
 // Use with OpenAI client
 const completion = await openai.chat.completions.create({
-  model: "gpt-4",
+  model: "gpt-4.1-nano",
   messages: [{ role: "user", content: "List my assigned issues" }],
   tools,
 });
@@ -85,7 +85,7 @@ const { tools, executeFunction } = createAnthropicTools("your-linear-api-key");
 
 // Use with Anthropic client
 const message = await anthropic.messages.create({
-  model: "claude-3-sonnet-20240229",
+  model: "claude-sonnet-4-20250514",
   messages: [{ role: "user", content: "Create a new project" }],
   tools,
 });

@@ -103,7 +103,7 @@ import { createVercelAITools } from "@tooly/resend";
 const tools = createVercelAITools("your-api-key");
 
 const result = await generateText({
-  model: openai("gpt-4"),
+          model: openai("gpt-4.1-nano"),
   messages: [{ role: "user", content: "Send a welcome email" }],
   tools,
 });`}</code>

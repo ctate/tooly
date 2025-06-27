@@ -30,10 +30,10 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/yourusername/tooly.git",
+    "url": "https://github.com/ctate/tool.git",
     "directory": "packages/resend"
   },
-  "homepage": "https://github.com/yourusername/tooly#readme",
+  "homepage": "https://github.com/ctate/tool#readme",
   "publishConfig": {
     "access": "public"
   },

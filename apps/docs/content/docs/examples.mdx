@@ -18,7 +18,7 @@ const emailTools = createVercelAITools(process.env.RESEND_API_KEY!);
 
 // AI-powered customer onboarding
 const result = await generateText({
-  model: openai("gpt-4"),
+  model: openai("gpt-4.1-nano"),
   messages: [
     {
       role: "system",
@@ -52,7 +52,7 @@ const tools = createVercelAITools(process.env.RESEND_API_KEY!);
 
 async function notifySupport(ticket: any) {
   const { textStream, toolCallStream } = await streamText({
-    model: openai("gpt-4"),
+    model: openai("gpt-4.1-nano"),
     messages: [
       {
         role: "system",
@@ -94,7 +94,7 @@ const tools = createVercelAITools(process.env.RESEND_API_KEY!);
 
 // AI can handle bulk email campaigns intelligently
 const result = await generateText({
-  model: anthropic("claude-3-sonnet-20240229"),
+  model: anthropic("claude-sonnet-4-20250514"),
   messages: [
     {
       role: "system",
@@ -128,7 +128,7 @@ const linearTools = createVercelAITools(process.env.LINEAR_API_KEY!);
 // AI creates structured bug reports from user feedback
 async function processBugReport(userFeedback: string) {
   const result = await generateText({
-    model: openai("gpt-4"),
+    model: openai("gpt-4.1-nano"),
     messages: [
       {
         role: "system",
@@ -171,7 +171,7 @@ const tools = createVercelAITools(process.env.LINEAR_API_KEY!);
 
 async function planSprint(requirements: string[]) {
   const { textStream, toolCallStream } = await streamText({
-    model: openai("gpt-4"),
+    model: openai("gpt-4.1-nano"),
     messages: [
       {
         role: "system",
@@ -224,7 +224,7 @@ const tools = createVercelAITools(process.env.LINEAR_API_KEY!);
 
 // AI can create entire project structures
 const result = await generateText({
-  model: openai("gpt-4"),
+  model: openai("gpt-4.1-nano"),
   messages: [
     {
       role: "system",
@@ -270,7 +270,7 @@ const allTools = {
 
 async function handleCustomerIssue(customerData: any, issueDescription: string) {
   const result = await generateText({
-    model: openai("gpt-4"),
+    model: openai("gpt-4.1-nano"),
     messages: [
       {
         role: "system",
@@ -326,7 +326,7 @@ async function handleIncident(incident: {
   };
 
   const { textStream, toolCallStream } = await streamText({
-    model: openai("gpt-4"),
+    model: openai("gpt-4.1-nano"),
     messages: [
       {
         role: "system",
@@ -383,7 +383,7 @@ const tools = {
 // AI can handle complex development workflows
 async function processCodeReview(pullRequest: any, reviewComments: string[]) {
   const result = await generateText({
-    model: openai("gpt-4"),
+    model: openai("gpt-4.1-nano"),
     messages: [
       {
         role: "system",
@@ -428,7 +428,7 @@ class EmailAssistant {
 
   async processRequest(request: string, context?: any) {
     const result = await generateText({
-      model: openai("gpt-4"),
+      model: openai("gpt-4.1-nano"),
       messages: [
         {
           role: "system",
@@ -493,7 +493,7 @@ class ProjectAgent {
 
   async executeCommand(command: string, context?: any) {
     const { textStream, toolCallStream } = await streamText({
-      model: openai("gpt-4"),
+      model: openai("gpt-4.1-nano"),
       messages: [
         {
           role: "system",
@@ -576,7 +576,7 @@ async function robustWorkflow(request: string) {
   while (attempt < maxRetries) {
     try {
       const result = await generateText({
-        model: openai("gpt-4"),
+        model: openai("gpt-4.1-nano"),
         messages: [
           {
             role: "system",
@@ -646,7 +646,7 @@ async function emailWithFallback(emailRequest: string) {
   try {
     // Primary: AI-powered email
     const result = await generateText({
-      model: openai("gpt-4"),
+      model: openai("gpt-4.1-nano"),
       messages: [
         {
           role: "user",
@@ -737,7 +737,7 @@ export const toolyConfig = {
   },
   ai: {
     provider: process.env.AI_PROVIDER || "openai",
-    model: process.env.AI_MODEL || "gpt-4",
+    model: process.env.AI_MODEL || "gpt-4.1-nano",
     maxRetries: parseInt(process.env.AI_MAX_RETRIES || "3"),
   }
 };
@@ -843,7 +843,7 @@ class QueuedEmailProcessor {
       
       try {
         const result = await generateText({
-          model: openai("gpt-4"),
+          model: openai("gpt-4.1-nano"),
           messages: [
             {
               role: "user",
@@ -893,7 +893,7 @@ const { tools, executeFunction } = createOpenAIFunctions(process.env.RESEND_API_
 
 async function processWithOpenAI(prompt: string) {
   const completion = await openai.chat.completions.create({
-    model: "gpt-4",
+    model: "gpt-4.1-nano",
     messages: [{ role: "user", content: prompt }],
     tools,
   });
@@ -922,7 +922,7 @@ const { tools, executeFunction } = createAnthropicTools(process.env.LINEAR_API_K
 
 async function processWithAnthropic(prompt: string) {
   const message = await anthropic.messages.create({
-    model: "claude-3-sonnet-20240229",
+    model: "claude-sonnet-4-20250514",
     messages: [{ role: "user", content: prompt }],
     tools,
   });

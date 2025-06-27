@@ -36,7 +36,7 @@ const tools = createVercelAITools("your-resend-api-key");
 
 // Use with AI
 const result = await generateText({
-  model: openai("gpt-4"),
+  model: openai("gpt-4.1-nano"),
   messages: [
     {
       role: "user", 
@@ -59,7 +59,7 @@ import { createVercelAITools } from "@tooly/linear";
 const tools = createVercelAITools("your-linear-api-key");
 
 const result = await generateText({
-  model: openai("gpt-4"),
+  model: openai("gpt-4.1-nano"),
   messages: [
     {
       role: "user", 
@@ -84,7 +84,7 @@ import { createVercelAITools } from "@tooly/resend";
 const tools = createVercelAITools("your-resend-api-key");
 
 const { textStream } = await streamText({
-  model: openai("gpt-4"),
+  model: openai("gpt-4.1-nano"),
   messages: [
     {
       role: "user", 
@@ -111,7 +111,7 @@ const openai = new OpenAI();
 const { tools, executeFunction } = createOpenAIFunctions("your-resend-api-key");
 
 const completion = await openai.chat.completions.create({
-  model: "gpt-4",
+  model: "gpt-4.1-nano",
   messages: [
     {
       role: "user", 
@@ -143,7 +143,7 @@ const anthropic = new Anthropic();
 const { tools, executeFunction } = createAnthropicTools("your-linear-api-key");
 
 const message = await anthropic.messages.create({
-  model: "claude-3-sonnet-20240229",
+  model: "claude-sonnet-4-20250514",
   messages: [
     {
       role: "user", 

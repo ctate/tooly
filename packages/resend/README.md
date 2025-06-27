@@ -54,7 +54,7 @@ const openai = new OpenAI({
 const { tools, executeFunction } = createOpenAIFunctions("your-resend-api-key");
 
 const completion = await openai.chat.completions.create({
-  model: "gpt-4",
+  model: "gpt-4.1-nano",
   messages: [
     {
       role: "user",
@@ -96,7 +96,7 @@ const anthropic = new Anthropic({
 const { tools, executeFunction } = createAnthropicTools("your-resend-api-key");
 
 const message = await anthropic.messages.create({
-  model: "claude-3-sonnet-20240229",
+  model: "claude-sonnet-4-20250514",
   max_tokens: 1024,
   messages: [
     {
@@ -128,7 +128,7 @@ import { createVercelAITools } from "@tooly/resend";
 const tools = createVercelAITools("your-resend-api-key");
 
 const { text } = await generateText({
-  model: openai("gpt-4"),
+  model: openai("gpt-4.1-nano"),
   prompt: 'Send a welcome email to john@example.com with subject "Welcome!"',
   tools: tools,
 });

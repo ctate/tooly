@@ -138,7 +138,7 @@ import { createVercelAITools } from "@tooly/linear";
 const tools = createVercelAITools(process.env.LINEAR_API_KEY!);
 
 const result = await generateText({
-  model: openai("gpt-4"),
+  model: openai("gpt-4.1-nano"),
   messages: [
     {
       role: "user",
@@ -159,7 +159,7 @@ import { createVercelAITools } from "@tooly/linear";
 const tools = createVercelAITools(process.env.LINEAR_API_KEY!);
 
 const { textStream, toolCallStream } = await streamText({
-  model: openai("gpt-4"),
+  model: openai("gpt-4.1-nano"),
   messages: [
     {
       role: "user",
@@ -191,7 +191,7 @@ const tools = createVercelAITools(process.env.LINEAR_API_KEY!);
 
 // Works with any AI provider
 const result = await generateText({
-  model: anthropic("claude-3-sonnet-20240229"),
+  model: anthropic("claude-sonnet-4-20250514"),
   messages: [
     {
       role: "user",
@@ -213,7 +213,7 @@ const tools = createVercelAITools(process.env.LINEAR_API_KEY!);
 
 // AI can handle complex project management tasks
 const result = await generateText({
-  model: openai("gpt-4"),
+  model: openai("gpt-4.1-nano"),
   messages: [
     {
       role: "system",
@@ -239,7 +239,7 @@ const openai = new OpenAI();
 const { tools, executeFunction } = createOpenAIFunctions(process.env.LINEAR_API_KEY!);
 
 const completion = await openai.chat.completions.create({
-  model: "gpt-4",
+  model: "gpt-4.1-nano",
   messages: [
     {
       role: "user",
@@ -269,7 +269,7 @@ const anthropic = new Anthropic();
 const { tools, executeFunction } = createAnthropicTools(process.env.LINEAR_API_KEY!);
 
 const message = await anthropic.messages.create({
-  model: "claude-3-sonnet-20240229",
+  model: "claude-sonnet-4-20250514",
   messages: [
     {
       role: "user",
@@ -340,7 +340,7 @@ try {
 ```typescript
 // AI can help you find and work with teams
 const result = await generateText({
-  model: openai("gpt-4"),
+  model: openai("gpt-4.1-nano"),
   messages: [
     {
       role: "user",
@@ -356,7 +356,7 @@ const result = await generateText({
 ```typescript
 // AI can find users and assign work
 const result = await generateText({
-  model: openai("gpt-4"),
+  model: openai("gpt-4.1-nano"),
   messages: [
     {
       role: "user",
@@ -380,7 +380,7 @@ Linear uses numeric priority levels:
 ```typescript
 // AI can intelligently set priorities based on context
 const result = await generateText({
-  model: openai("gpt-4"),
+  model: openai("gpt-4.1-nano"),
   messages: [
     {
       role: "user",
@@ -406,7 +406,7 @@ Let AI handle team discovery:
 ```typescript
 // Instead of hardcoding team IDs, let AI find them
 const result = await generateText({
-  model: openai("gpt-4"),
+  model: openai("gpt-4.1-nano"),
   messages: [
     {
       role: "user",
@@ -423,7 +423,7 @@ Create reusable issue templates that AI can use:
 ```typescript
 // AI can intelligently use templates based on context
 const result = await generateText({
-  model: openai("gpt-4"),
+  model: openai("gpt-4.1-nano"),
   messages: [
     {
       role: "system",
@@ -447,7 +447,7 @@ Use AI to handle multiple operations efficiently:
 
 ```typescript
 const result = await generateText({
-  model: openai("gpt-4"),
+  model: openai("gpt-4.1-nano"),
   messages: [
     {
       role: "user",

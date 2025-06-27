@@ -38,7 +38,7 @@ const tools = createVercelAITools("your-resend-api-key");
 
 // Use with Vercel AI SDK
 const result = await generateText({
-  model: openai("gpt-4"),
+  model: openai("gpt-4.1-nano"),
   messages: [{ role: "user", content: "Send a welcome email" }],
   tools,
 });

@@ -60,7 +60,7 @@ export const baseOptions: BaseLayoutProps = {
     },
     {
       text: "GitHub",
-      url: "https://github.com/yourusername/tooly",
+      url: "https://github.com/ctate/tool",
       external: true,
     },
   ],
