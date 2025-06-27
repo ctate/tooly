@@ -3,7 +3,7 @@ title: "@tooly/linear"
 description: Project management tools powered by Linear API for AI applications
 ---
 
-The `@tooly/linear` package provides AI-ready project management functionality powered by the Linear API. Perfect for issue tracking, project management, and team collaboration in AI applications.
+The `@tooly/linear` package provides AI-ready project management functionality powered by the Linear API. Built specifically for the Vercel AI SDK, it's perfect for issue tracking, project management, and team collaboration in AI applications.
 
 ## Installation
 
@@ -11,9 +11,11 @@ The `@tooly/linear` package provides AI-ready project management functionality p
 npm install @tooly/linear
 ```
 
-## Quick Start
+## Quick Start with Vercel AI SDK
 
 ```typescript
+import { generateText } from "ai";
+import { openai } from "@ai-sdk/openai";
 import { createVercelAITools } from "@tooly/linear";
 
 const tools = createVercelAITools("your-linear-api-key");
@@ -59,11 +61,15 @@ Create a new issue in Linear with full details and metadata.
 
 **Example:**
 ```typescript
-const result = await tools.executeFunction("createIssue", {
-  title: "Login page not responding",
-  description: "Users are unable to log in. The page hangs after entering credentials.",
-  teamId: "team-123",
-  priority: 2,
+const result = await generateText({
+  model: openai("gpt-4"),
+  messages: [
+    {
+      role: "user",
+      content: "Create a high-priority bug report for the payment system failing"
+    }
+  ],
+  tools,
 });
 ```
 
@@ -73,13 +79,6 @@ Retrieve detailed information about a specific issue.
 
 **Parameters:**
 - `issueId` (string): The Linear issue ID
-
-**Example:**
-```typescript
-const issue = await tools.executeFunction("getIssue", {
-  issueId: "ISS-123"
-});
-```
 
 ### updateIssue
 
@@ -93,15 +92,6 @@ Update an existing issue with new information or status changes.
 - `priority` (number, optional): Updated priority
 - `stateId` (string, optional): Updated workflow state
 
-**Example:**
-```typescript
-const result = await tools.executeFunction("updateIssue", {
-  issueId: "ISS-123",
-  title: "Updated: Login page authentication issue",
-  priority: 1, // Escalate to urgent
-});
-```
-
 ### searchIssues
 
 Search for issues using various criteria and filters.
@@ -114,15 +104,6 @@ Search for issues using various criteria and filters.
 - `priority` (number, optional): Filter by priority level
 - `limit` (number, optional): Maximum number of results (default: 10)
 
-**Example:**
-```typescript
-const issues = await tools.executeFunction("searchIssues", {
-  query: "login bug",
-  teamId: "team-123",
-  limit: 5
-});
-```
-
 ### createProject
 
 Create a new project to organize related issues and milestones.
@@ -134,24 +115,9 @@ Create a new project to organize related issues and milestones.
 - `leadId` (string, optional): User ID of the project lead
 - `targetDate` (string, optional): Target completion date (ISO format)
 
-**Example:**
-```typescript
-const project = await tools.executeFunction("createProject", {
-  name: "Q1 Security Improvements",
-  description: "Focus on authentication and authorization improvements",
-  teamIds: ["team-123", "team-456"],
-  targetDate: "2024-03-31T23:59:59Z"
-});
-```
-
 ### getTeams
 
 Retrieve all teams in your Linear workspace.
-
-**Example:**
-```typescript
-const teams = await tools.executeFunction("getTeams", {});
-```
 
 ### getUser
 
@@ -160,16 +126,9 @@ Get information about a specific user by their email address.
 **Parameters:**
 - `email` (string): User's email address
 
-**Example:**
-```typescript
-const user = await tools.executeFunction("getUser", {
-  email: "developer@company.com"
-});
-```
+## Vercel AI SDK Integration
 
-## AI Framework Integration
-
-### Vercel AI SDK
+### Basic Issue Creation
 
 ```typescript
 import { generateText } from "ai";
@@ -183,14 +142,94 @@ const result = await generateText({
   messages: [
     {
       role: "user",
-      content: "Create a high-priority bug report for the payment system failing"
+      content: "Create a bug report for the checkout page crashing when users apply discount codes"
     }
   ],
   tools,
 });
 ```
 
-### OpenAI Function Calling
+### Streaming with Tool Calls
+
+```typescript
+import { streamText } from "ai";
+import { openai } from "@ai-sdk/openai";
+import { createVercelAITools } from "@tooly/linear";
+
+const tools = createVercelAITools(process.env.LINEAR_API_KEY!);
+
+const { textStream, toolCallStream } = await streamText({
+  model: openai("gpt-4"),
+  messages: [
+    {
+      role: "user",
+      content: "Search for all critical bugs and create a summary report"
+    }
+  ],
+  tools,
+});
+
+// Stream the text response
+for await (const textPart of textStream) {
+  process.stdout.write(textPart);
+}
+
+// Handle tool calls
+for await (const toolCall of toolCallStream) {
+  console.log("Tool call:", toolCall);
+}
+```
+
+### Multiple AI Providers
+
+```typescript
+import { generateText } from "ai";
+import { anthropic } from "@ai-sdk/anthropic";
+import { createVercelAITools } from "@tooly/linear";
+
+const tools = createVercelAITools(process.env.LINEAR_API_KEY!);
+
+// Works with any AI provider
+const result = await generateText({
+  model: anthropic("claude-3-sonnet-20240229"),
+  messages: [
+    {
+      role: "user",
+      content: "Create a project for our upcoming mobile app redesign with Q2 deadline"
+    }
+  ],
+  tools,
+});
+```
+
+### Project Management Workflows
+
+```typescript
+import { generateText } from "ai";
+import { openai } from "@ai-sdk/openai";
+import { createVercelAITools } from "@tooly/linear";
+
+const tools = createVercelAITools(process.env.LINEAR_API_KEY!);
+
+// AI can handle complex project management tasks
+const result = await generateText({
+  model: openai("gpt-4"),
+  messages: [
+    {
+      role: "system",
+      content: "You are a project management assistant. Help organize and track development work."
+    },
+    {
+      role: "user",
+      content: `Based on this customer feedback: "The mobile app is slow and crashes frequently", 
+                create appropriate issues and assign them to the mobile team.`
+    }
+  ],
+  tools,
+});
+```
+
+## Alternative: OpenAI Function Calling
 
 ```typescript
 import OpenAI from "openai";
@@ -220,7 +259,7 @@ for (const toolCall of completion.choices[0].message.tool_calls || []) {
 }
 ```
 
-### Anthropic Claude
+## Alternative: Anthropic Claude
 
 ```typescript
 import Anthropic from "@anthropic-ai/sdk";
@@ -273,9 +312,15 @@ The package includes comprehensive error handling:
 
 ```typescript
 try {
-  const result = await tools.executeFunction("createIssue", {
-    title: "", // This will cause a validation error
-    teamId: "invalid-team-id",
+  const result = await generateText({
+    model: openai("gpt-4"),
+    messages: [
+      {
+        role: "user",
+        content: "Create an issue with invalid data"
+      }
+    ],
+    tools,
   });
 } catch (error) {
   if (error.name === "ZodError") {
@@ -293,34 +338,32 @@ try {
 ### Getting Team Information
 
 ```typescript
-// Get all teams
-const teams = await tools.executeFunction("getTeams", {});
-
-// Find a specific team
-const engineeringTeam = teams.nodes.find(team => 
-  team.name.toLowerCase().includes("engineering")
-);
-
-// Use team ID in issue creation
-await tools.executeFunction("createIssue", {
-  title: "New feature request",
-  teamId: engineeringTeam.id,
+// AI can help you find and work with teams
+const result = await generateText({
+  model: openai("gpt-4"),
+  messages: [
+    {
+      role: "user",
+      content: "Get all teams and create a bug report for the engineering team"
+    }
+  ],
+  tools,
 });
 ```
 
 ### User Management
 
 ```typescript
-// Find a user by email
-const user = await tools.executeFunction("getUser", {
-  email: "developer@company.com"
-});
-
-// Assign issue to user
-await tools.executeFunction("createIssue", {
-  title: "Code review needed",
-  teamId: "team-123",
-  assigneeId: user.id,
+// AI can find users and assign work
+const result = await generateText({
+  model: openai("gpt-4"),
+  messages: [
+    {
+      role: "user",
+      content: "Find the user john@company.com and assign them a code review task"
+    }
+  ],
+  tools,
 });
 ```
 
@@ -335,26 +378,16 @@ Linear uses numeric priority levels:
 - `4`: Low (🔵)
 
 ```typescript
-await tools.executeFunction("createIssue", {
-  title: "Critical security vulnerability",
-  teamId: "team-123",
-  priority: 1, // Urgent
-});
-```
-
-### Workflow States
-
-Each team has its own workflow states. Get them from team information:
-
-```typescript
-const teams = await tools.executeFunction("getTeams", {});
-const team = teams.nodes[0];
-console.log("Available states:", team.states.nodes);
-
-// Update issue to specific state
-await tools.executeFunction("updateIssue", {
-  issueId: "ISS-123",
-  stateId: "state-in-progress",
+// AI can intelligently set priorities based on context
+const result = await generateText({
+  model: openai("gpt-4"),
+  messages: [
+    {
+      role: "user",
+      content: "Create a critical security vulnerability report for the authentication system"
+    }
+  ],
+  tools,
 });
 ```
 
@@ -368,103 +401,91 @@ LINEAR_API_KEY=lin_api_your_key_here
 ```
 
 ### 2. Team ID Management
-Cache team IDs to avoid repeated API calls:
+Let AI handle team discovery:
 
 ```typescript
-const teamCache = new Map();
-
-async function getTeamId(teamName: string) {
-  if (teamCache.has(teamName)) {
-    return teamCache.get(teamName);
-  }
-  
-  const teams = await tools.executeFunction("getTeams", {});
-  const team = teams.nodes.find(t => 
-    t.name.toLowerCase() === teamName.toLowerCase()
-  );
-  
-  if (team) {
-    teamCache.set(teamName, team.id);
-    return team.id;
-  }
-  
-  throw new Error(`Team not found: ${teamName}`);
-}
+// Instead of hardcoding team IDs, let AI find them
+const result = await generateText({
+  model: openai("gpt-4"),
+  messages: [
+    {
+      role: "user",
+      content: "Create a backend issue for the API team"
+    }
+  ],
+  tools,
+});
 ```
 
 ### 3. Issue Templates
-Create reusable issue templates:
+Create reusable issue templates that AI can use:
 
 ```typescript
-const templates = {
-  bug: (title: string, description: string) => ({
-    title: `🐛 ${title}`,
-    description: `## Bug Report\n\n${description}\n\n## Steps to Reproduce\n\n1. \n2. \n3. \n\n## Expected Behavior\n\n## Actual Behavior\n\n## Environment\n\n`,
-    priority: 2,
-  }),
-  
-  feature: (title: string, description: string) => ({
-    title: `✨ ${title}`,
-    description: `## Feature Request\n\n${description}\n\n## Use Case\n\n## Acceptance Criteria\n\n- [ ] \n- [ ] \n- [ ] \n`,
-    priority: 3,
-  }),
-};
-
-// Use templates
-const bugReport = templates.bug(
-  "Login page timeout",
-  "Users experience timeouts when logging in during peak hours"
-);
-
-await tools.executeFunction("createIssue", {
-  ...bugReport,
-  teamId: "team-123",
+// AI can intelligently use templates based on context
+const result = await generateText({
+  model: openai("gpt-4"),
+  messages: [
+    {
+      role: "system",
+      content: `When creating bug reports, use this template:
+      - Clear, descriptive title with 🐛 emoji
+      - Steps to reproduce
+      - Expected vs actual behavior
+      - Environment details`
+    },
+    {
+      role: "user",
+      content: "Create a bug report for the login timeout issue"
+    }
+  ],
+  tools,
 });
 ```
 
 ### 4. Batch Operations
-When creating multiple issues, be mindful of rate limits:
+Use AI to handle multiple operations efficiently:
 
 ```typescript
-async function createIssuesWithDelay(issues: any[], delay = 100) {
-  const results = [];
-  
-  for (const issue of issues) {
-    const result = await tools.executeFunction("createIssue", issue);
-    results.push(result);
-    
-    // Small delay to respect rate limits
-    await new Promise(resolve => setTimeout(resolve, delay));
-  }
-  
-  return results;
-}
+const result = await generateText({
+  model: openai("gpt-4"),
+  messages: [
+    {
+      role: "user",
+      content: `Process this sprint planning request:
+      - Create issues for user authentication
+      - Set up project structure
+      - Assign tasks to appropriate team members
+      - Set priority levels based on dependencies`
+    }
+  ],
+  tools,
+});
 ```
 
 ## Common Use Cases
 
 ### 1. Automated Bug Reporting
 ```typescript
-// AI can automatically create bug reports from user feedback
-"Create a bug report for the shopping cart not calculating tax correctly"
+// AI can automatically create structured bug reports from user feedback
+"Create a bug report based on this user feedback: 'The app crashes when I try to upload large files'"
 ```
 
-### 2. Project Planning
+### 2. Sprint Planning
 ```typescript
-// AI can help create and organize projects
-"Create a project for the upcoming mobile app redesign with Q2 deadline"
+// AI can help with sprint planning and issue creation
+"Plan our next sprint by creating issues for these requirements: user authentication, file upload, dashboard improvements"
 ```
 
 ### 3. Issue Triage
 ```typescript
 // AI can search and organize existing issues
-"Find all high-priority issues assigned to the frontend team"
+"Find all high-priority issues assigned to the frontend team and create a summary"
 ```
 
-### 4. Status Updates
+### 4. Project Management
 ```typescript
-// AI can update issue status based on progress
-"Update issue ISS-456 to mark it as completed and add completion notes"
+// AI can create and manage projects
+"Create a project for our Q2 mobile app redesign with appropriate timeline and team assignments"
 ```
 
 ## Troubleshooting
@@ -481,13 +502,13 @@ Verify your API key from Linear Settings.
 ```
 Error: Team not found
 ```
-Use `getTeams()` to find valid team IDs.
+Let AI use `getTeams()` to find valid team IDs.
 
 **3. User Not Found**
 ```
 Error: User not found
 ```
-Verify the email address or use Linear's user search.
+Use AI to find users by email with `getUser()`.
 
 **4. Rate Limit Exceeded**
 ```
@@ -505,23 +526,31 @@ Use only valid priority numbers (1-4).
 
 ### Customer Support Bot
 ```typescript
-// Create issues directly from customer support conversations
-const issue = await tools.executeFunction("createIssue", {
-  title: `Customer Issue: ${supportTicket.subject}`,
-  description: `**Customer:** ${supportTicket.customer}\n\n**Issue:**\n${supportTicket.description}`,
-  teamId: supportTeamId,
-  priority: supportTicket.severity === "critical" ? 1 : 3,
+// AI can create issues directly from customer support conversations
+const result = await generateText({
+  model: openai("gpt-4"),
+  messages: [
+    {
+      role: "user",
+      content: "Customer John Smith reported: 'Dashboard won't load for our Enterprise account since yesterday. Multiple users affected.'"
+    }
+  ],
+  tools,
 });
 ```
 
 ### Development Workflow
 ```typescript
-// Automatically create issues from code review comments
-const issue = await tools.executeFunction("createIssue", {
-  title: `Code Review: ${pullRequest.title}`,
-  description: `**PR:** ${pullRequest.url}\n\n**Feedback:**\n${review.comment}`,
-  teamId: engineeringTeamId,
-  assigneeId: pullRequest.authorId,
+// AI can create issues from code review feedback
+const result = await generateText({
+  model: openai("gpt-4"),
+  messages: [
+    {
+      role: "user",
+      content: "Code review feedback: 'The authentication logic needs refactoring for better security. Also missing error handling.'"
+    }
+  ],
+  tools,
 });
 ```
 

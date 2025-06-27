@@ -3,9 +3,9 @@ title: Examples
 description: Real-world usage examples and common patterns
 ---
 
-Explore practical examples of using Tooly packages in real AI applications. These examples demonstrate common patterns and best practices.
+Explore practical examples of using Tooly packages with the Vercel AI SDK and other AI frameworks. These examples demonstrate common patterns and best practices for AI-powered applications.
 
-## Email Automation Examples
+## Email Automation with Vercel AI SDK
 
 ### Customer Onboarding Flow
 
@@ -41,16 +41,18 @@ const result = await generateText({
 console.log("Onboarding email sent:", result.text);
 ```
 
-### Support Ticket Notifications
+### Support Ticket Notifications with Streaming
 
 ```typescript
-import { createOpenAIFunctions } from "@tooly/resend";
+import { streamText } from "ai";
+import { openai } from "@ai-sdk/openai";
+import { createVercelAITools } from "@tooly/resend";
 
-const { tools, executeFunction } = createOpenAIFunctions(process.env.RESEND_API_KEY!);
+const tools = createVercelAITools(process.env.RESEND_API_KEY!);
 
 async function notifySupport(ticket: any) {
-  const completion = await openai.chat.completions.create({
-    model: "gpt-4",
+  const { textStream, toolCallStream } = await streamText({
+    model: openai("gpt-4"),
     messages: [
       {
         role: "system",
@@ -69,21 +71,56 @@ async function notifySupport(ticket: any) {
     tools,
   });
 
-  // Execute any tool calls
-  for (const toolCall of completion.choices[0].message.tool_calls || []) {
-    await executeFunction(
-      toolCall.function.name,
-      JSON.parse(toolCall.function.arguments)
-    );
+  // Stream the response while handling tool calls
+  for await (const textPart of textStream) {
+    process.stdout.write(textPart);
+  }
+
+  // Process tool calls
+  for await (const toolCall of toolCallStream) {
+    console.log("Email sent:", toolCall);
   }
 }
 ```
 
-## Project Management Examples
+### Bulk Email Campaigns
+
+```typescript
+import { generateText } from "ai";
+import { anthropic } from "@ai-sdk/anthropic";
+import { createVercelAITools } from "@tooly/resend";
+
+const tools = createVercelAITools(process.env.RESEND_API_KEY!);
+
+// AI can handle bulk email campaigns intelligently
+const result = await generateText({
+  model: anthropic("claude-3-sonnet-20240229"),
+  messages: [
+    {
+      role: "system",
+      content: "You manage email marketing campaigns. Create personalized emails based on user segments."
+    },
+    {
+      role: "user",
+      content: `Send a promotional email about our Black Friday sale to:
+      - Pro users: 30% discount
+      - Enterprise users: Custom pricing consultation
+      - Trial users: Extended trial + 20% discount
+      
+      Make it personalized and compelling.`
+    }
+  ],
+  tools,
+});
+```
+
+## Project Management with Vercel AI SDK
 
 ### Automated Bug Reporting
 
 ```typescript
+import { generateText } from "ai";
+import { openai } from "@ai-sdk/openai";
 import { createVercelAITools } from "@tooly/linear";
 
 const linearTools = createVercelAITools(process.env.LINEAR_API_KEY!);
@@ -97,18 +134,18 @@ async function processBugReport(userFeedback: string) {
         role: "system",
         content: `You analyze user feedback and create structured bug reports in Linear. 
         Always include:
-        - Clear title
+        - Clear title with 🐛 emoji
         - Detailed description
         - Steps to reproduce
         - Expected vs actual behavior
-        
-        Use appropriate priority levels (1-4) based on severity.`
+        - Appropriate priority (1-4) based on severity
+        - Find the right team automatically`
       },
       {
         role: "user",
         content: `User feedback: "${userFeedback}"
         
-        Create a bug report for the engineering team.`
+        Create a bug report for the appropriate engineering team.`
       }
     ],
     tools: linearTools,
@@ -119,21 +156,31 @@ async function processBugReport(userFeedback: string) {
 
 // Example usage
 await processBugReport(
-  "The checkout page keeps crashing when I try to apply a discount code. This happens every time on Chrome."
+  "The checkout page keeps crashing when I try to apply a discount code. This happens every time on Chrome and affects our whole team."
 );
 ```
 
 ### Sprint Planning Assistant
 
 ```typescript
-import { createAnthropicTools } from "@tooly/linear";
+import { streamText } from "ai";
+import { openai } from "@ai-sdk/openai";
+import { createVercelAITools } from "@tooly/linear";
 
-const { tools, executeFunction } = createAnthropicTools(process.env.LINEAR_API_KEY!);
+const tools = createVercelAITools(process.env.LINEAR_API_KEY!);
 
 async function planSprint(requirements: string[]) {
-  const message = await anthropic.messages.create({
-    model: "claude-3-sonnet-20240229",
+  const { textStream, toolCallStream } = await streamText({
+    model: openai("gpt-4"),
     messages: [
+      {
+        role: "system",
+        content: `You're a sprint planning assistant. Create well-structured issues with:
+        - Clear titles and descriptions
+        - Appropriate priority levels
+        - Team assignments based on expertise
+        - Dependencies and relationships`
+      },
       {
         role: "user",
         content: `Plan our next sprint by creating issues for these requirements:
@@ -146,28 +193,76 @@ async function planSprint(requirements: string[]) {
     tools,
   });
 
-  // Execute tool calls to create issues
-  for (const toolUse of message.content.filter((c) => c.type === "tool_use")) {
-    const result = await executeFunction(toolUse.name, toolUse.input);
-    console.log("Issue created:", result.identifier);
+  // Stream planning thoughts
+  for await (const textPart of textStream) {
+    process.stdout.write(textPart);
+  }
+
+  // Execute issue creation
+  for await (const toolCall of toolCallStream) {
+    console.log("Issue created:", toolCall);
   }
 }
+
+// Example usage
+await planSprint([
+  "User authentication with OAuth",
+  "File upload with drag & drop",
+  "Real-time dashboard updates",
+  "Mobile responsive improvements"
+]);
 ```
 
-## Multi-Tool Integration
+### Project Creation and Management
+
+```typescript
+import { generateText } from "ai";
+import { openai } from "@ai-sdk/openai";
+import { createVercelAITools } from "@tooly/linear";
+
+const tools = createVercelAITools(process.env.LINEAR_API_KEY!);
+
+// AI can create entire project structures
+const result = await generateText({
+  model: openai("gpt-4"),
+  messages: [
+    {
+      role: "system",
+      content: `You're a project manager. When creating projects:
+      - Set realistic timelines
+      - Assign appropriate teams
+      - Create initial project structure
+      - Set up milestones and dependencies`
+    },
+    {
+      role: "user",
+      content: `Create a project for our Q2 mobile app redesign:
+      - Timeline: 3 months
+      - Teams: Design, Frontend, Backend, QA
+      - Key features: New UI, Performance improvements, Offline support
+      - Target: App store release by end of Q2`
+    }
+  ],
+  tools,
+});
+```
+
+## Multi-Tool Integration with Vercel AI SDK
 
 ### Complete Customer Support Flow
 
 Combine both email and project management tools for comprehensive customer support:
 
 ```typescript
+import { generateText } from "ai";
+import { openai } from "@ai-sdk/openai";
 import { createVercelAITools as createEmailTools } from "@tooly/resend";
 import { createVercelAITools as createLinearTools } from "@tooly/linear";
 
 const emailTools = createEmailTools(process.env.RESEND_API_KEY!);
 const linearTools = createLinearTools(process.env.LINEAR_API_KEY!);
 
-// Combine tools
+// Combine tools for comprehensive AI workflows
 const allTools = {
   ...emailTools,
   ...linearTools,
@@ -183,12 +278,14 @@ async function handleCustomerIssue(customerData: any, issueDescription: string) 
         1. Creating internal bug reports/feature requests in Linear
         2. Sending appropriate emails to customers
         3. Escalating urgent issues appropriately
+        4. Following up with timeline expectations
         
-        Always acknowledge the customer issue and provide timeline expectations.`
+        Always acknowledge the customer issue and provide clear next steps.`
       },
       {
         role: "user",
-        content: `Customer ${customerData.email} reported: "${issueDescription}"
+        content: `Customer ${customerData.email} (${customerData.plan} plan) reported: 
+        "${issueDescription}"
         
         Handle this support request completely.`
       }
@@ -206,13 +303,18 @@ await handleCustomerIssue(
     name: "John Smith",
     plan: "Enterprise"
   },
-  "Our team can't access the dashboard since yesterday. Multiple users affected."
+  "Our team can't access the dashboard since yesterday. Multiple users affected and it's blocking our work."
 );
 ```
 
 ### DevOps Incident Response
 
 ```typescript
+import { streamText } from "ai";
+import { openai } from "@ai-sdk/openai";
+import { createVercelAITools as createEmailTools } from "@tooly/resend";
+import { createVercelAITools as createLinearTools } from "@tooly/linear";
+
 async function handleIncident(incident: {
   severity: "low" | "medium" | "high" | "critical";
   description: string;
@@ -223,7 +325,7 @@ async function handleIncident(incident: {
     ...createLinearTools(process.env.LINEAR_API_KEY!),
   };
 
-  const result = await generateText({
+  const { textStream, toolCallStream } = await streamText({
     model: openai("gpt-4"),
     messages: [
       {
@@ -235,9 +337,10 @@ async function handleIncident(incident: {
         - Escalate critical issues immediately
         - Follow incident response playbook
         
-        Critical/High: Notify immediately
-        Medium: Standard notification
-        Low: Create ticket only`
+        Severity levels:
+        - Critical/High: Notify immediately + create urgent Linear issue
+        - Medium: Standard notification + normal Linear issue
+        - Low: Create ticket only`
       },
       {
         role: "user",
@@ -252,15 +355,70 @@ async function handleIncident(incident: {
     tools,
   });
 
+  // Stream incident response
+  for await (const textPart of textStream) {
+    process.stdout.write(textPart);
+  }
+
+  // Execute response actions
+  for await (const toolCall of toolCallStream) {
+    console.log("Response action:", toolCall);
+  }
+}
+```
+
+### AI-Powered Development Workflow
+
+```typescript
+import { generateText } from "ai";
+import { openai } from "@ai-sdk/openai";
+import { createVercelAITools as createEmailTools } from "@tooly/resend";
+import { createVercelAITools as createLinearTools } from "@tooly/linear";
+
+const tools = {
+  ...createEmailTools(process.env.RESEND_API_KEY!),
+  ...createLinearTools(process.env.LINEAR_API_KEY!),
+};
+
+// AI can handle complex development workflows
+async function processCodeReview(pullRequest: any, reviewComments: string[]) {
+  const result = await generateText({
+    model: openai("gpt-4"),
+    messages: [
+      {
+        role: "system",
+        content: `You manage development workflows. When processing code reviews:
+        1. Create Linear issues for significant feedback
+        2. Send summary emails to stakeholders
+        3. Prioritize issues based on severity
+        4. Track follow-up actions`
+      },
+      {
+        role: "user",
+        content: `Process code review for PR "${pullRequest.title}":
+        
+        Review comments:
+        ${reviewComments.map((comment, i) => `${i + 1}. ${comment}`).join('\n')}
+        
+        Create appropriate issues and notifications.`
+      }
+    ],
+    tools,
+  });
+
   return result;
 }
 ```
 
-## AI Agent Patterns
+## AI Agent Patterns with Vercel AI SDK
 
 ### Smart Email Assistant
 
 ```typescript
+import { generateText } from "ai";
+import { openai } from "@ai-sdk/openai";
+import { createVercelAITools } from "@tooly/resend";
+
 class EmailAssistant {
   private tools;
 
@@ -274,13 +432,14 @@ class EmailAssistant {
       messages: [
         {
           role: "system",
-          content: `You're an email assistant that can:
+          content: `You're an intelligent email assistant. You can:
           - Send transactional emails
           - Check email delivery status
           - Send bulk email campaigns
-          - Generate email templates
+          - Generate personalized content
+          - Handle email templates intelligently
           
-          Always confirm actions with the user before sending emails.`
+          Always create compelling, personalized content based on context.`
         },
         {
           role: "user",
@@ -294,65 +453,94 @@ class EmailAssistant {
 
     return result;
   }
+
+  async handleBatch(requests: Array<{request: string, context?: any}>) {
+    // Process multiple requests efficiently
+    const results = await Promise.all(
+      requests.map(({request, context}) => this.processRequest(request, context))
+    );
+    return results;
+  }
 }
 
 // Usage
 const assistant = new EmailAssistant(process.env.RESEND_API_KEY!);
 
 await assistant.processRequest(
-  "Send a password reset email to john@company.com",
-  { userInfo: { name: "John Doe", lastLogin: "2024-01-15" } }
+  "Send password reset emails to all users who requested it today",
+  { 
+    resetRequests: [
+      { email: "john@example.com", name: "John Doe", requestTime: "2024-01-15T10:30:00Z" },
+      { email: "jane@example.com", name: "Jane Smith", requestTime: "2024-01-15T14:15:00Z" }
+    ]
+  }
 );
 ```
 
 ### Project Management Agent
 
 ```typescript
+import { streamText } from "ai";
+import { openai } from "@ai-sdk/openai";
+import { createVercelAITools } from "@tooly/linear";
+
 class ProjectAgent {
   private tools;
-  private teamCache = new Map();
 
   constructor(apiKey: string) {
-    this.tools = createOpenAIFunctions(apiKey);
+    this.tools = createVercelAITools(apiKey);
   }
 
-  async executeCommand(command: string) {
-    const { tools, executeFunction } = this.tools;
-
-    const completion = await openai.chat.completions.create({
-      model: "gpt-4",
+  async executeCommand(command: string, context?: any) {
+    const { textStream, toolCallStream } = await streamText({
+      model: openai("gpt-4"),
       messages: [
         {
           role: "system",
-          content: `You're a project management assistant for Linear. You can:
-          - Create and update issues
-          - Search for existing issues
-          - Create projects
-          - Manage team assignments
+          content: `You're an intelligent project management assistant. You can:
+          - Create and update issues with rich context
+          - Search for existing issues intelligently
+          - Create projects with proper structure
+          - Manage team assignments and workload
+          - Track project progress and dependencies
+          - Generate reports and insights
           
-          Always use descriptive titles and detailed descriptions.`
+          Always use descriptive titles, detailed descriptions, and appropriate metadata.`
         },
         {
           role: "user",
-          content: command
+          content: context 
+            ? `Context: ${JSON.stringify(context)}\n\nCommand: ${command}`
+            : command
         }
       ],
-      tools,
+      tools: this.tools,
     });
 
-    const results = [];
-    for (const toolCall of completion.choices[0].message.tool_calls || []) {
-      const result = await executeFunction(
-        toolCall.function.name,
-        JSON.parse(toolCall.function.arguments)
-      );
-      results.push(result);
+    // Collect response and actions
+    let response = "";
+    const actions = [];
+
+    for await (const textPart of textStream) {
+      response += textPart;
     }
 
-    return {
-      response: completion.choices[0].message.content,
-      actions: results
-    };
+    for await (const toolCall of toolCallStream) {
+      actions.push(toolCall);
+    }
+
+    return { response, actions };
+  }
+
+  async generateReport(teamId?: string) {
+    return this.executeCommand(
+      `Generate a comprehensive project status report${teamId ? ` for team ${teamId}` : ''} including:
+      - Active issues and their status
+      - Recent project progress
+      - Upcoming deadlines
+      - Team workload distribution
+      - Key blockers and recommendations`
+    );
   }
 }
 
@@ -360,105 +548,179 @@ class ProjectAgent {
 const agent = new ProjectAgent(process.env.LINEAR_API_KEY!);
 
 const result = await agent.executeCommand(
-  "Create a high-priority bug report for the payment gateway timeout issue affecting checkout"
+  "Analyze our current sprint and create optimization recommendations",
+  { 
+    sprintData: { currentSprint: "Sprint 23", endDate: "2024-02-01" },
+    concerns: ["Backend team overloaded", "Frontend blocked on API"]
+  }
 );
 ```
 
-## Error Handling Patterns
+## Advanced Error Handling Patterns
 
-### Robust Error Handling
+### Robust Multi-Tool Operations
 
 ```typescript
-async function robustEmailSend(emailData: any) {
+import { generateText } from "ai";
+import { openai } from "@ai-sdk/openai";
+import { createVercelAITools as createEmailTools } from "@tooly/resend";
+import { createVercelAITools as createLinearTools } from "@tooly/linear";
+
+async function robustWorkflow(request: string) {
+  const emailTools = createEmailTools(process.env.RESEND_API_KEY!);
+  const linearTools = createLinearTools(process.env.LINEAR_API_KEY!);
+
   const maxRetries = 3;
   let attempt = 0;
 
   while (attempt < maxRetries) {
     try {
-      const result = await tools.executeFunction("sendEmail", emailData);
-      console.log("Email sent successfully:", result.id);
-      return result;
+      const result = await generateText({
+        model: openai("gpt-4"),
+        messages: [
+          {
+            role: "system",
+            content: `Handle requests using available tools. If one tool fails, gracefully use alternatives or partial completion.`
+          },
+          {
+            role: "user",
+            content: request
+          }
+        ],
+        tools: { ...emailTools, ...linearTools },
+      });
+
+      return {
+        success: true,
+        result: result.text,
+        attempt: attempt + 1
+      };
+
     } catch (error) {
       attempt++;
       
       if (error.name === "ZodError") {
         // Validation error - don't retry
-        console.error("Invalid email data:", error.errors);
-        throw error;
+        throw new Error(`Validation failed: ${error.message}`);
       }
       
       if (error.status === 429) {
-        // Rate limit - wait and retry
-        const delay = Math.pow(2, attempt) * 1000; // Exponential backoff
+        // Rate limit - exponential backoff
+        const delay = Math.pow(2, attempt) * 1000;
         console.log(`Rate limited, retrying in ${delay}ms...`);
         await new Promise(resolve => setTimeout(resolve, delay));
         continue;
       }
       
       if (attempt === maxRetries) {
-        console.error("Max retries reached:", error.message);
-        throw error;
+        // Try fallback approach
+        return await fallbackWorkflow(request);
       }
       
       console.log(`Attempt ${attempt} failed, retrying...`);
     }
   }
 }
+
+async function fallbackWorkflow(request: string) {
+  // Simplified workflow with just logging
+  console.log(`Fallback: Could not complete "${request}" - logged for manual processing`);
+  return {
+    success: false,
+    fallback: true,
+    message: "Request logged for manual processing"
+  };
+}
 ```
 
 ### Graceful Degradation
 
 ```typescript
-async function handleWithFallback(primaryAction: () => Promise<any>, fallbackAction: () => Promise<any>) {
+import { generateText } from "ai";
+import { openai } from "@ai-sdk/openai";
+import { createVercelAITools } from "@tooly/resend";
+
+async function emailWithFallback(emailRequest: string) {
+  const emailTools = createVercelAITools(process.env.RESEND_API_KEY!);
+
   try {
-    return await primaryAction();
+    // Primary: AI-powered email
+    const result = await generateText({
+      model: openai("gpt-4"),
+      messages: [
+        {
+          role: "user",
+          content: emailRequest
+        }
+      ],
+      tools: emailTools,
+    });
+
+    return {
+      method: "ai-powered",
+      result: result.text
+    };
+
   } catch (error) {
-    console.warn("Primary action failed, using fallback:", error.message);
-    return await fallbackAction();
+    console.warn("AI email failed, using template fallback:", error.message);
+    
+    // Fallback: Simple template email
+    return {
+      method: "template-fallback",
+      result: "Email request logged and will be processed manually"
+    };
   }
 }
-
-// Example: Try Linear first, fallback to email notification
-await handleWithFallback(
-  () => linearTools.executeFunction("createIssue", issueData),
-  () => emailTools.executeFunction("sendEmail", {
-    to: "admin@company.com",
-    subject: "Manual Issue Creation Required",
-    text: `Failed to create Linear issue: ${JSON.stringify(issueData)}`
-  })
-);
 ```
 
 ## Testing Patterns
 
-### Mock AI Responses
+### Mock AI Responses for Testing
 
 ```typescript
-// For testing without actual AI calls
-function createMockAIResponse(toolCalls: any[]) {
+import { generateText } from "ai";
+import { openai } from "@ai-sdk/openai";
+
+// Mock for testing
+function createMockTools() {
   return {
-    text: "Mock AI response",
-    toolCalls: toolCalls.map(call => ({
-      toolName: call.name,
-      args: call.args
-    }))
+    sendEmail: {
+      description: "Send an email",
+      parameters: { /* schema */ },
+      execute: async (args: any) => ({
+        id: "mock-email-123",
+        success: true,
+        ...args
+      })
+    }
   };
 }
 
-// Test email functionality
-const mockEmailCall = {
-  name: "sendEmail",
-  args: {
-    to: "test@example.com",
-    subject: "Test Email",
-    html: "<p>Test content</p>"
-  }
-};
+// Test AI workflow without actual API calls
+async function testEmailWorkflow() {
+  const mockTools = createMockTools();
+  
+  // Simulate AI response
+  const mockResult = {
+    text: "I'll send that email for you.",
+    toolCalls: [
+      {
+        toolName: "sendEmail",
+        args: {
+          to: "test@example.com",
+          subject: "Test Email",
+          html: "<p>Test content</p>"
+        }
+      }
+    ]
+  };
 
-const response = createMockAIResponse([mockEmailCall]);
+  console.log("Mock test result:", mockResult);
+  return mockResult;
+}
 ```
 
-## Production Deployment
+## Production Deployment Patterns
 
 ### Environment Configuration
 
@@ -476,17 +738,23 @@ export const toolyConfig = {
   ai: {
     provider: process.env.AI_PROVIDER || "openai",
     model: process.env.AI_MODEL || "gpt-4",
+    maxRetries: parseInt(process.env.AI_MAX_RETRIES || "3"),
   }
 };
 
 // Initialize tools with config
-const emailTools = createVercelAITools(toolyConfig.resend.apiKey);
-const linearTools = createVercelAITools(toolyConfig.linear.apiKey);
+import { createVercelAITools as createEmailTools } from "@tooly/resend";
+import { createVercelAITools as createLinearTools } from "@tooly/linear";
+
+export const emailTools = createEmailTools(toolyConfig.resend.apiKey);
+export const linearTools = createLinearTools(toolyConfig.linear.apiKey);
 ```
 
-### Monitoring and Logging
+### Monitoring and Analytics
 
 ```typescript
+import { generateText } from "ai";
+import { openai } from "@ai-sdk/openai";
 import { createVercelAITools } from "@tooly/resend";
 
 // Wrap tools with monitoring
@@ -498,15 +766,37 @@ function createMonitoredTools(apiKey: string) {
       if (typeof target[prop] === 'function') {
         return async function(...args: any[]) {
           const start = Date.now();
+          const toolName = String(prop);
+          
           try {
             const result = await target[prop].apply(target, args);
             const duration = Date.now() - start;
             
-            console.log(`Tool ${String(prop)} succeeded in ${duration}ms`);
+            // Log successful operations
+            console.log(`✅ ${toolName} completed in ${duration}ms`);
+            
+            // Track metrics
+            analytics.track('tool_success', {
+              tool: toolName,
+              duration,
+              timestamp: new Date().toISOString()
+            });
+            
             return result;
           } catch (error) {
             const duration = Date.now() - start;
-            console.error(`Tool ${String(prop)} failed after ${duration}ms:`, error.message);
+            
+            // Log failures
+            console.error(`❌ ${toolName} failed after ${duration}ms:`, error.message);
+            
+            // Track errors
+            analytics.track('tool_error', {
+              tool: toolName,
+              error: error.message,
+              duration,
+              timestamp: new Date().toISOString()
+            });
+            
             throw error;
           }
         };
@@ -515,10 +805,138 @@ function createMonitoredTools(apiKey: string) {
     }
   });
 }
+
+// Usage
+const monitoredTools = createMonitoredTools(process.env.RESEND_API_KEY!);
+```
+
+### Rate Limiting and Queue Management
+
+```typescript
+import { generateText } from "ai";
+import { openai } from "@ai-sdk/openai";
+import { createVercelAITools } from "@tooly/resend";
+
+class QueuedEmailProcessor {
+  private tools;
+  private queue: Array<any> = [];
+  private processing = false;
+  private rateLimitDelay = 1000; // 1 second between requests
+
+  constructor(apiKey: string) {
+    this.tools = createVercelAITools(apiKey);
+  }
+
+  async addToQueue(request: string, context?: any) {
+    this.queue.push({ request, context, timestamp: Date.now() });
+    
+    if (!this.processing) {
+      this.processQueue();
+    }
+  }
+
+  private async processQueue() {
+    this.processing = true;
+
+    while (this.queue.length > 0) {
+      const item = this.queue.shift()!;
+      
+      try {
+        const result = await generateText({
+          model: openai("gpt-4"),
+          messages: [
+            {
+              role: "user",
+              content: item.context 
+                ? `Context: ${JSON.stringify(item.context)}\n\nRequest: ${item.request}`
+                : item.request
+            }
+          ],
+          tools: this.tools,
+        });
+
+        console.log(`✅ Processed: ${item.request.substring(0, 50)}...`);
+        
+        // Rate limiting
+        await new Promise(resolve => setTimeout(resolve, this.rateLimitDelay));
+        
+      } catch (error) {
+        console.error(`❌ Failed to process: ${item.request}`, error.message);
+        
+        // Could implement retry logic here
+      }
+    }
+
+    this.processing = false;
+  }
+}
+
+// Usage
+const processor = new QueuedEmailProcessor(process.env.RESEND_API_KEY!);
+
+// Add multiple requests
+processor.addToQueue("Send welcome email to new users");
+processor.addToQueue("Send weekly newsletter");
+processor.addToQueue("Send payment reminder emails");
+```
+
+## Alternative: OpenAI SDK Examples
+
+For users who prefer OpenAI SDK directly:
+
+```typescript
+import OpenAI from "openai";
+import { createOpenAIFunctions } from "@tooly/resend";
+
+const openai = new OpenAI();
+const { tools, executeFunction } = createOpenAIFunctions(process.env.RESEND_API_KEY!);
+
+async function processWithOpenAI(prompt: string) {
+  const completion = await openai.chat.completions.create({
+    model: "gpt-4",
+    messages: [{ role: "user", content: prompt }],
+    tools,
+  });
+
+  // Execute tool calls
+  for (const toolCall of completion.choices[0].message.tool_calls || []) {
+    const result = await executeFunction(
+      toolCall.function.name,
+      JSON.parse(toolCall.function.arguments)
+    );
+    console.log("Tool result:", result);
+  }
+}
+```
+
+## Alternative: Anthropic SDK Examples
+
+For Claude users:
+
+```typescript
+import Anthropic from "@anthropic-ai/sdk";
+import { createAnthropicTools } from "@tooly/linear";
+
+const anthropic = new Anthropic();
+const { tools, executeFunction } = createAnthropicTools(process.env.LINEAR_API_KEY!);
+
+async function processWithAnthropic(prompt: string) {
+  const message = await anthropic.messages.create({
+    model: "claude-3-sonnet-20240229",
+    messages: [{ role: "user", content: prompt }],
+    tools,
+  });
+
+  // Execute tool calls
+  for (const toolUse of message.content.filter((c) => c.type === "tool_use")) {
+    const result = await executeFunction(toolUse.name, toolUse.input);
+    console.log("Tool result:", result);
+  }
+}
 ```
 
 ## Next Steps
 
-- [📖 Getting Started](/docs/getting-started) - Basic setup guide
+- [🚀 Getting Started](/docs/getting-started) - Basic setup guide with Vercel AI SDK
 - [📦 Packages](/docs/packages) - Detailed package documentation
 - [🔧 Advanced Usage](/docs/advanced) - Advanced patterns and customization 

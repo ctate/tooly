@@ -3,7 +3,7 @@ title: Getting Started
 description: Set up your first AI tool with Tooly in minutes
 ---
 
-Get up and running with Tooly in just a few steps. This guide will walk you through installing your first package and integrating it with your AI application.
+Get up and running with Tooly in just a few steps. This guide will walk you through installing your first package and integrating it with the Vercel AI SDK.
 
 ## Installation
 
@@ -20,9 +20,11 @@ npm install @tooly/linear
 npm install @tooly/core
 ```
 
-## Basic Usage
+## Basic Usage with Vercel AI SDK
 
-### With Vercel AI SDK
+The Vercel AI SDK is the recommended way to use Tooly packages. Here's how to get started:
+
+### Email Example
 
 ```typescript
 import { generateText } from "ai";
@@ -47,7 +49,59 @@ const result = await generateText({
 console.log(result.text);
 ```
 
-### With OpenAI SDK
+### Project Management Example
+
+```typescript
+import { generateText } from "ai";
+import { openai } from "@ai-sdk/openai";
+import { createVercelAITools } from "@tooly/linear";
+
+const tools = createVercelAITools("your-linear-api-key");
+
+const result = await generateText({
+  model: openai("gpt-4"),
+  messages: [
+    {
+      role: "user", 
+      content: "Create a bug report for the login page timeout issue"
+    }
+  ],
+  tools,
+});
+
+console.log(result.text);
+```
+
+### Streaming Responses
+
+Tooly works perfectly with streaming AI responses:
+
+```typescript
+import { streamText } from "ai";
+import { openai } from "@ai-sdk/openai";
+import { createVercelAITools } from "@tooly/resend";
+
+const tools = createVercelAITools("your-resend-api-key");
+
+const { textStream } = await streamText({
+  model: openai("gpt-4"),
+  messages: [
+    {
+      role: "user", 
+      content: "Send a notification email about system maintenance"
+    }
+  ],
+  tools,
+});
+
+for await (const textPart of textStream) {
+  process.stdout.write(textPart);
+}
+```
+
+## Alternative: OpenAI SDK
+
+If you prefer using the OpenAI SDK directly:
 
 ```typescript
 import OpenAI from "openai";
@@ -77,7 +131,9 @@ for (const toolCall of completion.choices[0].message.tool_calls || []) {
 }
 ```
 
-### With Anthropic SDK
+## Alternative: Anthropic SDK
+
+For Claude users:
 
 ```typescript
 import Anthropic from "@anthropic-ai/sdk";
@@ -134,10 +190,10 @@ Tooly packages include built-in error handling and validation:
 
 ```typescript
 try {
-  const result = await executeFunction("sendEmail", {
-    to: "invalid-email", // This will throw a validation error
-    subject: "Test",
-    html: "<p>Hello!</p>"
+  const result = await generateText({
+    model: openai("gpt-4"),
+    messages: [{ role: "user", content: "Send invalid email" }],
+    tools,
   });
 } catch (error) {
   if (error instanceof ZodError) {
