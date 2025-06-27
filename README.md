@@ -13,21 +13,23 @@ Tooly is a collection of AI-powered tool packages designed for seamless integrat
 ## Quick Start
 
 ```bash
-# Install a package
+# Install a tool
 npm install @tooly/resend
+```
 
-# Use with AI SDK
-import { generateText } from "ai";
-import { openai } from "@ai-sdk/openai";
-import { createAITools } from "@tooly/resend";
+```ts
+// Use with AI SDK
+import { generateText } from 'ai'
+import { openai } from '@ai-sdk/openai'
+import { createAITools } from '@tooly/resend'
 
-const tools = createAITools("your-api-key");
+const tools = createAITools('your-api-key')
 
 const result = await generateText({
-  model: openai("gpt-4.1-nano"),
-  messages: [{ role: "user", content: "Send a welcome email" }],
+  model: openai('gpt-4.1-nano'),
+  messages: [{ role: 'user', content: 'Send a welcome email' }],
   tools,
-});
+})
 ```
 
 ## Key Features
