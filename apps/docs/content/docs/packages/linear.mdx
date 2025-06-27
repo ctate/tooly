@@ -3,7 +3,7 @@ title: "@tooly/linear"
 description: Project management tools powered by Linear API for AI applications
 ---
 
-The `@tooly/linear` package provides AI-ready project management functionality powered by the Linear API. Built specifically for the Vercel AI SDK, it's perfect for issue tracking, project management, and team collaboration in AI applications.
+The `@tooly/linear` package provides AI-ready project management functionality powered by the Linear API. Built specifically for the AI SDK, it's perfect for issue tracking, project management, and team collaboration in AI applications.
 
 ## Installation
 
@@ -11,7 +11,7 @@ The `@tooly/linear` package provides AI-ready project management functionality p
 npm install @tooly/linear
 ```
 
-## Quick Start with Vercel AI SDK
+## Quick Start with AI SDK
 
 ```typescript
 import { generateText } from "ai";
@@ -20,7 +20,7 @@ import { createVercelAITools } from "@tooly/linear";
 
 const tools = createVercelAITools("your-linear-api-key");
 
-// Use with Vercel AI SDK
+// Use with AI SDK
 const result = await generateText({
   model: openai("gpt-4"),
   messages: [
@@ -126,7 +126,7 @@ Get information about a specific user by their email address.
 **Parameters:**
 - `email` (string): User's email address
 
-## Vercel AI SDK Integration
+## AI SDK Integration
 
 ### Basic Issue Creation
 

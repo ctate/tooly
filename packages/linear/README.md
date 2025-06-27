@@ -1,6 +1,6 @@
 # @tooly/linear
 
-Linear API tools for AI applications, compatible with OpenAI function calling, Anthropic tool use, and Vercel AI SDK.
+Linear API tools for AI applications, compatible with OpenAI function calling, Anthropic tool use, and AI SDK.
 
 ## Installation
 
@@ -36,7 +36,7 @@ const result = await linear.executeFunction('createIssue', {
 })
 ```
 
-### Vercel AI SDK
+### AI SDK
 
 ```typescript
 import { createVercelAITools } from '@tooly/linear'

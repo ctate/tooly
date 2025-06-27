@@ -7,7 +7,7 @@ import {
 } from './types.js'
 
 /**
- * Create Vercel AI SDK compatible tools from a tool manager
+ * Create AI SDK compatible tools from a tool manager
  */
 export function createVercelAITools<TManager extends ToolManager>(
   toolManager: TManager,

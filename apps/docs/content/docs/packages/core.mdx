@@ -17,7 +17,7 @@ The core package provides:
 
 - **BaseToolManager**: Abstract class for creating tool managers
 - **Type Definitions**: Shared TypeScript interfaces
-- **AI Framework Helpers**: Utilities for OpenAI, Anthropic, and Vercel AI SDK
+- **AI Framework Helpers**: Utilities for OpenAI, Anthropic, and AI SDK
 - **Utility Functions**: Common helpers for tool development
 
 ## BaseToolManager
@@ -118,7 +118,7 @@ The core package includes helper functions for integrating with different AI fra
 
 ### createVercelAITools
 
-Creates Vercel AI SDK compatible tools from a tool manager.
+Creates AI SDK compatible tools from a tool manager.
 
 ```typescript
 import { createVercelAITools } from "@tooly/core";
@@ -129,7 +129,7 @@ const vercelTools = createVercelAITools(
   toolDescriptions
 );
 
-// Use with Vercel AI SDK
+// Use with AI SDK
 const result = await generateText({
   model: openai("gpt-4"),
   messages: [{ role: "user", content: "Use my tool" }],

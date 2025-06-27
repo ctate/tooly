@@ -1,7 +1,7 @@
 {
   "name": "@tooly/resend",
   "version": "0.0.2",
-  "description": "Resend API tools for OpenAI, Anthropic, and Vercel AI SDK",
+  "description": "Resend API tools for OpenAI, Anthropic, and AI SDK",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "exports": {

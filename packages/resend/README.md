@@ -1,6 +1,6 @@
 # @tooly/resend
 
-Resend API tools for OpenAI, Anthropic, and Vercel AI SDK. Convert Resend's email API into AI-compatible tools for sending, retrieving, updating, and canceling emails.
+Resend API tools for OpenAI, Anthropic, and AI SDK. Convert Resend's email API into AI-compatible tools for sending, retrieving, updating, and canceling emails.
 
 ## Installation
 
@@ -114,7 +114,7 @@ if (message.content.some((content) => content.type === 'tool_use')) {
 }
 ```
 
-## Usage with Vercel AI SDK
+## Usage with AI SDK
 
 ```typescript
 import { generateText } from 'ai'

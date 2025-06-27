@@ -1,4 +1,5 @@
 import type { BaseLayoutProps } from 'fumadocs-ui/layouts/shared'
+import { ToolyLogo } from './logos/tooly'
 
 /**
  * Shared layout configurations
@@ -11,7 +12,7 @@ export const baseOptions: BaseLayoutProps = {
   nav: {
     title: (
       <>
-        <img src="/logos/tooly-logo.svg" alt="Tooly Logo" width="24" height="24" className="shrink-0" />
+        <ToolyLogo />
         Tooly
       </>
     ),

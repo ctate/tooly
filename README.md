@@ -2,13 +2,13 @@
 
 <div align="center">
   <img src="apps/docs/public/logos/tooly-logo.svg" alt="Tooly Logo" width="120" height="120">
-  <h3>AI-powered tool packages for the Vercel AI SDK</h3>
+  <h3>AI-powered tool packages for the AI SDK</h3>
   <p>Build intelligent applications with pre-built integrations for email, project management, and more.</p>
 </div>
 
 ## What is Tooly?
 
-Tooly is a collection of AI-powered tool packages designed for seamless integration with the Vercel AI SDK. It provides pre-built, type-safe packages that enable AI applications to interact with popular services like email providers and project management tools.
+Tooly is a collection of AI-powered tool packages designed for seamless integration with the AI SDK. It provides pre-built, type-safe packages that enable AI applications to interact with popular services like email providers and project management tools.
 
 ## Quick Start
 
@@ -16,7 +16,7 @@ Tooly is a collection of AI-powered tool packages designed for seamless integrat
 # Install a package
 npm install @tooly/resend
 
-# Use with Vercel AI SDK
+# Use with AI SDK
 import { generateText } from "ai";
 import { openai } from "@ai-sdk/openai";
 import { createVercelAITools } from "@tooly/resend";
@@ -32,7 +32,7 @@ const result = await generateText({
 
 ## Key Features
 
-- 🚀 **Vercel AI SDK First** - Built specifically for the Vercel AI SDK
+- 🚀 **AI SDK First** - Built specifically for the AI SDK
 - 🤖 **Multi-Framework** - Also works with OpenAI and Anthropic SDKs
 - 📦 **Modular Packages** - Install only what you need
 - 🔒 **Type Safe** - Full TypeScript support with Zod validation

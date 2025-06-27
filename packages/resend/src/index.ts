@@ -52,7 +52,7 @@ export class ResendTools extends BaseToolManager<typeof toolParameterSchemas, ty
 }
 
 /**
- * Create Vercel AI SDK compatible tools
+ * Create AI SDK compatible tools
  */
 export function createVercelAITools(apiKey: string) {
   const resendTools = new ResendTools(apiKey)

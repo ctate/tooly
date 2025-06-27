@@ -11,6 +11,13 @@ export const docs = defineDocs({
   },
 })
 
+export const home = defineDocs({
+  dir: 'content',
+  docs: {
+    schema: frontmatterSchema,
+  },
+})
+
 export default defineConfig({
   mdxOptions: {
     // MDX options

@@ -3,7 +3,7 @@ title: "@tooly/resend"
 description: Email tools powered by Resend API for AI applications
 ---
 
-The `@tooly/resend` package provides AI-ready email functionality powered by the Resend API. Built specifically for the Vercel AI SDK, it's perfect for transactional emails, notifications, and automated communication in AI applications.
+The `@tooly/resend` package provides AI-ready email functionality powered by the Resend API. Built specifically for the AI SDK, it's perfect for transactional emails, notifications, and automated communication in AI applications.
 
 ## Installation
 
@@ -11,7 +11,7 @@ The `@tooly/resend` package provides AI-ready email functionality powered by the
 npm install @tooly/resend
 ```
 
-## Quick Start with Vercel AI SDK
+## Quick Start with AI SDK
 
 ```typescript
 import { generateText } from "ai";
@@ -20,7 +20,7 @@ import { createVercelAITools } from "@tooly/resend";
 
 const tools = createVercelAITools("your-resend-api-key");
 
-// Use with Vercel AI SDK
+// Use with AI SDK
 const result = await generateText({
   model: openai("gpt-4"),
   messages: [
@@ -86,7 +86,7 @@ Check the delivery status of a sent email.
 **Parameters:**
 - `emailId` (string): The ID returned from `sendEmail`
 
-## Vercel AI SDK Integration
+## AI SDK Integration
 
 ### Basic Text Generation
 

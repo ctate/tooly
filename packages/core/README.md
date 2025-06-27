@@ -1,6 +1,6 @@
 # @tooly/core
 
-Core utilities and abstractions for building AI tool packages compatible with OpenAI function calling, Anthropic tool use, and Vercel AI SDK.
+Core utilities and abstractions for building AI tool packages compatible with OpenAI function calling, Anthropic tool use, and AI SDK.
 
 ## Installation
 
@@ -20,7 +20,7 @@ This package provides:
 
 - **BaseToolManager**: Abstract class for creating tool managers
 - **Common Types**: Shared TypeScript types and interfaces
-- **AI Framework Helpers**: Utilities for OpenAI, Anthropic, and Vercel AI SDK integration
+- **AI Framework Helpers**: Utilities for OpenAI, Anthropic, and AI SDK integration
 - **Tool Definition Utilities**: Helpers for defining and validating tools
 
 ## Usage
@@ -84,7 +84,7 @@ import { createVercelAITools, createOpenAIFunctions, createAnthropicTools } from
 
 const toolManager = new MyToolManager('your-api-key')
 
-// Vercel AI SDK
+// AI SDK
 const vercelTools = createVercelAITools(toolManager)
 
 // OpenAI Function Calling
@@ -108,7 +108,7 @@ Abstract base class that provides common functionality for tool managers.
 
 ### Helper Functions
 
-- `createVercelAITools(toolManager)`: Creates Vercel AI SDK compatible tools
+- `createVercelAITools(toolManager)`: Creates AI SDK compatible tools
 - `createOpenAIFunctions(toolManager)`: Creates OpenAI function calling setup
 - `createAnthropicTools(toolManager)`: Creates Anthropic tool use setup
 
