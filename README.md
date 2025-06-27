@@ -2,7 +2,7 @@
 
 <div align="center">
   <img src="apps/docs/public/logos/tooly-logo.svg" alt="Tooly Logo" width="120" height="120">
-  <h3>AI-powered tool packages for the AI SDK</h3>
+  <h3>AI-powered tools</h3>
   <p>Build intelligent applications with pre-built integrations for email, project management, and more.</p>
 </div>
 
