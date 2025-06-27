@@ -31,10 +31,10 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/ctate/tool.git",
+    "url": "https://github.com/ctate/tooly.git",
     "directory": "packages/linear"
   },
-  "homepage": "https://github.com/ctate/tool#readme",
+  "homepage": "https://github.com/ctate/tooly#readme",
   "publishConfig": {
     "access": "public"
   },
