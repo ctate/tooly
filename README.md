@@ -2,8 +2,8 @@
 
 <div align="center">
   <img src="apps/docs/public/logos/tooly-logo.svg" alt="Tooly Logo" width="120" height="120">
-  <h3>AI-powered tools</h3>
-  <p>Build intelligent applications with pre-built integrations for email, project management, and more.</p>
+  <h3>APIs as AI Tools</h3>
+  <p>Tooly packages popular APIs into agent-ready tools</p>
 </div>
 
 ## What is Tooly?
