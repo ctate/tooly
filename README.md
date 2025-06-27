@@ -1,135 +1,76 @@
-# Turborepo starter
+# Tooly
 
-This Turborepo starter is maintained by the Turborepo core team.
+<div align="center">
+  <img src="apps/docs/public/logos/tooly-logo.svg" alt="Tooly Logo" width="120" height="120">
+  <h3>AI-powered tool packages for the Vercel AI SDK</h3>
+  <p>Build intelligent applications with pre-built integrations for email, project management, and more.</p>
+</div>
 
-## Using this example
+## What is Tooly?
 
-Run the following command:
+Tooly is a collection of AI-powered tool packages designed for seamless integration with the Vercel AI SDK. It provides pre-built, type-safe packages that enable AI applications to interact with popular services like email providers and project management tools.
 
-```sh
-npx create-turbo@latest
+## Quick Start
+
+```bash
+# Install a package
+npm install @tooly/resend
+
+# Use with Vercel AI SDK
+import { generateText } from "ai";
+import { openai } from "@ai-sdk/openai";
+import { createVercelAITools } from "@tooly/resend";
+
+const tools = createVercelAITools("your-api-key");
+
+const result = await generateText({
+  model: openai("gpt-4.1-nano"),
+  messages: [{ role: "user", content: "Send a welcome email" }],
+  tools,
+});
 ```
 
-## What's inside?
+## Key Features
 
-This Turborepo includes the following packages/apps:
+- 🚀 **Vercel AI SDK First** - Built specifically for the Vercel AI SDK
+- 🤖 **Multi-Framework** - Also works with OpenAI and Anthropic SDKs
+- 📦 **Modular Packages** - Install only what you need
+- 🔒 **Type Safe** - Full TypeScript support with Zod validation
+- ⚡ **Easy Integration** - Simple setup with consistent APIs
 
-### Apps and Packages
+## Available Packages
 
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
+- **[@tooly/core](./packages/core)** - Base abstractions and utilities
+- **[@tooly/resend](./packages/resend)** - Email tools powered by Resend API
+- **[@tooly/linear](./packages/linear)** - Project management tools powered by Linear API
 
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
+## Documentation
 
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
+📖 **[Full Documentation](https://tooly.dev/docs)** - Complete guides, API references, and examples
 
-### Utilities
+- [Getting Started](https://tooly.dev/docs/getting-started) - Set up your first AI tool
+- [Examples](https://tooly.dev/docs/examples) - Real-world usage examples
+- [Package Docs](https://tooly.dev/docs/packages) - Detailed package documentation
 
-This Turborepo has some additional tools already setup for you:
+## Development
 
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
+This is a monorepo built with Turborepo. To get started:
 
-- [Prettier](https://prettier.io) for code formatting
+```bash
+# Install dependencies
+pnpm install
 
-### Build
+# Start development server
+pnpm dev
 
-To build all apps and packages, run the following command:
-
-```
-cd my-turborepo
-
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build
-yarn dlx turbo build
-pnpm exec turbo build
-```
-
-You can build a specific package by using a [filter](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters):
-
-```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build --filter=docs
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build --filter=docs
-yarn exec turbo build --filter=docs
-pnpm exec turbo build --filter=docs
+# Build all packages
+pnpm build
 ```
 
-### Develop
+## Contributing
 
-To develop all apps and packages, run the following command:
+Contributions are welcome! Please read our [contributing guidelines](./CONTRIBUTING.md) and check out the [documentation](https://tooly.dev/docs) to understand the project structure.
 
-```
-cd my-turborepo
+## License
 
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev
-yarn exec turbo dev
-pnpm exec turbo dev
-```
-
-You can develop a specific package by using a [filter](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters):
-
-```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev --filter=web
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev --filter=web
-yarn exec turbo dev --filter=web
-pnpm exec turbo dev --filter=web
-```
-
-### Remote Caching
-
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
-
-Turborepo can use a technique known as [Remote Caching](https://turborepo.com/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
-
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
-
-```
-cd my-turborepo
-
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo login
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo login
-yarn exec turbo login
-pnpm exec turbo login
-```
-
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
-
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
-
-```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo link
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo link
-yarn exec turbo link
-pnpm exec turbo link
-```
-
-## Useful Links
-
-Learn more about the power of Turborepo:
-
-- [Tasks](https://turborepo.com/docs/crafting-your-repository/running-tasks)
-- [Caching](https://turborepo.com/docs/crafting-your-repository/caching)
-- [Remote Caching](https://turborepo.com/docs/core-concepts/remote-caching)
-- [Filtering](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters)
-- [Configuration Options](https://turborepo.com/docs/reference/configuration)
-- [CLI Usage](https://turborepo.com/docs/reference/command-line-reference)
+MIT License - see [LICENSE](./LICENSE) for details.
