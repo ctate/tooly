@@ -4,8 +4,10 @@ description: AI-powered tools. Build intelligent applications with pre-built int
 full: true
 ---
 
-import Link from "next/link";
-import { AiSdkLogo, OpenAiLogo, AnthropicLogo } from "@tooly/ui/logos";
+import Link from 'next/link'
+import { AiSdkLogo } from '@tooly/ui/logos/ai'
+import { OpenAiLogo } from '@tooly/ui/logos/openai'
+import { AnthropicLogo } from '@tooly/ui/logos/anthropic'
 
 <div className="flex min-h-screen flex-col">
   <main className="flex-1">
@@ -53,17 +55,17 @@ npm install @tooly/resend
 ### 2. Use with AI SDK
 
 ```typescript
-import { generateText } from "ai";
-import { openai } from "@ai-sdk/openai";
-import { createVercelAITools } from "@tooly/resend";
+import { generateText } from 'ai'
+import { openai } from '@ai-sdk/openai'
+import { createVercelAITools } from '@tooly/resend'
 
-const tools = createVercelAITools("your-api-key");
+const tools = createVercelAITools('your-api-key')
 
 const result = await generateText({
-  model: openai("gpt-4.1-nano"),
-  messages: [{ role: "user", content: "Send a welcome email" }],
+  model: openai('gpt-4.1-nano'),
+  messages: [{ role: 'user', content: 'Send a welcome email' }],
   tools,
-});
+})
 ```
 
       </div>
@@ -92,5 +94,6 @@ Works with all major AI frameworks
         </div>
       </div>
     </section>
+
   </main>
-</div> 
+</div>
