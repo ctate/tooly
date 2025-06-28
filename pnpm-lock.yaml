@@ -120,6 +120,34 @@ importers:
         specifier: 5.8.2
         version: 5.8.2
 
+  packages/notion:
+    dependencies:
+      '@notionhq/client':
+        specifier: ^2.2.15
+        version: 2.3.0
+      '@tooly/core':
+        specifier: workspace:*
+        version: link:../core
+      ai:
+        specifier: ^3.0.0
+        version: 3.4.33(openai@4.104.0(zod@3.25.67))(react@19.1.0)(sswr@2.2.0(svelte@5.34.8))(svelte@5.34.8)(vue@3.5.17(typescript@5.8.2))(zod@3.25.67)
+      openai:
+        specifier: ^4.0.0
+        version: 4.104.0(zod@3.25.67)
+      zod:
+        specifier: ^3.23.8
+        version: 3.25.67
+    devDependencies:
+      '@tooly/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
+      '@types/node':
+        specifier: ^22.15.3
+        version: 22.15.3
+      typescript:
+        specifier: 5.8.2
+        version: 5.8.2
+
   packages/resend:
     dependencies:
       '@tooly/core':
@@ -725,6 +753,10 @@ packages:
   '@nodelib/fs.walk@1.2.8':
     resolution: {integrity: sha512-oGB+UxlgWcgQkgwo8GcEGwemoTFt3FIO9ababBmaGwXIoBKZ+GTy0pP185beGg7Llih/NSHSV2XAs1lnznocSg==}
     engines: {node: '>= 8'}
+
+  '@notionhq/client@2.3.0':
+    resolution: {integrity: sha512-l7WqTCpQqC+HibkB9chghONQTYcxNQT0/rOJemBfmuKQRTu2vuV8B3yA395iKaUdDo7HI+0KvQaz9687Xskzkw==}
+    engines: {node: '>=12'}
 
   '@opentelemetry/api@1.9.0':
     resolution: {integrity: sha512-3giAOQvZiH5F9bMlMiv8+GSPMeqg0dbaeo58/0SlA9sxSqZhnUtxzX9/2FzyhS9sWQf5S0GJE0AKBrFqjpeYcg==}
@@ -3986,6 +4018,13 @@ snapshots:
     dependencies:
       '@nodelib/fs.scandir': 2.1.5
       fastq: 1.19.1
+
+  '@notionhq/client@2.3.0':
+    dependencies:
+      '@types/node-fetch': 2.6.12
+      node-fetch: 2.7.0
+    transitivePeerDependencies:
+      - encoding
 
   '@opentelemetry/api@1.9.0': {}
 
