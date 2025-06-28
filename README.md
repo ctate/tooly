@@ -1,7 +1,9 @@
 # Tooly
 
 <div align="center">
-  <img src="tooly-icon.png" alt="Tooly Logo" width="120" height="120">
+  <a href="https://tooly.ctate.dev">
+    <img src="tooly-icon.png" alt="Tooly Logo" width="120" height="120">
+  </a>
   <h3>APIs as AI Tools</h3>
   <p>Tooly packages popular APIs into agent-ready tools</p>
 </div>
