@@ -1,5 +1,5 @@
 import { Resend } from 'resend'
-import { sendEmail, sendBatchEmails, retrieveEmail, updateEmail, cancelEmail } from './tools/index.js'
+import { sendEmail, sendBatchEmails, retrieveEmail, updateEmail, cancelEmail } from './tools'
 import type {
   SendEmailParams,
   SendBatchEmailsParams,
@@ -9,7 +9,7 @@ import type {
   EmailResponse,
   EmailDetails,
   BatchEmailResponse,
-} from './types.js'
+} from './types'
 
 export class ResendHandlers {
   private resend: Resend
