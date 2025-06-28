@@ -1,0 +1,483 @@
+---
+title: Twilio
+description: SMS, WhatsApp, and voice communication tools powered by Twilio API
+---
+
+The `@tooly/twilio` package provides AI-ready communication tools powered by Twilio. Send SMS messages, WhatsApp messages, make voice calls, and manage communications with AI assistance.
+
+## Installation
+
+```bash
+npm install @tooly/twilio
+```
+
+## Quick Start
+
+```typescript
+import { generateText } from 'ai'
+import { openai } from '@ai-sdk/openai'
+import { createAITools } from '@tooly/twilio'
+
+const tools = createAITools(process.env.TWILIO_ACCOUNT_SID!, process.env.TWILIO_AUTH_TOKEN!)
+
+const result = await generateText({
+  model: openai('gpt-4.1-nano'),
+  messages: [
+    {
+      role: 'user',
+      content: 'Send an SMS reminder about the meeting tomorrow at 2 PM to +1234567890',
+    },
+  ],
+  tools,
+})
+
+console.log(result.text)
+```
+
+## Setup
+
+### 1. Create a Twilio Account
+
+1. Sign up at [Twilio](https://www.twilio.com)
+2. Go to [Console Dashboard](https://console.twilio.com)
+3. Find your Account SID and Auth Token
+4. Purchase a phone number for sending messages/calls
+
+### 2. Environment Variables
+
+Store your credentials securely:
+
+```bash
+TWILIO_ACCOUNT_SID=your_account_sid_here
+TWILIO_AUTH_TOKEN=your_auth_token_here
+TWILIO_PHONE_NUMBER=+1234567890
+```
+
+### 3. Initialize the Tools
+
+```typescript
+import { createAITools } from '@tooly/twilio'
+
+const tools = createAITools(process.env.TWILIO_ACCOUNT_SID!, process.env.TWILIO_AUTH_TOKEN!)
+```
+
+## Available Tools
+
+The Twilio package provides the following AI tools:
+
+### sendSms
+
+Sends an SMS message to a phone number.
+
+**Parameters:**
+
+- `to` (string, required): Recipient phone number (E.164 format)
+- `from` (string, required): Sender phone number (your Twilio number)
+- `body` (string, required): Message content (max 1600 characters)
+- `statusCallback` (string, optional): Webhook URL for delivery status
+
+**Example:**
+
+```typescript
+const result = await generateText({
+  model: openai('gpt-4.1-nano'),
+  messages: [
+    {
+      role: 'user',
+      content: 'Send an SMS to +1234567890 with appointment confirmation for tomorrow at 3 PM',
+    },
+  ],
+  tools,
+})
+```
+
+### sendWhatsApp
+
+Sends a WhatsApp message using Twilio's WhatsApp API.
+
+**Parameters:**
+
+- `to` (string, required): Recipient WhatsApp number (E.164 format with "whatsapp:" prefix)
+- `from` (string, required): Sender WhatsApp number (your approved Twilio WhatsApp number)
+- `body` (string, required): Message content
+- `mediaUrl` (array, optional): Array of media URLs to include
+
+**Example:**
+
+```typescript
+const result = await generateText({
+  model: openai('gpt-4.1-nano'),
+  messages: [
+    {
+      role: 'user',
+      content: 'Send a WhatsApp message to +1234567890 with order tracking information',
+    },
+  ],
+  tools,
+})
+```
+
+### makeCall
+
+Initiates a voice call using Twilio.
+
+**Parameters:**
+
+- `to` (string, required): Recipient phone number (E.164 format)
+- `from` (string, required): Caller phone number (your Twilio number)
+- `url` (string, optional): TwiML URL for call instructions
+- `twiml` (string, optional): TwiML content for the call
+- `statusCallback` (string, optional): Webhook URL for call status updates
+
+**Example:**
+
+```typescript
+const result = await generateText({
+  model: openai('gpt-4.1-nano'),
+  messages: [
+    {
+      role: 'user',
+      content: 'Make a call to +1234567890 with a reminder about the appointment',
+    },
+  ],
+  tools,
+})
+```
+
+### getCallStatus
+
+Retrieves the status of a specific call.
+
+**Parameters:**
+
+- `callSid` (string, required): Unique identifier for the call
+
+**Example:**
+
+```typescript
+const result = await generateText({
+  model: openai('gpt-4.1-nano'),
+  messages: [
+    {
+      role: 'user',
+      content: 'Check the status of call CAxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
+    },
+  ],
+  tools,
+})
+```
+
+### getMessageStatus
+
+Retrieves the status of a specific message.
+
+**Parameters:**
+
+- `messageSid` (string, required): Unique identifier for the message
+
+**Example:**
+
+```typescript
+const result = await generateText({
+  model: openai('gpt-4.1-nano'),
+  messages: [
+    {
+      role: 'user',
+      content: 'Check the delivery status of message SMxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
+    },
+  ],
+  tools,
+})
+```
+
+### listMessages
+
+Retrieves a list of messages from your Twilio account.
+
+**Parameters:**
+
+- `to` (string, optional): Filter by recipient phone number
+- `from` (string, optional): Filter by sender phone number
+- `dateSent` (string, optional): Filter by date sent (YYYY-MM-DD)
+- `pageSize` (number, optional): Number of results per page (max 1000)
+
+**Example:**
+
+```typescript
+const result = await generateText({
+  model: openai('gpt-4.1-nano'),
+  messages: [
+    {
+      role: 'user',
+      content: 'Show me all messages sent today',
+    },
+  ],
+  tools,
+})
+```
+
+### listCalls
+
+Retrieves a list of calls from your Twilio account.
+
+**Parameters:**
+
+- `to` (string, optional): Filter by recipient phone number
+- `from` (string, optional): Filter by caller phone number
+- `status` (string, optional): Filter by call status
+- `startTime` (string, optional): Filter by start time
+- `pageSize` (number, optional): Number of results per page (max 1000)
+
+**Example:**
+
+```typescript
+const result = await generateText({
+  model: openai('gpt-4.1-nano'),
+  messages: [
+    {
+      role: 'user',
+      content: 'Show me all failed calls from the past week',
+    },
+  ],
+  tools,
+})
+```
+
+### getPhoneNumber
+
+Retrieves information about a phone number in your Twilio account.
+
+**Parameters:**
+
+- `phoneNumber` (string, required): Phone number to lookup (E.164 format)
+
+**Example:**
+
+```typescript
+const result = await generateText({
+  model: openai('gpt-4.1-nano'),
+  messages: [
+    {
+      role: 'user',
+      content: 'Get information about phone number +1234567890',
+    },
+  ],
+  tools,
+})
+```
+
+## AI Framework Integration
+
+### AI SDK (Recommended)
+
+```typescript
+import { generateText } from 'ai'
+import { openai } from '@ai-sdk/openai'
+import { createAITools } from '@tooly/twilio'
+
+const tools = createAITools(process.env.TWILIO_ACCOUNT_SID!, process.env.TWILIO_AUTH_TOKEN!)
+
+const result = await generateText({
+  model: openai('gpt-4.1-nano'),
+  messages: [
+    {
+      role: 'user',
+      content: 'Send appointment reminders to all patients scheduled for tomorrow',
+    },
+  ],
+  tools,
+})
+```
+
+### OpenAI SDK
+
+```typescript
+import OpenAI from 'openai'
+import { createOpenAIFunctions } from '@tooly/twilio'
+
+const openai = new OpenAI()
+const { tools, executeFunction } = createOpenAIFunctions(
+  process.env.TWILIO_ACCOUNT_SID!,
+  process.env.TWILIO_AUTH_TOKEN!,
+)
+
+const completion = await openai.chat.completions.create({
+  model: 'gpt-4.1-nano',
+  messages: [
+    {
+      role: 'user',
+      content: 'Send SMS notifications about the system maintenance window',
+    },
+  ],
+  tools,
+})
+
+// Execute any tool calls
+for (const toolCall of completion.choices[0].message.tool_calls || []) {
+  const result = await executeFunction(toolCall.function.name, JSON.parse(toolCall.function.arguments))
+  console.log('Tool result:', result)
+}
+```
+
+### Anthropic SDK
+
+```typescript
+import Anthropic from '@anthropic-ai/sdk'
+import { createAnthropicTools } from '@tooly/twilio'
+
+const anthropic = new Anthropic()
+const { tools, executeFunction } = createAnthropicTools(process.env.TWILIO_ACCOUNT_SID!, process.env.TWILIO_AUTH_TOKEN!)
+
+const message = await anthropic.messages.create({
+  model: 'claude-sonnet-4-20250514',
+  messages: [
+    {
+      role: 'user',
+      content: 'Set up automated customer support via SMS and WhatsApp',
+    },
+  ],
+  tools,
+})
+
+// Execute any tool calls
+for (const toolUse of message.content.filter((c) => c.type === 'tool_use')) {
+  const result = await executeFunction(toolUse.name, toolUse.input)
+  console.log('Tool result:', result)
+}
+```
+
+## Error Handling
+
+The Twilio package includes comprehensive error handling:
+
+```typescript
+import { generateText } from 'ai'
+import { ZodError } from 'zod'
+
+try {
+  const result = await generateText({
+    model: openai('gpt-4.1-nano'),
+    messages: [{ role: 'user', content: 'Send invalid SMS' }],
+    tools,
+  })
+} catch (error) {
+  if (error instanceof ZodError) {
+    console.log('Validation error:', error.errors)
+  } else if (error.message.includes('Twilio')) {
+    console.log('Twilio API error:', error.message)
+  } else {
+    console.log('Unexpected error:', error)
+  }
+}
+```
+
+## TypeScript Support
+
+Full TypeScript support with proper types:
+
+```typescript
+import type { TwilioTools } from '@tooly/twilio'
+
+// Type-safe tool manager
+const tools: TwilioTools = createAITools(process.env.TWILIO_ACCOUNT_SID!, process.env.TWILIO_AUTH_TOKEN!)
+
+// Typed message parameters
+interface MessageData {
+  to: string
+  from: string
+  body: string
+}
+```
+
+## Rate Limiting
+
+Twilio has generous rate limits, but the package handles them gracefully:
+
+- SMS: 1 message per second by default (can be increased)
+- Voice: Multiple concurrent calls (based on your account)
+- Automatic retry with exponential backoff
+- Proper error messages for rate limit exceeded
+
+## Advanced Usage
+
+### Custom Tool Manager
+
+For more control, you can use the base tool manager:
+
+```typescript
+import { TwilioTools } from '@tooly/twilio'
+
+const twilioTools = new TwilioTools(process.env.TWILIO_ACCOUNT_SID!, process.env.TWILIO_AUTH_TOKEN!)
+
+// Get available tools
+const tools = twilioTools.getTools()
+
+// Execute tools directly
+const result = await twilioTools.executeFunction('sendSms', {
+  to: '+1234567890',
+  from: process.env.TWILIO_PHONE_NUMBER!,
+  body: 'Your order has been shipped and will arrive tomorrow.',
+})
+
+console.log('Message sent:', result)
+```
+
+### Bulk Communications
+
+Send messages to multiple recipients:
+
+```typescript
+export async function sendBulkReminders(phoneNumbers: string[], message: string) {
+  const promises = phoneNumbers.map(async (phoneNumber) => {
+    return generateText({
+      model: openai('gpt-4.1-nano'),
+      messages: [
+        {
+          role: 'user',
+          content: `Send SMS to ${phoneNumber}: ${message}`,
+        },
+      ],
+      tools,
+    })
+  })
+
+  const results = await Promise.all(promises)
+  return results
+}
+```
+
+### Interactive Voice Response (IVR)
+
+Create dynamic call flows:
+
+```typescript
+export async function createIVRCall(phoneNumber: string, customerName: string) {
+  const twiml = `
+    <Response>
+      <Say voice="alice">Hello ${customerName}, thank you for calling. Press 1 for support, 2 for billing.</Say>
+      <Gather numDigits="1" action="/handle-selection">
+        <Say voice="alice">Please make your selection now.</Say>
+      </Gather>
+    </Response>
+  `
+
+  const result = await generateText({
+    model: openai('gpt-4.1-nano'),
+    messages: [
+      {
+        role: 'user',
+        content: `Make a call to ${phoneNumber} with this TwiML: ${twiml}`,
+      },
+    ],
+    tools,
+  })
+
+  return result
+}
+```
+
+## Next Steps
+
+- [📧 Resend Package](/docs/tools/resend) - Email communications
+- [📋 Linear Package](/docs/tools/linear) - Project management notifications
+- [💡 Examples](/docs/examples) - See Twilio automation in action

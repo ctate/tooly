@@ -1,0 +1,287 @@
+---
+title: Supabase
+description: Database, auth, and storage tools powered by Supabase API
+---
+
+The `@tooly/supabase` package provides AI-ready tools for Supabase backend services. Manage databases, authentication, and file storage with AI assistance.
+
+## Installation
+
+```bash
+npm install @tooly/supabase
+```
+
+## Quick Start
+
+```typescript
+import { generateText } from 'ai'
+import { openai } from '@ai-sdk/openai'
+import { createAITools } from '@tooly/supabase'
+
+const tools = createAITools(process.env.SUPABASE_URL!, process.env.SUPABASE_ANON_KEY!)
+
+const result = await generateText({
+  model: openai('gpt-4.1-nano'),
+  messages: [
+    {
+      role: 'user',
+      content: 'Create a user account and add their profile to the database',
+    },
+  ],
+  tools,
+})
+
+console.log(result.text)
+```
+
+## Setup
+
+### 1. Create a Supabase Project
+
+1. Go to [Supabase](https://supabase.com)
+2. Create a new project
+3. Get your project URL and API keys from Settings > API
+
+### 2. Environment Variables
+
+```bash
+SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_ANON_KEY=your_anon_key_here
+SUPABASE_SERVICE_ROLE_KEY=your_service_role_key_here
+```
+
+### 3. Initialize the Tools
+
+```typescript
+import { createAITools } from '@tooly/supabase'
+
+const tools = createAITools(process.env.SUPABASE_URL!, process.env.SUPABASE_ANON_KEY!)
+```
+
+## Available Tools
+
+### Database Operations
+
+#### selectData
+
+Query data from tables.
+
+**Parameters:**
+
+- `table` (string, required): Table name
+- `columns` (string, optional): Columns to select
+- `filter` (object, optional): Filter conditions
+- `orderBy` (object, optional): Sort order
+
+#### insertData
+
+Insert new records into tables.
+
+**Parameters:**
+
+- `table` (string, required): Table name
+- `data` (object/array, required): Data to insert
+
+#### updateData
+
+Update existing records.
+
+**Parameters:**
+
+- `table` (string, required): Table name
+- `data` (object, required): Update data
+- `filter` (object, required): Update conditions
+
+#### deleteData
+
+Delete records from tables.
+
+**Parameters:**
+
+- `table` (string, required): Table name
+- `filter` (object, required): Delete conditions
+
+#### upsertData
+
+Insert or update records.
+
+**Parameters:**
+
+- `table` (string, required): Table name
+- `data` (object/array, required): Data to upsert
+
+### Authentication
+
+#### signUp
+
+Create new user account.
+
+**Parameters:**
+
+- `email` (string, required): User email
+- `password` (string, required): User password
+- `metadata` (object, optional): Additional user data
+
+#### signIn
+
+Authenticate existing user.
+
+**Parameters:**
+
+- `email` (string, required): User email
+- `password` (string, required): User password
+
+#### signOut
+
+Sign out current user.
+
+#### getUser
+
+Get current authenticated user.
+
+### File Storage
+
+#### createBucket
+
+Create a new storage bucket.
+
+**Parameters:**
+
+- `name` (string, required): Bucket name
+- `options` (object, optional): Bucket configuration
+
+#### uploadFile
+
+Upload file to storage.
+
+**Parameters:**
+
+- `bucket` (string, required): Bucket name
+- `path` (string, required): File path
+- `file` (File/Buffer, required): File to upload
+
+#### downloadFile
+
+Download file from storage.
+
+**Parameters:**
+
+- `bucket` (string, required): Bucket name
+- `path` (string, required): File path
+
+#### listFiles
+
+List files in a bucket.
+
+**Parameters:**
+
+- `bucket` (string, required): Bucket name
+- `folder` (string, optional): Folder path
+
+## AI Framework Integration
+
+### AI SDK (Recommended)
+
+```typescript
+import { generateText } from 'ai'
+import { openai } from '@ai-sdk/openai'
+import { createAITools } from '@tooly/supabase'
+
+const tools = createAITools(process.env.SUPABASE_URL!, process.env.SUPABASE_ANON_KEY!)
+
+const result = await generateText({
+  model: openai('gpt-4.1-nano'),
+  messages: [
+    {
+      role: 'user',
+      content: 'Set up user profiles with avatar uploads',
+    },
+  ],
+  tools,
+})
+```
+
+### OpenAI SDK
+
+```typescript
+import OpenAI from 'openai'
+import { createOpenAIFunctions } from '@tooly/supabase'
+
+const openai = new OpenAI()
+const { tools, executeFunction } = createOpenAIFunctions(process.env.SUPABASE_URL!, process.env.SUPABASE_ANON_KEY!)
+
+const completion = await openai.chat.completions.create({
+  model: 'gpt-4.1-nano',
+  messages: [
+    {
+      role: 'user',
+      content: 'Create a blog management system with posts and authors',
+    },
+  ],
+  tools,
+})
+```
+
+## Error Handling
+
+```typescript
+import { generateText } from 'ai'
+import { ZodError } from 'zod'
+
+try {
+  const result = await generateText({
+    model: openai('gpt-4.1-nano'),
+    messages: [{ role: 'user', content: 'Invalid operation' }],
+    tools,
+  })
+} catch (error) {
+  if (error instanceof ZodError) {
+    console.log('Validation error:', error.errors)
+  } else if (error.message.includes('Supabase')) {
+    console.log('Supabase error:', error.message)
+  }
+}
+```
+
+## Advanced Usage
+
+### Custom Tool Manager
+
+```typescript
+import { SupabaseTools } from '@tooly/supabase'
+
+const supabaseTools = new SupabaseTools(process.env.SUPABASE_URL!, process.env.SUPABASE_ANON_KEY!)
+
+// Execute directly
+const result = await supabaseTools.executeFunction('selectData', {
+  table: 'users',
+  columns: 'id, email, name',
+  filter: { active: true },
+})
+```
+
+### Real-time Subscriptions
+
+```typescript
+// Example: Real-time chat system
+export async function setupRealtimeChat() {
+  const result = await generateText({
+    model: openai('gpt-4.1-nano'),
+    messages: [
+      {
+        role: 'user',
+        content: 'Create a messages table and set up real-time chat functionality',
+      },
+    ],
+    tools,
+  })
+
+  return result
+}
+```
+
+## Next Steps
+
+- [📧 Resend Package](/docs/tools/resend) - Email integration
+- [📋 Linear Package](/docs/tools/linear) - Project management
+- [💡 Examples](/docs/examples) - See Supabase in action

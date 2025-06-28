@@ -1,0 +1,446 @@
+---
+title: GitHub
+description: Repository and issue management tools powered by GitHub API
+---
+
+The `@tooly/github` package provides AI-ready tools for GitHub repository management. Create and manage issues, repositories, and collaborate with your development workflow using AI assistance.
+
+## Installation
+
+```bash
+npm install @tooly/github
+```
+
+## Quick Start
+
+```typescript
+import { generateText } from 'ai'
+import { openai } from '@ai-sdk/openai'
+import { createAITools } from '@tooly/github'
+
+const tools = createAITools(process.env.GITHUB_TOKEN!)
+
+const result = await generateText({
+  model: openai('gpt-4.1-nano'),
+  messages: [
+    {
+      role: 'user',
+      content: 'Create a bug report for the login timeout issue in the mobile app repository',
+    },
+  ],
+  tools,
+})
+
+console.log(result.text)
+```
+
+## Setup
+
+### 1. Create a GitHub Personal Access Token
+
+1. Go to [GitHub Settings > Developer settings > Personal access tokens](https://github.com/settings/tokens)
+2. Click "Generate new token (classic)"
+3. Select the required scopes:
+   - `repo` - Full repository access
+   - `read:user` - Read user profile data
+   - `user:email` - Access user email addresses
+4. Copy the generated token
+
+### 2. Environment Variables
+
+Store your token securely:
+
+```bash
+GITHUB_TOKEN=ghp_your_github_personal_access_token_here
+```
+
+### 3. Initialize the Tools
+
+```typescript
+import { createAITools } from '@tooly/github'
+
+const tools = createAITools(process.env.GITHUB_TOKEN!)
+```
+
+## Available Tools
+
+The GitHub package provides the following AI tools:
+
+### createIssue
+
+Creates a new issue in a GitHub repository.
+
+**Parameters:**
+
+- `owner` (string, required): Repository owner username
+- `repo` (string, required): Repository name
+- `title` (string, required): Issue title
+- `body` (string, optional): Issue description
+- `assignees` (array, optional): List of usernames to assign
+- `milestone` (number, optional): Milestone number
+- `labels` (array, optional): List of label names
+
+**Example:**
+
+```typescript
+const result = await generateText({
+  model: openai('gpt-4.1-nano'),
+  messages: [
+    {
+      role: 'user',
+      content: 'Create a bug report for the payment processing error in the e-commerce repo',
+    },
+  ],
+  tools,
+})
+```
+
+### getIssue
+
+Retrieves a specific issue from a GitHub repository.
+
+**Parameters:**
+
+- `owner` (string, required): Repository owner username
+- `repo` (string, required): Repository name
+- `issue_number` (number, required): Issue number
+
+**Example:**
+
+```typescript
+const result = await generateText({
+  model: openai('gpt-4.1-nano'),
+  messages: [
+    {
+      role: 'user',
+      content: 'Get the details of issue #42 from the myorg/myrepo repository',
+    },
+  ],
+  tools,
+})
+```
+
+### updateIssue
+
+Updates an existing issue in a GitHub repository.
+
+**Parameters:**
+
+- `owner` (string, required): Repository owner username
+- `repo` (string, required): Repository name
+- `issue_number` (number, required): Issue number
+- `title` (string, optional): Updated issue title
+- `body` (string, optional): Updated issue description
+- `state` (string, optional): Issue state ("open" or "closed")
+- `assignees` (array, optional): Updated list of assignees
+- `labels` (array, optional): Updated list of labels
+
+**Example:**
+
+```typescript
+const result = await generateText({
+  model: openai('gpt-4.1-nano'),
+  messages: [
+    {
+      role: 'user',
+      content: 'Close issue #42 and add a comment that it has been resolved',
+    },
+  ],
+  tools,
+})
+```
+
+### searchIssues
+
+Searches for issues across GitHub repositories.
+
+**Parameters:**
+
+- `q` (string, required): Search query
+- `sort` (string, optional): Sort field ("comments", "reactions", "author-date", "committer-date", "created", "updated")
+- `order` (string, optional): Sort order ("asc" or "desc")
+- `per_page` (number, optional): Results per page (max 100)
+- `page` (number, optional): Page number
+
+**Example:**
+
+```typescript
+const result = await generateText({
+  model: openai('gpt-4.1-nano'),
+  messages: [
+    {
+      role: 'user',
+      content: 'Find all open bugs related to authentication in our repositories',
+    },
+  ],
+  tools,
+})
+```
+
+### getRepository
+
+Retrieves information about a GitHub repository.
+
+**Parameters:**
+
+- `owner` (string, required): Repository owner username
+- `repo` (string, required): Repository name
+
+**Example:**
+
+```typescript
+const result = await generateText({
+  model: openai('gpt-4.1-nano'),
+  messages: [
+    {
+      role: 'user',
+      content: 'Get information about the myorg/awesome-project repository',
+    },
+  ],
+  tools,
+})
+```
+
+### getUser
+
+Retrieves information about a GitHub user.
+
+**Parameters:**
+
+- `username` (string, optional): GitHub username (if not provided, returns authenticated user)
+
+**Example:**
+
+```typescript
+const result = await generateText({
+  model: openai('gpt-4.1-nano'),
+  messages: [
+    {
+      role: 'user',
+      content: 'Get information about the GitHub user octocat',
+    },
+  ],
+  tools,
+})
+```
+
+## AI Framework Integration
+
+### AI SDK (Recommended)
+
+```typescript
+import { generateText } from 'ai'
+import { openai } from '@ai-sdk/openai'
+import { createAITools } from '@tooly/github'
+
+const tools = createAITools(process.env.GITHUB_TOKEN!)
+
+const result = await generateText({
+  model: openai('gpt-4.1-nano'),
+  messages: [
+    {
+      role: 'user',
+      content: 'Create a feature request for dark mode support with proper labels and assignment',
+    },
+  ],
+  tools,
+})
+```
+
+### OpenAI SDK
+
+```typescript
+import OpenAI from 'openai'
+import { createOpenAIFunctions } from '@tooly/github'
+
+const openai = new OpenAI()
+const { tools, executeFunction } = createOpenAIFunctions(process.env.GITHUB_TOKEN!)
+
+const completion = await openai.chat.completions.create({
+  model: 'gpt-4.1-nano',
+  messages: [
+    {
+      role: 'user',
+      content: 'Triage and organize the open issues in our main repository',
+    },
+  ],
+  tools,
+})
+
+// Execute any tool calls
+for (const toolCall of completion.choices[0].message.tool_calls || []) {
+  const result = await executeFunction(toolCall.function.name, JSON.parse(toolCall.function.arguments))
+  console.log('Tool result:', result)
+}
+```
+
+### Anthropic SDK
+
+```typescript
+import Anthropic from '@anthropic-ai/sdk'
+import { createAnthropicTools } from '@tooly/github'
+
+const anthropic = new Anthropic()
+const { tools, executeFunction } = createAnthropicTools(process.env.GITHUB_TOKEN!)
+
+const message = await anthropic.messages.create({
+  model: 'claude-sonnet-4-20250514',
+  messages: [
+    {
+      role: 'user',
+      content: 'Analyze our repository issues and create a project roadmap',
+    },
+  ],
+  tools,
+})
+
+// Execute any tool calls
+for (const toolUse of message.content.filter((c) => c.type === 'tool_use')) {
+  const result = await executeFunction(toolUse.name, toolUse.input)
+  console.log('Tool result:', result)
+}
+```
+
+## Error Handling
+
+The GitHub package includes comprehensive error handling:
+
+```typescript
+import { generateText } from 'ai'
+import { ZodError } from 'zod'
+
+try {
+  const result = await generateText({
+    model: openai('gpt-4.1-nano'),
+    messages: [{ role: 'user', content: 'Create invalid issue' }],
+    tools,
+  })
+} catch (error) {
+  if (error instanceof ZodError) {
+    console.log('Validation error:', error.errors)
+  } else if (error.message.includes('GitHub API')) {
+    console.log('GitHub API error:', error.message)
+  } else {
+    console.log('Unexpected error:', error)
+  }
+}
+```
+
+## TypeScript Support
+
+Full TypeScript support with proper types:
+
+```typescript
+import type { GitHubTools } from '@tooly/github'
+
+// Type-safe tool manager
+const tools: GitHubTools = createAITools(process.env.GITHUB_TOKEN!)
+
+// Typed issue parameters
+interface IssueData {
+  title: string
+  body: string
+  labels: string[]
+}
+```
+
+## Rate Limiting
+
+GitHub has rate limits that the package handles gracefully:
+
+- Primary rate limit: 5,000 requests per hour for authenticated users
+- Search API: 30 requests per minute
+- Automatic retry with exponential backoff
+- Proper error messages for rate limit exceeded
+
+## Advanced Usage
+
+### Custom Tool Manager
+
+For more control, you can use the base tool manager:
+
+```typescript
+import { GitHubTools } from '@tooly/github'
+
+const githubTools = new GitHubTools(process.env.GITHUB_TOKEN!)
+
+// Get available tools
+const tools = githubTools.getTools()
+
+// Execute tools directly
+const result = await githubTools.executeFunction('createIssue', {
+  owner: 'myorg',
+  repo: 'myrepo',
+  title: 'Bug: Login form validation error',
+  body: 'Users are unable to log in when special characters are used in passwords.',
+})
+
+console.log('Issue created:', result)
+```
+
+### Issue Management Automation
+
+Automate issue management workflows:
+
+```typescript
+// Example: Auto-triage issues
+export async function triageIssues(owner: string, repo: string) {
+  const result = await generateText({
+    model: openai('gpt-4.1-nano'),
+    messages: [
+      {
+        role: 'user',
+        content: `Review and triage all open issues in ${owner}/${repo}. Assign appropriate labels and prioritize them.`,
+      },
+    ],
+    tools,
+  })
+
+  return result
+}
+
+// Example: Generate release notes
+export async function generateReleaseNotes(owner: string, repo: string, milestone: string) {
+  const result = await generateText({
+    model: openai('gpt-4.1-nano'),
+    messages: [
+      {
+        role: 'user',
+        content: `Generate release notes for milestone "${milestone}" in ${owner}/${repo} based on closed issues and PRs.`,
+      },
+    ],
+    tools,
+  })
+
+  return result
+}
+```
+
+### Webhook Integration
+
+Combine with GitHub webhooks for real-time automation:
+
+```typescript
+// Example webhook handler
+export async function handleIssueWebhook(payload: any) {
+  if (payload.action === 'opened') {
+    // Auto-analyze and categorize new issues
+    const result = await generateText({
+      model: openai('gpt-4.1-nano'),
+      messages: [
+        {
+          role: 'user',
+          content: `Analyze this new issue and add appropriate labels: "${payload.issue.title}" - ${payload.issue.body}`,
+        },
+      ],
+      tools,
+    })
+  }
+}
+```
+
+## Next Steps
+
+- [📋 Linear Package](/docs/tools/linear) - Project management integration
+- [📧 Resend Package](/docs/tools/resend) - Email notifications
+- [💡 Examples](/docs/examples) - See GitHub automation in action

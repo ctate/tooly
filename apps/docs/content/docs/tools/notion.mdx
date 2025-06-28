@@ -1,0 +1,458 @@
+---
+title: Notion
+description: Database and page management tools powered by Notion API
+---
+
+The `@tooly/notion` package provides AI-ready tools for Notion workspace management. Create and manage pages, databases, and content with AI assistance.
+
+## Installation
+
+```bash
+npm install @tooly/notion
+```
+
+## Quick Start
+
+```typescript
+import { generateText } from 'ai'
+import { openai } from '@ai-sdk/openai'
+import { createAITools } from '@tooly/notion'
+
+const tools = createAITools(process.env.NOTION_API_KEY!)
+
+const result = await generateText({
+  model: openai('gpt-4.1-nano'),
+  messages: [
+    {
+      role: 'user',
+      content: 'Create a new project page with tasks database for the mobile app redesign',
+    },
+  ],
+  tools,
+})
+
+console.log(result.text)
+```
+
+## Setup
+
+### 1. Create a Notion Integration
+
+1. Go to [Notion Developers](https://www.notion.so/my-integrations)
+2. Click "New integration"
+3. Fill in the integration details
+4. Copy the "Internal Integration Token"
+
+### 2. Share Pages/Databases
+
+Share the pages or databases you want to access with your integration:
+
+1. Open the page/database in Notion
+2. Click "Share" in the top right
+3. Search for your integration name
+4. Click "Invite"
+
+### 3. Environment Variables
+
+Store your API key securely:
+
+```bash
+NOTION_API_KEY=secret_your_notion_integration_token_here
+```
+
+### 4. Initialize the Tools
+
+```typescript
+import { createAITools } from '@tooly/notion'
+
+const tools = createAITools(process.env.NOTION_API_KEY!)
+```
+
+## Available Tools
+
+The Notion package provides the following AI tools:
+
+### createPage
+
+Creates a new page in Notion with the specified content and properties.
+
+**Parameters:**
+
+- `parent` (object, required): Parent page or database reference
+- `properties` (object, optional): Page properties
+- `children` (array, optional): Page content blocks
+- `icon` (object, optional): Page icon
+- `cover` (object, optional): Page cover image
+
+**Example:**
+
+```typescript
+const result = await generateText({
+  model: openai('gpt-4.1-nano'),
+  messages: [
+    {
+      role: 'user',
+      content: 'Create a new project page titled "Mobile App Redesign" with a brief description',
+    },
+  ],
+  tools,
+})
+```
+
+### getPage
+
+Retrieves a page from Notion by its ID.
+
+**Parameters:**
+
+- `page_id` (string, required): The ID of the page to retrieve
+
+**Example:**
+
+```typescript
+const result = await generateText({
+  model: openai('gpt-4.1-nano'),
+  messages: [
+    {
+      role: 'user',
+      content: 'Get the details of page ID abc123def456',
+    },
+  ],
+  tools,
+})
+```
+
+### updatePage
+
+Updates an existing page's properties and content.
+
+**Parameters:**
+
+- `page_id` (string, required): The ID of the page to update
+- `properties` (object, optional): Updated page properties
+- `icon` (object, optional): Updated page icon
+- `cover` (object, optional): Updated page cover
+
+**Example:**
+
+```typescript
+const result = await generateText({
+  model: openai('gpt-4.1-nano'),
+  messages: [
+    {
+      role: 'user',
+      content: 'Update the project status to "In Progress" for page abc123def456',
+    },
+  ],
+  tools,
+})
+```
+
+### searchPages
+
+Searches for pages in the Notion workspace.
+
+**Parameters:**
+
+- `query` (string, optional): Search query text
+- `filter` (object, optional): Filter criteria
+- `sort` (object, optional): Sort criteria
+
+**Example:**
+
+```typescript
+const result = await generateText({
+  model: openai('gpt-4.1-nano'),
+  messages: [
+    {
+      role: 'user',
+      content: 'Find all pages related to mobile development',
+    },
+  ],
+  tools,
+})
+```
+
+### createDatabase
+
+Creates a new database in Notion.
+
+**Parameters:**
+
+- `parent` (object, required): Parent page reference
+- `title` (array, required): Database title
+- `properties` (object, required): Database schema
+- `icon` (object, optional): Database icon
+- `cover` (object, optional): Database cover
+
+**Example:**
+
+```typescript
+const result = await generateText({
+  model: openai('gpt-4.1-nano'),
+  messages: [
+    {
+      role: 'user',
+      content: 'Create a tasks database with columns for title, status, assignee, and due date',
+    },
+  ],
+  tools,
+})
+```
+
+### getDatabase
+
+Retrieves a database from Notion by its ID.
+
+**Parameters:**
+
+- `database_id` (string, required): The ID of the database to retrieve
+
+**Example:**
+
+```typescript
+const result = await generateText({
+  model: openai('gpt-4.1-nano'),
+  messages: [
+    {
+      role: 'user',
+      content: 'Get the schema of database xyz789abc123',
+    },
+  ],
+  tools,
+})
+```
+
+### updateDatabase
+
+Updates an existing database's properties and schema.
+
+**Parameters:**
+
+- `database_id` (string, required): The ID of the database to update
+- `title` (array, optional): Updated database title
+- `properties` (object, optional): Updated database schema
+
+**Example:**
+
+```typescript
+const result = await generateText({
+  model: openai('gpt-4.1-nano'),
+  messages: [
+    {
+      role: 'user',
+      content: 'Add a priority column to database xyz789abc123',
+    },
+  ],
+  tools,
+})
+```
+
+### queryDatabase
+
+Queries a database for entries matching specific criteria.
+
+**Parameters:**
+
+- `database_id` (string, required): The ID of the database to query
+- `filter` (object, optional): Filter criteria
+- `sorts` (array, optional): Sort criteria
+- `start_cursor` (string, optional): Pagination cursor
+- `page_size` (number, optional): Number of results per page
+
+**Example:**
+
+```typescript
+const result = await generateText({
+  model: openai('gpt-4.1-nano'),
+  messages: [
+    {
+      role: 'user',
+      content: 'Get all incomplete tasks from the project database, sorted by due date',
+    },
+  ],
+  tools,
+})
+```
+
+## AI Framework Integration
+
+### AI SDK (Recommended)
+
+```typescript
+import { generateText } from 'ai'
+import { openai } from '@ai-sdk/openai'
+import { createAITools } from '@tooly/notion'
+
+const tools = createAITools(process.env.NOTION_API_KEY!)
+
+const result = await generateText({
+  model: openai('gpt-4.1-nano'),
+  messages: [
+    {
+      role: 'user',
+      content: 'Create a project management setup with pages for planning, tasks, and notes',
+    },
+  ],
+  tools,
+})
+```
+
+### OpenAI SDK
+
+```typescript
+import OpenAI from 'openai'
+import { createOpenAIFunctions } from '@tooly/notion'
+
+const openai = new OpenAI()
+const { tools, executeFunction } = createOpenAIFunctions(process.env.NOTION_API_KEY!)
+
+const completion = await openai.chat.completions.create({
+  model: 'gpt-4.1-nano',
+  messages: [
+    {
+      role: 'user',
+      content: 'Create a knowledge base page with documentation structure',
+    },
+  ],
+  tools,
+})
+
+// Execute any tool calls
+for (const toolCall of completion.choices[0].message.tool_calls || []) {
+  const result = await executeFunction(toolCall.function.name, JSON.parse(toolCall.function.arguments))
+  console.log('Tool result:', result)
+}
+```
+
+### Anthropic SDK
+
+```typescript
+import Anthropic from '@anthropic-ai/sdk'
+import { createAnthropicTools } from '@tooly/notion'
+
+const anthropic = new Anthropic()
+const { tools, executeFunction } = createAnthropicTools(process.env.NOTION_API_KEY!)
+
+const message = await anthropic.messages.create({
+  model: 'claude-sonnet-4-20250514',
+  messages: [
+    {
+      role: 'user',
+      content: 'Set up a project tracking system with databases and templates',
+    },
+  ],
+  tools,
+})
+
+// Execute any tool calls
+for (const toolUse of message.content.filter((c) => c.type === 'tool_use')) {
+  const result = await executeFunction(toolUse.name, toolUse.input)
+  console.log('Tool result:', result)
+}
+```
+
+## Error Handling
+
+The Notion package includes comprehensive error handling:
+
+```typescript
+import { generateText } from 'ai'
+import { ZodError } from 'zod'
+
+try {
+  const result = await generateText({
+    model: openai('gpt-4.1-nano'),
+    messages: [{ role: 'user', content: 'Create invalid page' }],
+    tools,
+  })
+} catch (error) {
+  if (error instanceof ZodError) {
+    console.log('Validation error:', error.errors)
+  } else if (error.message.includes('Notion API')) {
+    console.log('Notion API error:', error.message)
+  } else {
+    console.log('Unexpected error:', error)
+  }
+}
+```
+
+## TypeScript Support
+
+Full TypeScript support with proper types:
+
+```typescript
+import type { NotionTools } from '@tooly/notion'
+
+// Type-safe tool manager
+const tools: NotionTools = createAITools(process.env.NOTION_API_KEY!)
+
+// Typed page parameters
+interface PageData {
+  title: string
+  properties: Record<string, any>
+}
+```
+
+## Rate Limiting
+
+Notion has rate limits that the package handles gracefully:
+
+- Automatic retry with exponential backoff
+- Request queuing for bulk operations
+- Proper error messages for rate limit exceeded
+
+## Advanced Usage
+
+### Custom Tool Manager
+
+For more control, you can use the base tool manager:
+
+```typescript
+import { NotionTools } from '@tooly/notion'
+
+const notionTools = new NotionTools(process.env.NOTION_API_KEY!)
+
+// Get available tools
+const tools = notionTools.getTools()
+
+// Execute tools directly
+const result = await notionTools.executeFunction('createPage', {
+  parent: { page_id: 'parent-page-id' },
+  properties: {
+    title: {
+      title: [{ type: 'text', text: { content: 'New Project Page' } }],
+    },
+  },
+})
+
+console.log('Page created:', result)
+```
+
+### Workspace Automation
+
+Automate workspace management:
+
+```typescript
+// Example: Auto-organize pages
+export async function organizeWorkspace() {
+  const result = await generateText({
+    model: openai('gpt-4.1-nano'),
+    messages: [
+      {
+        role: 'user',
+        content: 'Create a project structure with pages for documentation, tasks, and meetings',
+      },
+    ],
+    tools,
+  })
+
+  return result
+}
+```
+
+## Next Steps
+
+- [📧 Resend Package](/docs/tools/resend) - Email automation
+- [📋 Linear Package](/docs/tools/linear) - Project management
+- [💡 Examples](/docs/examples) - See Notion in action
