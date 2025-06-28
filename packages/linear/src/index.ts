@@ -1,5 +1,5 @@
 import { LinearHandlers } from './handlers.js'
-import { linearTools, toolParameterSchemas } from './tools.js'
+import { linearTools, toolParameterSchemas } from './tools/index.js'
 import {
   BaseToolManager,
   createAITools as coreCreateVercelAITools,
@@ -9,7 +9,7 @@ import {
 } from '@tooly/core'
 
 export * from './types.js'
-export * from './tools.js'
+export * from './tools/index.js'
 export * from './handlers.js'
 
 /**

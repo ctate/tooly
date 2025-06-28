@@ -1,5 +1,5 @@
 import { ResendHandlers } from './handlers.js'
-import { resendTools, toolParameterSchemas } from './tools.js'
+import { resendTools, toolParameterSchemas } from './tools/index.js'
 import {
   BaseToolManager,
   createAITools as coreCreateVercelAITools,
@@ -9,7 +9,7 @@ import {
 } from '@tooly/core'
 
 export * from './types.js'
-export * from './tools.js'
+export * from './tools/index.js'
 export * from './handlers.js'
 
 /**

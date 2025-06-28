@@ -1,16 +1,6 @@
-import { z } from 'zod'
-import {
-  SendEmailSchema,
-  SendBatchEmailsSchema,
-  UpdateEmailSchema,
-  type SendEmailParams,
-  type SendBatchEmailsParams,
-  type RetrieveEmailParams,
-  type UpdateEmailParams,
-  type CancelEmailParams,
-} from './types.js'
+import { Resend } from 'resend'
+import type { SendEmailParams, EmailResponse } from '../types.js'
 
-// Tool definitions for OpenAI/Anthropic function calling
 export const sendEmailTool = {
   name: 'sendEmail',
   description: 'Send a single email using Resend',
@@ -93,86 +83,19 @@ export const sendEmailTool = {
   },
 } as const
 
-export const sendBatchEmailsTool = {
-  name: 'sendBatchEmails',
-  description: 'Send up to 100 batch emails at once using Resend',
-  parameters: {
-    type: 'object',
-    properties: {
-      emails: {
-        type: 'array',
-        items: sendEmailTool.parameters,
-        maxItems: 100,
-        description: 'Array of email objects to send (max 100)',
-      },
-    },
-    required: ['emails'],
-  },
-} as const
-
-export const retrieveEmailTool = {
-  name: 'retrieveEmail',
-  description: 'Retrieve details of a single email by ID',
-  parameters: {
-    type: 'object',
-    properties: {
-      id: {
-        type: 'string',
-        description: 'The email ID to retrieve',
-      },
-    },
-    required: ['id'],
-  },
-} as const
-
-export const updateEmailTool = {
-  name: 'updateEmail',
-  description: 'Update a scheduled email',
-  parameters: {
-    type: 'object',
-    properties: {
-      id: {
-        type: 'string',
-        description: 'The email ID to update',
-      },
-      scheduled_at: {
-        type: 'string',
-        description: 'New scheduled time. Use natural language (e.g., "in 1 min") or ISO 8601 format',
-      },
-    },
-    required: ['id'],
-  },
-} as const
-
-export const cancelEmailTool = {
-  name: 'cancelEmail',
-  description: 'Cancel a scheduled email',
-  parameters: {
-    type: 'object',
-    properties: {
-      id: {
-        type: 'string',
-        description: 'The email ID to cancel',
-      },
-    },
-    required: ['id'],
-  },
-} as const
-
-// Export all tools as an array
-export const resendTools = [
-  sendEmailTool,
-  sendBatchEmailsTool,
-  retrieveEmailTool,
-  updateEmailTool,
-  cancelEmailTool,
-] as const
-
-// Tool parameter validation schemas
-export const toolParameterSchemas = {
-  sendEmail: SendEmailSchema,
-  sendBatchEmails: z.object({ emails: SendBatchEmailsSchema }),
-  retrieveEmail: z.object({ id: z.string() }),
-  updateEmail: z.object({ id: z.string() }).merge(UpdateEmailSchema),
-  cancelEmail: z.object({ id: z.string() }),
-} as const
+/**
+ * Send a single email
+ */
+export async function sendEmail(resend: Resend, params: SendEmailParams): Promise<EmailResponse> {
+  try {
+    // Ensure at least one of html, text, or react is provided
+    const emailParams = {
+      ...params,
+      html: params.html || (params.text ? undefined : '<p>No content provided</p>'),
+    }
+    const result = await resend.emails.send(emailParams as any)
+    return { id: result.data?.id || '' }
+  } catch (error) {
+    throw new Error(`Failed to send email: ${error instanceof Error ? error.message : String(error)}`)
+  }
+}
