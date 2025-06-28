@@ -50,11 +50,11 @@ const result = await generateText({
 
 ## Documentation
 
-📖 **[Full Documentation](https://tooly.dev/docs)** - Complete guides, API references, and examples
+📖 **[Full Documentation](https://tooly.ctate.dev/docs)** - Complete guides, API references, and examples
 
-- [Getting Started](https://tooly.dev/docs/getting-started) - Set up your first AI tool
-- [Examples](https://tooly.dev/docs/examples) - Real-world usage examples
-- [Package Docs](https://tooly.dev/docs/packages) - Detailed package documentation
+- [Getting Started](https://tooly.ctate.dev/docs/getting-started) - Set up your first AI tool
+- [Examples](https://tooly.ctate.dev/docs/examples) - Real-world usage examples
+- [Package Docs](https://tooly.ctate.dev/docs/packages) - Detailed package documentation
 
 ## Development
 
@@ -73,7 +73,7 @@ pnpm build
 
 ## Contributing
 
-Contributions are welcome! Please read our [contributing guidelines](./CONTRIBUTING.md) and check out the [documentation](https://tooly.dev/docs) to understand the project structure.
+Contributions are welcome! Please read our [contributing guidelines](./CONTRIBUTING.md) and check out the [documentation](https://tooly.ctate.dev/docs) to understand the project structure.
 
 ## License
 
