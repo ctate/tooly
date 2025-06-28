@@ -44,9 +44,9 @@ const result = await generateText({
 
 ## Available Packages
 
-- **[@tooly/core](./packages/core)** - Base abstractions and utilities
 - **[@tooly/resend](./packages/resend)** - Email tools powered by Resend API
 - **[@tooly/linear](./packages/linear)** - Project management tools powered by Linear API
+- **[@tooly/core](./packages/core)** - Base abstractions and utilities
 
 ## Documentation
 
