@@ -1,5 +1,13 @@
 # @tooly/notion
 
+## 0.0.2
+
+### Patch Changes
+
+- adds supabase, notion, github, twilio
+- Updated dependencies
+  - @tooly/core@0.0.5
+
 ## 0.0.1
 
 ### Patch Changes
