@@ -36,11 +36,11 @@ const result = await generateText({
 
 ## Key Features
 
-- 🚀 **AI SDK First** - Built specifically for the AI SDK
-- 🤖 **Multi-Framework** - Also works with OpenAI and Anthropic SDKs
-- 📦 **Modular Packages** - Install only what you need
-- 🔒 **Type Safe** - Full TypeScript support with Zod validation
-- ⚡ **Easy Integration** - Simple setup with consistent APIs
+- **AI SDK First** - Built specifically for the AI SDK
+- **Multi-Framework** - Also works with OpenAI and Anthropic SDKs
+- **Modular Packages** - Install only what you need
+- **Type Safe** - Full TypeScript support with Zod validation
+- **Easy Integration** - Simple setup with consistent APIs
 
 ## Available Packages
 
