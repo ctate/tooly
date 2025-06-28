@@ -50,11 +50,7 @@ const result = await generateText({
 
 ## Documentation
 
-📖 **[Full Documentation](https://tooly.ctate.dev/docs)** - Complete guides, API references, and examples
-
-- [Getting Started](https://tooly.ctate.dev/docs/getting-started) - Set up your first AI tool
-- [Examples](https://tooly.ctate.dev/docs/examples) - Real-world usage examples
-- [Package Docs](https://tooly.ctate.dev/docs/packages) - Detailed package documentation
+**[Full Documentation](https://tooly.ctate.dev/docs)** - Complete guides, API references, and examples
 
 ## Development
 
