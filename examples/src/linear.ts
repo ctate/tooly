@@ -18,4 +18,4 @@ const { toolResults } = await generateText({
   tools,
 })
 
-console.log(toolResults[0]?.result.issues)
+console.log(JSON.stringify(toolResults[0]?.result, null, 2))

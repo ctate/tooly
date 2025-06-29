@@ -1,5 +1,5 @@
 import { LinearClient } from '@linear/sdk'
-import { createIssue, getIssue, updateIssue, searchIssues, createProject, getTeams, getUser } from './tools'
+import { createIssue, getIssue, updateIssue, searchIssues, createProject, getTeams, getUser } from './tools/index.js'
 import type {
   CreateIssueParams,
   GetIssueParams,

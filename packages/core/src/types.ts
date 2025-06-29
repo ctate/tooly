@@ -24,13 +24,8 @@ export interface ToolExecutionResult {
 }
 
 // AI Framework tool interfaces
-export interface VercelAITool {
-  description: string
-  parameters: z.ZodSchema
-  execute: (...args: any[]) => Promise<any>
-}
-
-export type VercelAITools = Record<string, VercelAITool>
+// AI SDK 4+ tool type (returned by tool() function)
+export type VercelAITools = Record<string, any> // Tools created by AI SDK tool() function
 
 export interface OpenAIFunctionSetup {
   tools: ToolDefinitions
