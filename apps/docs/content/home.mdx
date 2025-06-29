@@ -8,51 +8,164 @@ import Link from 'next/link'
 import { AiLogo } from '@private/ui/logos/ai'
 import { OpenAiLogo } from '@private/ui/logos/openai'
 import { AnthropicLogo } from '@private/ui/logos/anthropic'
+import { Star } from 'lucide-react'
 
 <div className="flex min-h-screen flex-col">
   <main className="flex-1">
-    <section className="container flex flex-col items-center justify-center space-y-6 py-8 md:py-12 lg:py-24">
-      <div className="mx-auto flex max-w-[58rem] flex-col items-center space-y-4 text-center">
+    <section className="relative overflow-hidden">
+      {/* Background gradient */}
+      <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-blue-950/20 dark:via-indigo-950/20 dark:to-purple-950/20" />
+      <div className="absolute inset-0 bg-grid-slate-100/50 dark:bg-grid-slate-800/50" />
+      
+      <div className="relative container flex flex-col items-center justify-center space-y-8 py-16 md:py-20 lg:py-32">
+        <div className="mx-auto flex max-w-[64rem] flex-col items-center space-y-6 text-center">
+          
+          {/* Badge */}
+          <a
+            className="inline-flex gap-1 items-center rounded-full border px-3 py-1 text-xs font-medium bg-gradient-to-r from-blue-500/10 to-purple-500/10 border-blue-500/20 text-blue-700 dark:text-blue-300"
+            href="https://github.com/ctate/tooly"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Star className="h-4 w-4 mr-1" />
+            <span>Star on GitHub</span>
+          </a>
 
-<h1 className="text-6xl font-bold">APIs as AI Tools</h1>
+          <h1 className="text-5xl font-bold tracking-tight sm:text-6xl md:text-7xl lg:text-8xl">
+            <span className="text-white">
+              APIs as AI Tools
+            </span>
+          </h1>
 
-Tooly packages popular APIs into agent-ready tools
+          <div className="max-w-[42rem] leading-normal text-muted-foreground sm:text-xl sm:leading-8">
+            Tooly packages popular APIs into <span className="font-semibold text-foreground"> agent-ready tools</span>.
+          </div>
 
-<div className="space-x-4">
-  <Link
-    href="/docs"
-    className="inline-flex h-10 items-center justify-center rounded-md bg-primary px-8 py-2 text-sm font-medium text-primary-foreground ring-offset-background transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
-  >
-    Get Started
-  </Link>
-  <Link
-    href="/docs/examples"
-    className="inline-flex h-10 items-center justify-center rounded-md border border-input bg-background px-8 py-2 text-sm font-medium ring-offset-background transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
-  >
-    View Examples
-  </Link>
-</div>
+          <div className="flex flex-col gap-4 sm:flex-row sm:gap-6">
+            <Link
+              href="/docs"
+              className="inline-flex h-12 items-center justify-center rounded-lg bg-gradient-to-r from-blue-600 to-purple-600 px-8 py-3 text-sm font-semibold text-white shadow-lg transition-all hover:shadow-xl hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+            >
+              Get Started →
+            </Link>
+            <Link
+              href="/docs/examples"
+              className="inline-flex h-12 items-center justify-center rounded-lg border border-input bg-background/80 backdrop-blur-sm px-8 py-3 text-sm font-semibold transition-all hover:bg-accent hover:text-accent-foreground hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            >
+              View Examples
+            </Link>
+          </div>
 
+          {/* Stats */}
+          {/* <div className="mt-8 flex flex-wrap justify-center gap-8 text-center">
+            <div className="flex flex-col">
+              <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">5+</div>
+              <div className="text-sm text-muted-foreground">API Integrations</div>
+            </div>
+            <div className="flex flex-col">
+              <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">TypeScript</div>
+              <div className="text-sm text-muted-foreground">First</div>
+            </div>
+            <div className="flex flex-col">
+              <div className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">3</div>
+              <div className="text-sm text-muted-foreground">AI Frameworks</div>
+            </div>
+          </div> */}
+
+        </div>
       </div>
     </section>
 
-    <section className="container space-y-6 py-8 md:py-12 lg:py-24">
-      <div className="mx-auto flex max-w-[58rem] flex-col items-center space-y-4 text-center">
+    <section className="container space-y-8 py-16 md:py-20 lg:py-24">
+      <div className="mx-auto flex max-w-[58rem] flex-col items-center space-y-6 text-center">
 
-<h2 className="text-4xl font-bold">Quick Start</h2>
+<h2 className="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl">
+  <span className="text-white">Production-Ready Integrations</span>
+</h2>
 
-Get started with Tooly in just a few lines of code using the AI SDK.
+<div className="text-lg text-muted-foreground max-w-[46rem]">
+  Each toolkit includes authentication, error handling, rate limiting, and comprehensive TypeScript support. Just plug
+  in your API key and start building.
+</div>
 
       </div>
-      <div className="mx-auto max-w-[58rem] space-y-6">
+      <div className="mx-auto grid justify-center gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 md:max-w-[72rem]">
+        <Link href="/docs/tools/github" className="group relative flex flex-col items-center justify-center p-6 text-center rounded-xl border bg-card/50 backdrop-blur-sm text-card-foreground shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 hover:bg-gradient-to-br hover:from-slate-50 hover:to-slate-100 dark:hover:from-slate-800 dark:hover:to-slate-900">
+          <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-blue-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+          <img src="/logos/github-light.svg" alt="GitHub" className="h-12 w-auto mb-3 relative z-10 dark:hidden" />
+          <img src="/logos/github-dark.svg" alt="GitHub" className="h-12 w-auto mb-3 relative z-10 hidden dark:block" />
+          <div className="text-lg font-semibold relative z-10">GitHub</div>
+          <div className="text-sm text-muted-foreground relative z-10">@tooly/github</div>
+        </Link>
+        <Link href="/docs/tools/linear" className="group relative flex flex-col items-center justify-center p-6 text-center rounded-xl border bg-card/50 backdrop-blur-sm text-card-foreground shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 hover:bg-gradient-to-br hover:from-slate-50 hover:to-slate-100 dark:hover:from-slate-800 dark:hover:to-slate-900">
+          <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-blue-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+          <img src="/logos/linear.svg" alt="Linear" className="h-12 w-auto mb-3 relative z-10" />
+          <div className="text-lg font-semibold relative z-10">Linear</div>
+          <div className="text-sm text-muted-foreground relative z-10">@tooly/linear</div>
+        </Link>
+        <Link href="/docs/tools/notion" className="group relative flex flex-col items-center justify-center p-6 text-center rounded-xl border bg-card/50 backdrop-blur-sm text-card-foreground shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 hover:bg-gradient-to-br hover:from-slate-50 hover:to-slate-100 dark:hover:from-slate-800 dark:hover:to-slate-900">
+          <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-blue-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+          <img src="/logos/notion.svg" alt="Notion" className="h-12 w-auto mb-3 relative z-10" />
+          <div className="text-lg font-semibold relative z-10">Notion</div>
+          <div className="text-sm text-muted-foreground relative z-10">@tooly/notion</div>
+        </Link>
+        <Link href="/docs/tools/resend" className="group relative flex flex-col items-center justify-center p-6 text-center rounded-xl border bg-card/50 backdrop-blur-sm text-card-foreground shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 hover:bg-gradient-to-br hover:from-slate-50 hover:to-slate-100 dark:hover:from-slate-800 dark:hover:to-slate-900">
+          <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-blue-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+          <img src="/logos/resend-light.svg" alt="Resend" className="h-12 w-auto mb-3 relative z-10 dark:hidden" />
+          <img src="/logos/resend-dark.svg" alt="Resend" className="h-12 w-auto mb-3 relative z-10 hidden dark:block" />
+          <div className="text-lg font-semibold relative z-10">Resend</div>
+          <div className="text-sm text-muted-foreground relative z-10">@tooly/resend</div>
+        </Link>
+        <Link href="/docs/tools/supabase" className="group relative flex flex-col items-center justify-center p-6 text-center rounded-xl border bg-card/50 backdrop-blur-sm text-card-foreground shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 hover:bg-gradient-to-br hover:from-slate-50 hover:to-slate-100 dark:hover:from-slate-800 dark:hover:to-slate-900">
+          <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-blue-500/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+          <img src="/logos/supabase.svg" alt="Supabase" className="h-12 w-auto mb-3 relative z-10" />
+          <div className="text-lg font-semibold relative z-10">Supabase</div>
+          <div className="text-sm text-muted-foreground relative z-10">@tooly/supabase</div>
+        </Link>
+      </div>
+    </section>
 
-### 1. Install a package
+    <section className="container space-y-8 py-16 md:py-20 lg:py-24">
+      <div className="mx-auto flex max-w-[58rem] flex-col items-center space-y-6 text-center">
 
+<h2 className="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl">
+  <span className="text-white">Ready in 30 Seconds</span>
+</h2>
+
+<div className="text-lg text-muted-foreground max-w-[46rem]">
+  Install any toolkit and start building AI agents with powerful integrations. No complex setup, no boilerplate code.
+</div>
+
+      </div>
+      <div className="mx-auto max-w-[64rem] space-y-8">
+
+<div className="grid gap-8 md:grid-cols-2">
+  <div className="space-y-4">
+    <div className="flex items-center gap-3">
+      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-r from-blue-500 to-purple-500 text-sm font-bold text-white">
+        1
+      </div>
+      <h3 className="text-xl font-semibold">Install & Configure</h3>
+    </div>
+    
 ```bash
 npm install @tooly/resend
 ```
 
-### 2. Use with AI SDK
+<div>
+  Simply install any toolkit and add your API key. Each package includes TypeScript definitions and comprehensive
+  documentation.
+</div>
+
+  </div>
+  
+  <div className="space-y-4">
+    <div className="flex items-center gap-3">
+      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-r from-green-500 to-blue-500 text-sm font-bold text-white">
+        2
+      </div>
+      <h3 className="text-xl font-semibold">Use with Any AI Framework</h3>
+    </div>
 
 ```typescript
 import { generateText } from 'ai'
@@ -62,35 +175,56 @@ import { createAITools } from '@tooly/resend'
 const tools = createAITools('your-api-key')
 
 const result = await generateText({
-  model: openai('gpt-4.1-nano'),
-  messages: [{ role: 'user', content: 'Send a welcome email' }],
+  model: openai('gpt-4o'),
+  messages: [
+    {
+      role: 'user',
+      content: 'Send a welcome email to new users',
+    },
+  ],
   tools,
 })
 ```
 
+<div>Your AI agent can now send emails, create issues, manage databases, and more—all through natural language.</div>
+
+  </div>
+</div>
+
       </div>
     </section>
 
-    <section className="container space-y-6 py-8 md:py-12 lg:py-24">
-      <div className="mx-auto flex max-w-[58rem] flex-col items-center space-y-4 text-center">
+    <section className="relative py-16 md:py-20 lg:py-24">
+      <div className="absolute inset-0 bg-gradient-to-t from-slate-50 to-transparent dark:from-slate-900/50" />
+      <div className="relative container space-y-8">
+        <div className="mx-auto flex max-w-[58rem] flex-col items-center space-y-6 text-center">
 
-<h2 className="text-4xl font-bold">Supported Frameworks</h2>
+<h2 className="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl">
+  <span className="text-white">Universal Compatibility</span>
+</h2>
 
-Works with all major AI frameworks
+<div className="text-lg text-muted-foreground max-w-[46rem]">
+  Tooly works seamlessly with any AI framework. Use the same tools across different platforms and switch between
+  providers without changing your integration code.
+</div>
 
-      </div>
-      <div className="mx-auto grid justify-center gap-4 sm:grid-cols-3 md:max-w-[48rem]">
-        <div className="flex flex-col items-center justify-center p-6 text-center rounded-lg border bg-card text-card-foreground shadow-sm">
-          <AiLogo className="h-12 w-auto mb-2" />
-          <div className="text-lg font-semibold">AI SDK</div>
         </div>
-        <div className="flex flex-col items-center justify-center p-6 text-center rounded-lg border bg-card text-card-foreground shadow-sm">
-          <OpenAiLogo className="h-12 w-auto mb-2" />
-          <div className="text-lg font-semibold">OpenAI SDK</div>
-        </div>
-        <div className="flex flex-col items-center justify-center p-6 text-center rounded-lg border bg-card text-card-foreground shadow-sm">
-          <AnthropicLogo className="h-12 w-auto mb-2" />
-          <div className="text-lg font-semibold">Anthropic SDK</div>
+        <div className="mx-auto grid justify-center gap-6 sm:grid-cols-3 md:max-w-[56rem]">
+          <div className="group flex flex-col items-center justify-center p-8 text-center rounded-xl border bg-card/50 backdrop-blur-sm text-card-foreground shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
+            <AiLogo className="h-16 w-auto mb-4 group-hover:scale-110 transition-transform" />
+            <div className="text-xl font-semibold mb-2">AI SDK</div>
+            <div className="text-sm text-muted-foreground">Vercel's AI SDK with streaming support</div>
+          </div>
+          <div className="group flex flex-col items-center justify-center p-8 text-center rounded-xl border bg-card/50 backdrop-blur-sm text-card-foreground shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
+            <OpenAiLogo className="h-16 w-auto mb-4 group-hover:scale-110 transition-transform" />
+            <div className="text-xl font-semibold mb-2">OpenAI SDK</div>
+            <div className="text-sm text-muted-foreground">Direct integration with OpenAI's API</div>
+          </div>
+          <div className="group flex flex-col items-center justify-center p-8 text-center rounded-xl border bg-card/50 backdrop-blur-sm text-card-foreground shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
+            <AnthropicLogo className="h-16 w-auto mb-4 group-hover:scale-110 transition-transform" />
+            <div className="text-xl font-semibold mb-2">Anthropic SDK</div>
+            <div className="text-sm text-muted-foreground">Claude models with tool calling</div>
+          </div>
         </div>
       </div>
     </section>
