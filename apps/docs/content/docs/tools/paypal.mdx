@@ -1,0 +1,421 @@
+---
+title: PayPal
+description: Payment processing tools powered by PayPal API
+---
+
+The `@tooly/paypal` package provides AI-ready tools for PayPal payment processing. Create orders, process payments, handle refunds, and automate your payment workflow with AI assistance.
+
+## Installation
+
+```bash
+npm install @tooly/paypal
+```
+
+## Quick Start
+
+```typescript
+import { generateText } from 'ai'
+import { openai } from '@ai-sdk/openai'
+import { createAITools } from '@tooly/paypal'
+
+const tools = createAITools(
+  process.env.PAYPAL_CLIENT_ID!,
+  process.env.PAYPAL_CLIENT_SECRET!,
+  'sandbox', // or 'live' for production
+)
+
+const result = await generateText({
+  model: openai('gpt-4.1-nano'),
+  messages: [
+    {
+      role: 'user',
+      content: 'Create a payment order for $50 USD',
+    },
+  ],
+  tools,
+})
+
+console.log(result.text)
+```
+
+## Setup
+
+### 1. Get Your PayPal API Credentials
+
+1. Go to [PayPal Developer Dashboard](https://developer.paypal.com/developer/applications/)
+2. Create a new application
+3. Get your Client ID and Client Secret
+4. Use sandbox credentials for testing, live credentials for production
+
+### 2. Environment Variables
+
+Store your credentials securely:
+
+```bash
+PAYPAL_CLIENT_ID=your_client_id_here
+PAYPAL_CLIENT_SECRET=your_client_secret_here
+```
+
+### 3. Initialize the Tools
+
+```typescript
+import { createAITools } from '@tooly/paypal'
+
+const tools = createAITools(process.env.PAYPAL_CLIENT_ID!, process.env.PAYPAL_CLIENT_SECRET!, 'sandbox')
+```
+
+## Available Tools
+
+The PayPal package provides the following AI tools:
+
+### createOrder
+
+Creates a new payment order with the specified details.
+
+**Parameters:**
+
+- `intent` (string, required): Either 'CAPTURE' or 'AUTHORIZE'
+- `purchase_units` (array, required): Array of purchase units containing amount and other details
+- `application_context` (object, optional): Additional context like return URLs
+
+**Example:**
+
+```typescript
+const result = await generateText({
+  model: openai('gpt-4.1-nano'),
+  messages: [
+    {
+      role: 'user',
+      content: 'Create a payment order for $25.50 USD for a digital product',
+    },
+  ],
+  tools,
+})
+```
+
+### showOrderDetails
+
+Shows details for an order by ID.
+
+**Parameters:**
+
+- `id` (string, required): The order ID
+
+**Example:**
+
+```typescript
+const result = await generateText({
+  model: openai('gpt-4.1-nano'),
+  messages: [
+    {
+      role: 'user',
+      content: 'Show me details for order ORDER_123',
+    },
+  ],
+  tools,
+})
+```
+
+### captureOrder
+
+Captures payment for an approved order.
+
+**Parameters:**
+
+- `id` (string, required): The order ID to capture
+- `payment_source` (object, optional): Payment source configuration
+
+**Example:**
+
+```typescript
+const result = await generateText({
+  model: openai('gpt-4.1-nano'),
+  messages: [
+    {
+      role: 'user',
+      content: 'Capture payment for order ORDER_123',
+    },
+  ],
+  tools,
+})
+```
+
+### authorizeOrder
+
+Authorizes payment for an order (for later capture).
+
+**Parameters:**
+
+- `id` (string, required): The order ID to authorize
+
+**Example:**
+
+```typescript
+const result = await generateText({
+  model: openai('gpt-4.1-nano'),
+  messages: [
+    {
+      role: 'user',
+      content: 'Authorize payment for order ORDER_123',
+    },
+  ],
+  tools,
+})
+```
+
+### showAuthorizedPayment
+
+Shows details for an authorized payment.
+
+**Parameters:**
+
+- `authorization_id` (string, required): The authorization ID
+
+**Example:**
+
+```typescript
+const result = await generateText({
+  model: openai('gpt-4.1-nano'),
+  messages: [
+    {
+      role: 'user',
+      content: 'Show details for authorization AUTH_123',
+    },
+  ],
+  tools,
+})
+```
+
+### captureAuthorizedPayment
+
+Captures an authorized payment.
+
+**Parameters:**
+
+- `authorization_id` (string, required): The authorization ID
+- `amount` (object, optional): Amount to capture (if partial)
+- `final_capture` (boolean, optional): Whether this is the final capture
+- `note_to_payer` (string, optional): Note to include with the capture
+
+**Example:**
+
+```typescript
+const result = await generateText({
+  model: openai('gpt-4.1-nano'),
+  messages: [
+    {
+      role: 'user',
+      content: 'Capture the full amount from authorization AUTH_123',
+    },
+  ],
+  tools,
+})
+```
+
+### voidAuthorizedPayment
+
+Voids (cancels) an authorized payment.
+
+**Parameters:**
+
+- `authorization_id` (string, required): The authorization ID to void
+
+**Example:**
+
+```typescript
+const result = await generateText({
+  model: openai('gpt-4.1-nano'),
+  messages: [
+    {
+      role: 'user',
+      content: 'Cancel authorization AUTH_123',
+    },
+  ],
+  tools,
+})
+```
+
+### reauthorizePayment
+
+Reauthorizes an authorization for a new amount.
+
+**Parameters:**
+
+- `authorization_id` (string, required): The authorization ID
+- `amount` (object, required): New amount to reauthorize
+
+**Example:**
+
+```typescript
+const result = await generateText({
+  model: openai('gpt-4.1-nano'),
+  messages: [
+    {
+      role: 'user',
+      content: 'Reauthorize AUTH_123 for $30.00 USD',
+    },
+  ],
+  tools,
+})
+```
+
+### showCapturedPayment
+
+Shows details for a captured payment.
+
+**Parameters:**
+
+- `capture_id` (string, required): The capture ID
+
+**Example:**
+
+```typescript
+const result = await generateText({
+  model: openai('gpt-4.1-nano'),
+  messages: [
+    {
+      role: 'user',
+      content: 'Show details for capture CAPTURE_123',
+    },
+  ],
+  tools,
+})
+```
+
+### refundCapturedPayment
+
+Refunds a captured payment (full or partial).
+
+**Parameters:**
+
+- `capture_id` (string, required): The capture ID to refund
+- `amount` (object, optional): Amount to refund (if partial)
+- `invoice_id` (string, optional): Invoice ID for reference
+- `note_to_payer` (string, optional): Reason for the refund
+
+**Example:**
+
+```typescript
+const result = await generateText({
+  model: openai('gpt-4.1-nano'),
+  messages: [
+    {
+      role: 'user',
+      content: 'Refund $10.00 from capture CAPTURE_123 due to partial return',
+    },
+  ],
+  tools,
+})
+```
+
+### showRefundDetails
+
+Shows details for a refund.
+
+**Parameters:**
+
+- `refund_id` (string, required): The refund ID
+
+**Example:**
+
+```typescript
+const result = await generateText({
+  model: openai('gpt-4.1-nano'),
+  messages: [
+    {
+      role: 'user',
+      content: 'Show details for refund REFUND_123',
+    },
+  ],
+  tools,
+})
+```
+
+## Common Use Cases
+
+### Creating a Simple Payment
+
+```typescript
+// AI will create an order for immediate capture
+const result = await generateText({
+  model: openai('gpt-4.1-nano'),
+  messages: [
+    {
+      role: 'user',
+      content: 'Create a payment order for $49.99 USD for a premium subscription',
+    },
+  ],
+  tools,
+})
+```
+
+### Processing Refunds
+
+```typescript
+// AI will handle the refund process
+const result = await generateText({
+  model: openai('gpt-4.1-nano'),
+  messages: [
+    {
+      role: 'user',
+      content: 'Process a full refund for capture CAPTURE_123 because the customer was not satisfied',
+    },
+  ],
+  tools,
+})
+```
+
+### Authorization and Capture Flow
+
+```typescript
+// First authorize the payment
+const authResult = await generateText({
+  model: openai('gpt-4.1-nano'),
+  messages: [
+    {
+      role: 'user',
+      content: "Authorize payment for order ORDER_123 but don't capture yet",
+    },
+  ],
+  tools,
+})
+
+// Later capture when ready to fulfill
+const captureResult = await generateText({
+  model: openai('gpt-4.1-nano'),
+  messages: [
+    {
+      role: 'user',
+      content: 'Capture the authorized payment AUTH_123 since the item is ready to ship',
+    },
+  ],
+  tools,
+})
+```
+
+## Best Practices
+
+1. **Use Sandbox for Testing**: Always test with sandbox credentials before going live
+2. **Handle Webhooks**: Set up PayPal webhooks to receive payment status updates
+3. **Validate Amounts**: Always validate payment amounts match your expected values
+4. **Store Order IDs**: Keep track of PayPal order/transaction IDs for reference
+5. **Handle Errors**: Implement proper error handling for failed payments
+
+## Error Handling
+
+The PayPal tools will throw descriptive errors for common issues:
+
+- Invalid credentials
+- Insufficient funds
+- Order not found
+- Payment already captured
+- Authorization expired
+
+Always wrap tool usage in try-catch blocks for production applications.
+
+## Next Steps
+
+- Set up PayPal webhooks for real-time payment notifications
+- Implement proper logging for payment transactions
+- Add payment status monitoring to your application
+- Consider implementing subscription payments for recurring revenue

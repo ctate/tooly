@@ -52,6 +52,7 @@ const result = await generateText({
 - **[@tooly/twilio](./packages/twilio)** - SMS, WhatsApp, and voice communication tools powered by Twilio API
 - **[@tooly/supabase](./packages/supabase)** - Database, auth, and storage tools powered by Supabase API
 - **[@tooly/firecrawl](./packages/firecrawl)** - Web scraping and crawling tools powered by Firecrawl API
+- **[@tooly/paypal](./packages/paypal)** - Payment processing tools powered by PayPal API
 - **[@tooly/core](./packages/core)** - Base abstractions and utilities
 
 ## Documentation
