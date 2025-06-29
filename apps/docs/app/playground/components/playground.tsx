@@ -10,6 +10,9 @@ interface ApiKeys {
   notion: string
   supabase: string
   twilio: string
+  stripe: string
+  vercel: string
+  paypal: string
 }
 
 interface TestResult {
@@ -63,6 +66,27 @@ const toolkits = [
     testPrompt: 'List my Twilio phone numbers',
     package: '@tooly/twilio',
   },
+  {
+    name: 'Stripe',
+    key: 'stripe' as keyof ApiKeys,
+    placeholder: 'sk_...',
+    testPrompt: 'Create a new customer with email test@example.com',
+    package: '@tooly/stripe',
+  },
+  {
+    name: 'Vercel',
+    key: 'vercel' as keyof ApiKeys,
+    placeholder: 'your_vercel_token...',
+    testPrompt: 'List my Vercel projects',
+    package: '@tooly/vercel',
+  },
+  {
+    name: 'PayPal',
+    key: 'paypal' as keyof ApiKeys,
+    placeholder: 'your_client_id...',
+    testPrompt: 'Create a payment order for $10 USD',
+    package: '@tooly/paypal',
+  },
 ]
 
 export function Playground() {
@@ -74,6 +98,9 @@ export function Playground() {
     notion: '',
     supabase: '',
     twilio: '',
+    stripe: '',
+    vercel: '',
+    paypal: '',
   })
 
   const [selectedTool, setSelectedTool] = useState(0)
@@ -163,6 +190,9 @@ export function Playground() {
         notion: '',
         supabase: '',
         twilio: '',
+        stripe: '',
+        vercel: '',
+        paypal: '',
       })
       localStorage.removeItem('tooly-playground-keys')
     }

@@ -49,6 +49,25 @@ export const toolkits: Toolkit[] = [
     logo: '/logos/twilio.svg',
     useCase: 'Send an SMS notification to the user',
   },
+  {
+    name: 'Stripe',
+    package: '@tooly/stripe',
+    logo: '/logos/stripe.svg',
+    useCase: 'Process a payment for the subscription',
+  },
+  {
+    name: 'Vercel',
+    package: '@tooly/vercel',
+    logo: '/logos/vercel.svg',
+    logoDark: '/logos/vercel-dark.svg',
+    useCase: 'Deploy the latest version of the project',
+  },
+  {
+    name: 'PayPal',
+    package: '@tooly/paypal',
+    logo: '/logos/paypal.svg',
+    useCase: 'Create a payment order for the purchase',
+  },
 ]
 
 interface ToolkitContextType {

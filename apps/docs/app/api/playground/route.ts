@@ -9,6 +9,9 @@ import { createAITools as createLinearTools } from '@tooly/linear'
 import { createAITools as createNotionTools } from '@tooly/notion'
 import { createAITools as createSupabaseTools } from '@tooly/supabase'
 import { createAITools as createTwilioTools } from '@tooly/twilio'
+import { createAITools as createStripeTools } from '@tooly/stripe'
+import { createAITools as createVercelTools } from '@tooly/vercel'
+import { createAITools as createPayPalTools } from '@tooly/paypal'
 
 const toolkitMap = {
   resend: createResendTools,
@@ -17,6 +20,9 @@ const toolkitMap = {
   notion: createNotionTools,
   supabase: createSupabaseTools,
   twilio: createTwilioTools,
+  stripe: createStripeTools,
+  vercel: createVercelTools,
+  paypal: createPayPalTools,
 }
 
 export async function POST(request: NextRequest) {
@@ -41,7 +47,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: `Unsupported toolkit: ${toolkit}` }, { status: 400 })
     }
 
-    const tools = createLinearTools(apiKeys[toolkit])
+    const tools = createTools(apiKeys[toolkit])
     const openai = createOpenAI({
       apiKey: apiKeys.openai,
     })
