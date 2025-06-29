@@ -1,6 +1,6 @@
 {
   "name": "@tooly/core",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Core utilities and abstractions for Tooly AI tool packages",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

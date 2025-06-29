@@ -11,6 +11,7 @@
     "tools/github",
     "tools/twilio",
     "tools/supabase",
+    "tools/firecrawl",
     "tools/custom"
   ]
 }

@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.0.2
+
+### Patch Changes
+
+- adds firecrawl
+- Updated dependencies
+  - @tooly/core@0.0.6
+
 All notable changes to this project will be documented in this file.
 
 ## [0.0.1] - 2025-01-02

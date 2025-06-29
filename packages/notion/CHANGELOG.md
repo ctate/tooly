@@ -1,5 +1,13 @@
 # @tooly/notion
 
+## 0.0.3
+
+### Patch Changes
+
+- adds firecrawl
+- Updated dependencies
+  - @tooly/core@0.0.6
+
 ## 0.0.2
 
 ### Patch Changes

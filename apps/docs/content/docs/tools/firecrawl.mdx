@@ -1,0 +1,443 @@
+---
+title: Firecrawl
+description: Web scraping and crawling tools powered by Firecrawl API
+---
+
+The `@tooly/firecrawl` package provides AI-ready web scraping and crawling tools powered by the Firecrawl API. Extract content from websites, crawl entire domains, and perform web searches with AI assistance.
+
+## Installation
+
+```bash
+npm install @tooly/firecrawl
+```
+
+## Quick Start
+
+```typescript
+import { generateText } from 'ai'
+import { openai } from '@ai-sdk/openai'
+import { createAITools } from '@tooly/firecrawl'
+
+const tools = createAITools(process.env.FIRECRAWL_API_KEY!)
+
+const result = await generateText({
+  model: openai('gpt-4.1-nano'),
+  messages: [
+    {
+      role: 'user',
+      content: 'Scrape the content from https://example.com and summarize it',
+    },
+  ],
+  tools,
+})
+
+console.log(result.text)
+```
+
+## Setup
+
+### 1. Get Your Firecrawl API Key
+
+1. Sign up at [Firecrawl](https://firecrawl.dev)
+2. Go to your [API Keys](https://firecrawl.dev/app/api-keys) page
+3. Create a new API key
+4. Copy the key for use in your application
+
+### 2. Environment Variables
+
+Store your API key securely:
+
+```bash
+FIRECRAWL_API_KEY=fc_your_api_key_here
+```
+
+### 3. Initialize the Tools
+
+```typescript
+import { createAITools } from '@tooly/firecrawl'
+
+const tools = createAITools(process.env.FIRECRAWL_API_KEY!)
+```
+
+## Available Tools
+
+The Firecrawl package provides the following AI tools:
+
+### scrapeUrl
+
+Scrapes a single URL and extracts its content in various formats.
+
+**Parameters:**
+
+- `url` (string, required): The URL to scrape
+- `formats` (array, optional): Output formats to return (default: ["markdown"])
+  - Available formats: `markdown`, `html`, `rawHtml`, `links`, `screenshot`, `screenshot@fullPage`, `extract`, `json`, `changeTracking`
+- `headers` (object, optional): Custom headers for the request
+- `includeTags` (array, optional): HTML tags to include in output
+- `excludeTags` (array, optional): HTML tags to exclude from output
+- `onlyMainContent` (boolean, optional): Extract only main content (default: false)
+- `timeout` (number, optional): Request timeout in milliseconds
+- `waitFor` (number, optional): Time to wait before scraping
+- `actions` (array, optional): Actions to perform before scraping
+
+**Example:**
+
+```typescript
+const result = await generateText({
+  model: openai('gpt-4.1-nano'),
+  messages: [
+    {
+      role: 'user',
+      content: 'Scrape the latest blog post from https://blog.example.com and extract the main content',
+    },
+  ],
+  tools,
+})
+```
+
+### crawlUrl
+
+Crawls a website starting from a given URL and extracts content from multiple pages.
+
+**Parameters:**
+
+- `url` (string, required): The starting URL to crawl
+- `limit` (number, optional): Maximum number of pages to crawl
+- `scrapeOptions` (object, optional): Options for scraping each page
+- `maxDepth` (number, optional): Maximum crawl depth
+- `allowedDomains` (array, optional): Domains allowed for crawling
+- `blockedDomains` (array, optional): Domains to exclude from crawling
+- `allowBackwardLinks` (boolean, optional): Allow crawling backward links
+- `allowExternalLinks` (boolean, optional): Allow crawling external links
+- `ignoreSitemap` (boolean, optional): Ignore sitemap when crawling
+
+**Example:**
+
+```typescript
+const result = await generateText({
+  model: openai('gpt-4.1-nano'),
+  messages: [
+    {
+      role: 'user',
+      content: 'Crawl https://docs.example.com and extract documentation from up to 10 pages',
+    },
+  ],
+  tools,
+})
+```
+
+### mapUrl
+
+Maps and discovers URLs from a website without scraping content.
+
+**Parameters:**
+
+- `url` (string, required): The URL to map
+- `search` (string, optional): Search query to filter URLs
+- `ignoreSitemap` (boolean, optional): Ignore sitemap when mapping
+- `includeSubdomains` (boolean, optional): Include subdomains in mapping
+- `limit` (number, optional): Maximum number of URLs to return
+
+**Example:**
+
+```typescript
+const result = await generateText({
+  model: openai('gpt-4.1-nano'),
+  messages: [
+    {
+      role: 'user',
+      content: 'Map all the URLs on https://example.com to understand the site structure',
+    },
+  ],
+  tools,
+})
+```
+
+### search
+
+Performs web search and returns relevant content.
+
+**Parameters:**
+
+- `query` (string, required): Search query
+- `limit` (number, optional): Maximum number of results
+- `lang` (string, optional): Language code for search
+- `country` (string, optional): Country code for search
+- `location` (string, optional): Location for search
+- `scrapeOptions` (object, optional): Options for scraping search results
+
+**Example:**
+
+```typescript
+const result = await generateText({
+  model: openai('gpt-4.1-nano'),
+  messages: [
+    {
+      role: 'user',
+      content: 'Search for "AI tools 2024" and summarize the top 5 results',
+    },
+  ],
+  tools,
+})
+```
+
+### batchScrape
+
+Scrapes multiple URLs efficiently in a single batch operation.
+
+**Parameters:**
+
+- `urls` (array, required): Array of URLs to scrape (1-1000 URLs)
+- `formats` (array, optional): Output formats for each URL
+- `headers` (object, optional): Custom headers for requests
+- `includeTags` (array, optional): HTML tags to include
+- `excludeTags` (array, optional): HTML tags to exclude
+- `onlyMainContent` (boolean, optional): Extract only main content
+- `timeout` (number, optional): Timeout per URL
+
+**Example:**
+
+```typescript
+const result = await generateText({
+  model: openai('gpt-4.1-nano'),
+  messages: [
+    {
+      role: 'user',
+      content: 'Scrape these product pages and compare their features: https://product1.com, https://product2.com',
+    },
+  ],
+  tools,
+})
+```
+
+### checkCrawlStatus
+
+Checks the status of a previously initiated crawl operation.
+
+**Parameters:**
+
+- `id` (string, required): The crawl job ID
+
+**Example:**
+
+```typescript
+const result = await generateText({
+  model: openai('gpt-4.1-nano'),
+  messages: [
+    {
+      role: 'user',
+      content: "Check the status of crawl job abc123 and let me know if it's complete",
+    },
+  ],
+  tools,
+})
+```
+
+## AI Framework Integration
+
+### AI SDK (Recommended)
+
+```typescript
+import { generateText } from 'ai'
+import { openai } from '@ai-sdk/openai'
+import { createAITools } from '@tooly/firecrawl'
+
+const tools = createAITools(process.env.FIRECRAWL_API_KEY!)
+
+const result = await generateText({
+  model: openai('gpt-4.1-nano'),
+  messages: [
+    {
+      role: 'user',
+      content: "Scrape the competitor's pricing page and analyze their strategy",
+    },
+  ],
+  tools,
+})
+```
+
+### OpenAI SDK
+
+```typescript
+import OpenAI from 'openai'
+import { createOpenAIFunctions } from '@tooly/firecrawl'
+
+const openai = new OpenAI()
+const { tools, executeFunction } = createOpenAIFunctions(process.env.FIRECRAWL_API_KEY!)
+
+const completion = await openai.chat.completions.create({
+  model: 'gpt-4.1-nano',
+  messages: [
+    {
+      role: 'user',
+      content: 'Extract contact information from this company website',
+    },
+  ],
+  tools,
+})
+```
+
+### Anthropic SDK
+
+```typescript
+import Anthropic from '@anthropic-ai/sdk'
+import { createAnthropicTools } from '@tooly/firecrawl'
+
+const anthropic = new Anthropic()
+const { tools, executeFunction } = createAnthropicTools(process.env.FIRECRAWL_API_KEY!)
+
+const completion = await anthropic.messages.create({
+  model: 'claude-3-5-sonnet-20241022',
+  messages: [
+    {
+      role: 'user',
+      content: 'Research the latest trends in web design by scraping design blogs',
+    },
+  ],
+  tools,
+})
+```
+
+## Usage Examples
+
+### Content Research
+
+```typescript
+const result = await generateText({
+  model: openai('gpt-4.1-nano'),
+  messages: [
+    {
+      role: 'user',
+      content: 'Research the top 3 AI startups by scraping their websites and summarizing their value propositions',
+    },
+  ],
+  tools,
+})
+```
+
+### Competitive Analysis
+
+```typescript
+const result = await generateText({
+  model: openai('gpt-4.1-nano'),
+  messages: [
+    {
+      role: 'user',
+      content: "Crawl our competitor's documentation site and identify features we don't have",
+    },
+  ],
+  tools,
+})
+```
+
+### Market Intelligence
+
+```typescript
+const result = await generateText({
+  model: openai('gpt-4.1-nano'),
+  messages: [
+    {
+      role: 'user',
+      content: 'Search for recent news about our industry and extract key insights',
+    },
+  ],
+  tools,
+})
+```
+
+### Content Monitoring
+
+```typescript
+const result = await generateText({
+  model: openai('gpt-4.1-nano'),
+  messages: [
+    {
+      role: 'user',
+      content: 'Monitor these news sites for mentions of our brand and alert me to any negative coverage',
+    },
+  ],
+  tools,
+})
+```
+
+## Best Practices
+
+### Rate Limiting
+
+Firecrawl has built-in rate limiting. For high-volume operations:
+
+- Use `batchScrape` for multiple URLs
+- Add delays between requests when needed
+- Monitor your API usage in the dashboard
+
+### Content Extraction
+
+- Use `onlyMainContent: true` to extract just the main content
+- Specify `formats` based on your needs (markdown for text, html for structure)
+- Use `includeTags` and `excludeTags` to filter content
+
+### Error Handling
+
+```typescript
+const result = await generateText({
+  model: openai('gpt-4.1-nano'),
+  messages: [
+    {
+      role: 'user',
+      content: 'Scrape this URL and handle any errors gracefully: https://example.com',
+    },
+  ],
+  tools,
+})
+
+// The tools automatically handle errors and return structured responses
+```
+
+### Performance Optimization
+
+- Use `mapUrl` first to discover relevant pages before crawling
+- Set appropriate `timeout` values for slow websites
+- Use `limit` parameters to control resource usage
+- Consider using `actions` for JavaScript-heavy sites
+
+## Troubleshooting
+
+### Common Issues
+
+1. **403 Forbidden**: The website blocks automated requests
+   - Try adding custom headers to mimic browser requests
+   - Use different user agents
+
+2. **Timeout Errors**: Website is slow to respond
+   - Increase the `timeout` parameter
+   - Add `waitFor` delay before scraping
+
+3. **Empty Content**: JavaScript-rendered content not captured
+   - Use `actions` to interact with the page before scraping
+   - Try different formats like `html` instead of `markdown`
+
+4. **Rate Limiting**: Too many requests
+   - Use `batchScrape` for multiple URLs
+   - Add delays between operations
+   - Check your API limits in the dashboard
+
+### Getting Help
+
+- Check the [Firecrawl Documentation](https://docs.firecrawl.dev)
+- Review error messages returned by the tools
+- Monitor your usage in the [Firecrawl Dashboard](https://firecrawl.dev/app)
+
+## Type Safety
+
+The package includes full TypeScript support with Zod validation:
+
+```typescript
+import type { ScrapeUrlParams, ScrapeResponse } from '@tooly/firecrawl'
+
+// All parameters and responses are fully typed
+const params: ScrapeUrlParams = {
+  url: 'https://example.com',
+  formats: ['markdown', 'html'],
+  onlyMainContent: true,
+}
+```

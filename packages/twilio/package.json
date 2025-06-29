@@ -1,6 +1,6 @@
 {
   "name": "@tooly/twilio",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Twilio API tools for OpenAI, Anthropic, and AI SDK",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
