@@ -11,6 +11,7 @@
     "tools/notion",
     "tools/github",
     "tools/twilio",
+    "tools/stripe",
     "tools/supabase",
     "tools/firecrawl",
     "tools/custom"
