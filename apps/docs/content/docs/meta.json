@@ -15,6 +15,7 @@
     "tools/supabase",
     "tools/firecrawl",
     "tools/paypal",
+    "tools/vercel",
     "tools/custom"
   ]
 }
