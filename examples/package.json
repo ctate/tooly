@@ -8,13 +8,13 @@
     "build": "tsc",
     "dev": "tsc --watch",
     "check-types": "tsc --noEmit",
-    "example:github": "tsx src/github-example",
-    "example:linear": "tsx src/linear-example",
-    "example:notion": "tsx src/notion-example",
-    "example:resend": "tsx src/resend-example",
-    "example:supabase": "tsx src/supabase-example",
-    "example:twilio": "tsx src/twilio-example",
-    "example:firecrawl": "tsx src/firecrawl-example"
+    "example:github": "tsx src/github",
+    "example:linear": "tsx src/linear",
+    "example:notion": "tsx src/notion",
+    "example:resend": "tsx src/resend",
+    "example:supabase": "tsx src/supabase",
+    "example:twilio": "tsx src/twilio",
+    "example:firecrawl": "tsx src/firecrawl"
   },
   "keywords": [
     "tooly",

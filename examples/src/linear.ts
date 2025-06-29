@@ -11,7 +11,6 @@ if (!linearApiKey) {
 
 // Create AI SDK tools for Linear
 const tools = createAITools(linearApiKey)
-console.log(tools)
 
 const { toolResults } = await generateText({
   model: openai('gpt-4.1-nano'),
