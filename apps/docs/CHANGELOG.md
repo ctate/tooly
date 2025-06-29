@@ -1,4 +1,4 @@
-# @tooly/docs
+# @private/docs
 
 ## 0.0.1
 

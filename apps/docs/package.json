@@ -1,5 +1,5 @@
 {
-  "name": "@tooly/docs",
+  "name": "@private/docs",
   "version": "0.0.1",
   "private": true,
   "scripts": {
@@ -15,7 +15,7 @@
     "fumadocs-ui": "15.5.5",
     "fumadocs-core": "15.5.5",
     "fumadocs-mdx": "11.6.9",
-    "@tooly/ui": "workspace:*"
+    "@private/ui": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "24.0.3",

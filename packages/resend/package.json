@@ -38,7 +38,7 @@
     "access": "public"
   },
   "devDependencies": {
-    "@tooly/typescript-config": "workspace:*",
+    "@private/typescript-config": "workspace:*",
     "@types/node": "^22.15.3",
     "typescript": "5.8.2"
   },

@@ -1,5 +1,5 @@
 import type { BaseLayoutProps } from 'fumadocs-ui/layouts/shared'
-import { ToolyLogo } from '@tooly/ui/logos/tooly'
+import { ToolyLogo } from '@private/ui/logos/tooly'
 
 /**
  * Shared layout configurations

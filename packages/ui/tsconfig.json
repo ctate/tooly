@@ -1,5 +1,5 @@
 {
-  "extends": "@tooly/typescript-config/react-library.json",
+  "extends": "@private/typescript-config/react-library.json",
   "compilerOptions": {
     "outDir": "dist"
   },
