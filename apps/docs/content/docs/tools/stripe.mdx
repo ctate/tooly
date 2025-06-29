@@ -1,0 +1,425 @@
+---
+title: Stripe
+description: Payment processing and billing tools powered by Stripe API
+---
+
+The `@tooly/stripe` package provides AI-ready tools for Stripe payment processing. Handle customers, payments, and invoices with AI assistance to streamline your billing operations.
+
+## Installation
+
+```bash
+npm install @tooly/stripe
+```
+
+## Quick Start
+
+```typescript
+import { generateText } from 'ai'
+import { openai } from '@ai-sdk/openai'
+import { createAITools } from '@tooly/stripe'
+
+const tools = createAITools(process.env.STRIPE_SECRET_KEY!)
+
+const result = await generateText({
+  model: openai('gpt-4.1-nano'),
+  messages: [
+    {
+      role: 'user',
+      content: 'Create a customer for John Doe and process a $25 payment',
+    },
+  ],
+  tools,
+})
+
+console.log(result.text)
+```
+
+## Setup
+
+### 1. Get Your Stripe API Keys
+
+1. Go to [Stripe Dashboard](https://dashboard.stripe.com/apikeys)
+2. Create a new secret API key
+3. Copy the key for use in your application
+
+### 2. Environment Variables
+
+Store your API key securely:
+
+```bash
+STRIPE_SECRET_KEY=sk_test_your_stripe_secret_key_here
+```
+
+### 3. Initialize the Tools
+
+```typescript
+import { createAITools } from '@tooly/stripe'
+
+const tools = createAITools(process.env.STRIPE_SECRET_KEY!)
+```
+
+## Available Tools
+
+The Stripe package provides the following AI tools:
+
+### createCustomer
+
+Creates a new customer in Stripe with the specified details.
+
+**Parameters:**
+
+- `email` (string, optional): Customer's email address
+- `name` (string, optional): Customer's full name or business name
+- `phone` (string, optional): Customer's phone number
+- `description` (string, optional): An arbitrary description for the customer
+- `address` (object, optional): Customer's address information
+- `metadata` (object, optional): Set of key-value pairs for storing additional information
+
+**Example:**
+
+```typescript
+const result = await generateText({
+  model: openai('gpt-4.1-nano'),
+  messages: [
+    {
+      role: 'user',
+      content: 'Create a customer for Jane Smith with email jane@example.com',
+    },
+  ],
+  tools,
+})
+```
+
+### getCustomer
+
+Retrieves an existing customer from Stripe.
+
+**Parameters:**
+
+- `id` (string, required): ID of the customer to retrieve
+
+**Example:**
+
+```typescript
+const result = await generateText({
+  model: openai('gpt-4.1-nano'),
+  messages: [
+    {
+      role: 'user',
+      content: 'Get details for customer cus_1234567890',
+    },
+  ],
+  tools,
+})
+```
+
+### listCustomers
+
+Lists customers in Stripe with optional filtering.
+
+**Parameters:**
+
+- `limit` (number, optional): Number of customers to return (1-100, default 10)
+- `starting_after` (string, optional): Customer ID for pagination cursor
+- `ending_before` (string, optional): Customer ID for pagination cursor
+- `email` (string, optional): Filter customers by email address
+
+**Example:**
+
+```typescript
+const result = await generateText({
+  model: openai('gpt-4.1-nano'),
+  messages: [
+    {
+      role: 'user',
+      content: 'Show me the first 20 customers',
+    },
+  ],
+  tools,
+})
+```
+
+### createPaymentIntent
+
+Creates a payment intent to process a payment.
+
+**Parameters:**
+
+- `amount` (number, required): Amount in smallest currency unit (e.g., cents for USD)
+- `currency` (string, optional): Three-letter ISO currency code (default: 'usd')
+- `customer` (string, optional): ID of the customer this payment is for
+- `payment_method` (string, optional): ID of the payment method to use
+- `description` (string, optional): Description of the payment
+- `receipt_email` (string, optional): Email address to send receipt to
+- `metadata` (object, optional): Additional information to store
+- `automatic_payment_methods` (object, optional): Configuration for automatic payment methods
+
+**Example:**
+
+```typescript
+const result = await generateText({
+  model: openai('gpt-4.1-nano'),
+  messages: [
+    {
+      role: 'user',
+      content: 'Create a $50 payment intent for customer cus_1234567890',
+    },
+  ],
+  tools,
+})
+```
+
+### getPaymentIntent
+
+Retrieves details of a payment intent.
+
+**Parameters:**
+
+- `id` (string, required): ID of the payment intent to retrieve
+
+**Example:**
+
+```typescript
+const result = await generateText({
+  model: openai('gpt-4.1-nano'),
+  messages: [
+    {
+      role: 'user',
+      content: 'Get status of payment intent pi_1234567890',
+    },
+  ],
+  tools,
+})
+```
+
+### createInvoice
+
+Creates an invoice for a customer.
+
+**Parameters:**
+
+- `customer` (string, required): ID of the customer to invoice
+- `description` (string, optional): Description for the invoice
+- `metadata` (object, optional): Additional information to store
+- `auto_advance` (boolean, optional): Whether to automatically finalize the invoice (default: true)
+
+**Example:**
+
+```typescript
+const result = await generateText({
+  model: openai('gpt-4.1-nano'),
+  messages: [
+    {
+      role: 'user',
+      content: 'Create an invoice for customer cus_1234567890 for consulting services',
+    },
+  ],
+  tools,
+})
+```
+
+### getInvoice
+
+Retrieves details of an invoice.
+
+**Parameters:**
+
+- `id` (string, required): ID of the invoice to retrieve
+
+**Example:**
+
+```typescript
+const result = await generateText({
+  model: openai('gpt-4.1-nano'),
+  messages: [
+    {
+      role: 'user',
+      content: 'Get details of invoice in_1234567890',
+    },
+  ],
+  tools,
+})
+```
+
+## Advanced Usage
+
+### OpenAI Integration
+
+```typescript
+import OpenAI from 'openai'
+import { createOpenAIFunctions } from '@tooly/stripe'
+
+const openai = new OpenAI()
+const { functions, callHandler } = createOpenAIFunctions(process.env.STRIPE_SECRET_KEY!)
+
+const response = await openai.chat.completions.create({
+  model: 'gpt-4',
+  messages: [{ role: 'user', content: 'Create a customer and process payment' }],
+  functions,
+})
+
+// Handle function calls
+for (const choice of response.choices) {
+  if (choice.message.function_call) {
+    const result = await callHandler(choice.message.function_call)
+    console.log(result)
+  }
+}
+```
+
+### Anthropic Integration
+
+```typescript
+import Anthropic from '@anthropic-ai/sdk'
+import { createAnthropicTools } from '@tooly/stripe'
+
+const anthropic = new Anthropic()
+const { tools, callHandler } = createAnthropicTools(process.env.STRIPE_SECRET_KEY!)
+
+const response = await anthropic.messages.create({
+  model: 'claude-3-sonnet-20240229',
+  max_tokens: 1000,
+  messages: [{ role: 'user', content: 'Help me process a payment' }],
+  tools,
+})
+
+// Handle tool calls in the response
+for (const content of response.content) {
+  if (content.type === 'tool_use') {
+    const result = await callHandler(content)
+    console.log(result)
+  }
+}
+```
+
+### Direct Usage
+
+```typescript
+import { StripeTools } from '@tooly/stripe'
+
+const stripe = new StripeTools(process.env.STRIPE_SECRET_KEY!)
+
+// Create a customer
+const customer = await stripe.execute('createCustomer', {
+  email: 'john@example.com',
+  name: 'John Doe',
+})
+
+// Create a payment intent
+const paymentIntent = await stripe.execute('createPaymentIntent', {
+  amount: 2500, // $25.00 in cents
+  currency: 'usd',
+  customer: customer.id,
+  description: 'Subscription payment',
+})
+
+console.log('Payment Intent:', paymentIntent)
+```
+
+## Error Handling
+
+All Stripe tools include comprehensive error handling:
+
+```typescript
+try {
+  const result = await generateText({
+    model: openai('gpt-4.1-nano'),
+    messages: [
+      {
+        role: 'user',
+        content: 'Create a payment intent with invalid data',
+      },
+    ],
+    tools,
+  })
+} catch (error) {
+  console.error('Stripe operation failed:', error.message)
+}
+```
+
+## Security Best Practices
+
+1. **Use Test Keys in Development**: Always use test keys (`sk_test_...`) during development
+2. **Secure API Keys**: Never expose secret keys in client-side code or version control
+3. **Environment Variables**: Store API keys in environment variables
+4. **Webhook Validation**: When using webhooks, always validate the webhook signature
+
+## Common Use Cases
+
+### E-commerce Checkout
+
+```typescript
+const result = await generateText({
+  model: openai('gpt-4.1-nano'),
+  messages: [
+    {
+      role: 'user',
+      content: 'Process checkout for John Doe (john@example.com) for $99.99 product purchase',
+    },
+  ],
+  tools,
+})
+```
+
+### Subscription Billing
+
+```typescript
+const result = await generateText({
+  model: openai('gpt-4.1-nano'),
+  messages: [
+    {
+      role: 'user',
+      content: 'Create monthly subscription invoice for customer cus_1234567890',
+    },
+  ],
+  tools,
+})
+```
+
+### Customer Management
+
+```typescript
+const result = await generateText({
+  model: openai('gpt-4.1-nano'),
+  messages: [
+    {
+      role: 'user',
+      content: 'Find all customers with email domain @company.com and show their payment history',
+    },
+  ],
+  tools,
+})
+```
+
+## Related Resources
+
+- [Stripe API Documentation](https://stripe.com/docs/api)
+- [Stripe Dashboard](https://dashboard.stripe.com/)
+- [Stripe Testing Guide](https://stripe.com/docs/testing)
+- [Stripe Webhooks](https://stripe.com/docs/webhooks)
+
+## Troubleshooting
+
+### API Key Issues
+
+If you encounter authentication errors:
+
+1. Verify your API key is correct
+2. Ensure you're using the right key for your environment (test vs live)
+3. Check that the key has necessary permissions
+
+### Rate Limiting
+
+Stripe has rate limits. If you hit them:
+
+1. Implement exponential backoff
+2. Consider caching frequently accessed data
+3. Monitor your API usage in the Stripe Dashboard
+
+### Webhook Configuration
+
+For real-time updates:
+
+1. Set up webhook endpoints in your Stripe Dashboard
+2. Configure endpoint URLs to receive events
+3. Verify webhook signatures for security

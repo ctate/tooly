@@ -1,0 +1,64 @@
+{
+  "name": "@tooly/stripe",
+  "version": "0.0.1",
+  "description": "Stripe API tools for OpenAI, Anthropic, and AI SDK",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": "./dist/index.js",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "check-types": "tsc --noEmit"
+  },
+  "keywords": [
+    "stripe",
+    "payments",
+    "billing",
+    "subscriptions",
+    "openai",
+    "anthropic",
+    "ai",
+    "tools",
+    "vercel-ai-sdk"
+  ],
+  "author": "Tooly",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ctate/tooly.git",
+    "directory": "packages/stripe"
+  },
+  "homepage": "https://github.com/ctate/tooly#readme",
+  "publishConfig": {
+    "access": "public"
+  },
+  "devDependencies": {
+    "@private/typescript-config": "workspace:*",
+    "@types/node": "^22.15.3",
+    "typescript": "5.8.2"
+  },
+  "dependencies": {
+    "@tooly/core": "workspace:*",
+    "stripe": "^17.4.0",
+    "zod": "^3.23.8"
+  },
+  "peerDependencies": {
+    "ai": "^4.3.16",
+    "openai": "^5.8.2"
+  },
+  "peerDependenciesMeta": {
+    "ai": {
+      "optional": true
+    },
+    "openai": {
+      "optional": true
+    }
+  }
+}

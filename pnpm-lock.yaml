@@ -126,6 +126,9 @@ importers:
       '@tooly/resend':
         specifier: workspace:*
         version: link:../packages/resend
+      '@tooly/stripe':
+        specifier: workspace:*
+        version: link:../packages/stripe
       '@tooly/supabase':
         specifier: workspace:*
         version: link:../packages/supabase
@@ -331,6 +334,34 @@ importers:
       resend:
         specifier: ^4.6.0
         version: 4.6.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      zod:
+        specifier: ^3.23.8
+        version: 3.25.67
+    devDependencies:
+      '@private/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
+      '@types/node':
+        specifier: ^22.15.3
+        version: 22.15.3
+      typescript:
+        specifier: 5.8.2
+        version: 5.8.2
+
+  packages/stripe:
+    dependencies:
+      '@tooly/core':
+        specifier: workspace:*
+        version: link:../core
+      ai:
+        specifier: ^4.3.16
+        version: 4.3.16(react@19.1.0)(zod@3.25.67)
+      openai:
+        specifier: ^5.8.2
+        version: 5.8.2(ws@8.18.3)(zod@3.25.67)
+      stripe:
+        specifier: ^17.4.0
+        version: 17.7.0
       zod:
         specifier: ^3.23.8
         version: 3.25.67
@@ -3558,6 +3589,10 @@ packages:
   strip-json-comments@2.0.1:
     resolution: {integrity: sha512-4gB8na07fecVVkOI6Rs4e7T6NOTki5EmL7TUduTs6bu3EdnSycntVJ4re8kgZA+wx9IueI2Y11bfbgwtzuE0KQ==}
     engines: {node: '>=0.10.0'}
+
+  stripe@17.7.0:
+    resolution: {integrity: sha512-aT2BU9KkizY9SATf14WhhYVv2uOapBWX0OFWF4xvcj1mPaNotlSc2CsxpS4DS46ZueSppmCF5BX1sNYBtwBvfw==}
+    engines: {node: '>=12.*'}
 
   style-to-js@1.1.17:
     resolution: {integrity: sha512-xQcBGDxJb6jjFCTzvQtfiPn6YvvP2O8U1MDIPNfJQlWMYfktPy+iGsHE7cssjs7y84d9fQaK4UF3RIJaAHSoYA==}
@@ -7604,6 +7639,11 @@ snapshots:
   strip-final-newline@2.0.0: {}
 
   strip-json-comments@2.0.1: {}
+
+  stripe@17.7.0:
+    dependencies:
+      '@types/node': 22.15.3
+      qs: 6.14.0
 
   style-to-js@1.1.17:
     dependencies:
