@@ -27,7 +27,7 @@ import { generateText } from 'ai'
 const tools = createAITools(process.env.FIRECRAWL_API_KEY!)
 
 const result = await generateText({
-  model: openai('gpt-4'),
+  model: openai('gpt-4.1-nano'),
   prompt: 'Scrape the homepage of https://example.com and summarize the content',
   tools,
 })

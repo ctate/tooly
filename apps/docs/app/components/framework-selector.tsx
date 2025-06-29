@@ -8,7 +8,7 @@ const frameworks = [
     name: 'AI SDK',
     import: "import { generateText } from 'ai'\nimport { openai } from '@ai-sdk/openai'",
     code: `const result = await generateText({
-  model: openai('gpt-4o'),
+  model: openai('gpt-4.1-nano'),
   messages: [
     {
       role: 'user',

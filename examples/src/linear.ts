@@ -1,6 +1,6 @@
 import 'dotenv/config'
 import { createAITools } from '@tooly/linear'
-import { generateText } from 'ai'
+import { streamText } from 'ai'
 import { openai } from '@ai-sdk/openai'
 
 // Get Linear API key from environment
@@ -12,10 +12,13 @@ if (!linearApiKey) {
 // Create AI SDK tools for Linear
 const tools = createAITools(linearApiKey)
 
-const { toolResults } = await generateText({
+const { textStream } = streamText({
   model: openai('gpt-4.1-nano'),
-  prompt: 'Give me a list of all the issues in Linear',
+  prompt: 'Show me a simple list of all the issues in Linear with the number, title, and status',
   tools,
+  maxSteps: 2,
 })
 
-console.log(JSON.stringify(toolResults[0]?.result, null, 2))
+for await (const textPart of textStream) {
+  process.stdout.write(textPart)
+}

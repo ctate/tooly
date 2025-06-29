@@ -1,5 +1,5 @@
 import { Resend } from 'resend'
-import { sendEmail, sendBatchEmails, retrieveEmail, updateEmail, cancelEmail } from './tools'
+import { sendEmail, sendBatchEmails, retrieveEmail, updateEmail, cancelEmail } from './tools/index.js'
 import type {
   SendEmailParams,
   SendBatchEmailsParams,

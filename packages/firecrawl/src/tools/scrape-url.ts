@@ -17,7 +17,17 @@ export const scrapeUrlTool = {
         type: 'array',
         items: {
           type: 'string',
-          enum: ['markdown', 'html', 'rawHtml', 'content', 'links', 'screenshot'],
+          enum: [
+            'markdown',
+            'html',
+            'rawHtml',
+            'links',
+            'screenshot',
+            'screenshot@fullPage',
+            'extract',
+            'json',
+            'changeTracking',
+          ],
         },
         description: 'Output formats to return (default: ["markdown"])',
         default: ['markdown'],

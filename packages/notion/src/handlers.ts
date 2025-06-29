@@ -8,7 +8,7 @@ import {
   getDatabase,
   updateDatabase,
   queryDatabase,
-} from './tools'
+} from './tools/index.js'
 import type {
   CreatePageParams,
   GetPageParams,

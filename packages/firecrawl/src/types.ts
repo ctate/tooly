@@ -45,7 +45,21 @@ export const ActionSchema = z.discriminatedUnion('type', [
 
 // Scrape options schema
 export const ScrapeOptionsSchema = z.object({
-  formats: z.array(z.enum(['markdown', 'html', 'rawHtml', 'content', 'links', 'screenshot'])).optional(),
+  formats: z
+    .array(
+      z.enum([
+        'markdown',
+        'html',
+        'rawHtml',
+        'links',
+        'screenshot',
+        'screenshot@fullPage',
+        'extract',
+        'json',
+        'changeTracking',
+      ]),
+    )
+    .optional(),
   headers: z.record(z.string()).optional(),
   includeTags: z.array(z.string()).optional(),
   excludeTags: z.array(z.string()).optional(),
@@ -58,7 +72,21 @@ export const ScrapeOptionsSchema = z.object({
 // Scrape URL schema
 export const ScrapeUrlSchema = z.object({
   url: UrlSchema,
-  formats: z.array(z.enum(['markdown', 'html', 'rawHtml', 'content', 'links', 'screenshot'])).optional(),
+  formats: z
+    .array(
+      z.enum([
+        'markdown',
+        'html',
+        'rawHtml',
+        'links',
+        'screenshot',
+        'screenshot@fullPage',
+        'extract',
+        'json',
+        'changeTracking',
+      ]),
+    )
+    .optional(),
   headers: z.record(z.string()).optional(),
   includeTags: z.array(z.string()).optional(),
   excludeTags: z.array(z.string()).optional(),
@@ -103,7 +131,21 @@ export const SearchSchema = z.object({
 // Batch scrape schema
 export const BatchScrapeSchema = z.object({
   urls: UrlsSchema,
-  formats: z.array(z.enum(['markdown', 'html', 'rawHtml', 'content', 'links', 'screenshot'])).optional(),
+  formats: z
+    .array(
+      z.enum([
+        'markdown',
+        'html',
+        'rawHtml',
+        'links',
+        'screenshot',
+        'screenshot@fullPage',
+        'extract',
+        'json',
+        'changeTracking',
+      ]),
+    )
+    .optional(),
   headers: z.record(z.string()).optional(),
   includeTags: z.array(z.string()).optional(),
   excludeTags: z.array(z.string()).optional(),

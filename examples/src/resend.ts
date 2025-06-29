@@ -1,24 +1,21 @@
+import 'dotenv/config'
 import { createAITools } from '@tooly/resend'
-import { config } from 'dotenv'
+import { generateText } from 'ai'
+import { openai } from '@ai-sdk/openai'
 
-// Load environment variables
-config()
-
-async function resendExample() {
-  // Get Resend API key from environment
-  const resendApiKey = process.env.RESEND_API_KEY
-  if (!resendApiKey) {
-    throw new Error('Please set RESEND_API_KEY environment variable')
-  }
-
-  // Create AI SDK tools for Resend
-  const tools = createAITools(resendApiKey)
-
-  return tools
+// Get Resend API key from environment
+const resendApiKey = process.env.RESEND_API_KEY
+if (!resendApiKey) {
+  throw new Error('Please set RESEND_API_KEY environment variable')
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
-  resendExample().catch(console.error)
-}
+// Create AI SDK tools for Resend
+const tools = createAITools(resendApiKey)
 
-export { resendExample }
+const { toolResults } = await generateText({
+  model: openai('gpt-4.1-nano'),
+  prompt: 'Send a test email to test@example.com with the subject "Test Email" and a simple greeting message',
+  tools,
+})
+
+console.log(JSON.stringify(toolResults[0]?.result, null, 2))

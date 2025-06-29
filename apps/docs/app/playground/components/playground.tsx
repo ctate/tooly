@@ -416,7 +416,7 @@ import { createAITools } from '${getCurrentTool().package}'
 const tools = createAITools('${apiKeys[getCurrentTool().key] ? '***' : 'your-api-key'}')
 
 const result = await generateText({
-  model: openai('gpt-4o'),
+  model: openai('gpt-4.1-nano'),
   messages: [
     {
       role: 'user',

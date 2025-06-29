@@ -8,7 +8,7 @@ import {
   listMessages,
   listCalls,
   getPhoneNumber,
-} from './tools'
+} from './tools/index.js'
 import type {
   SendSmsParams,
   SendWhatsAppParams,

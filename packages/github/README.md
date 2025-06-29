@@ -21,7 +21,7 @@ const tools = createAITools('your-github-token')
 import { generateText } from 'ai'
 
 const result = await generateText({
-  model: openai('gpt-4'),
+  model: openai('gpt-4.1-nano'),
   tools,
   prompt: 'Create a new issue in my repo called "Fix bug in login"',
 })
