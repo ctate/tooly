@@ -1,0 +1,53 @@
+{
+  "name": "@private/examples",
+  "version": "0.0.1",
+  "description": "Examples for trying out each Tooly toolkit",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "check-types": "tsc --noEmit",
+    "example:github": "tsx src/github-example",
+    "example:linear": "tsx src/linear-example",
+    "example:notion": "tsx src/notion-example",
+    "example:resend": "tsx src/resend-example",
+    "example:supabase": "tsx src/supabase-example",
+    "example:twilio": "tsx src/twilio-example",
+    "example:firecrawl": "tsx src/firecrawl-example"
+  },
+  "keywords": [
+    "tooly",
+    "examples",
+    "ai",
+    "tools",
+    "vercel-ai-sdk"
+  ],
+  "author": "Tooly",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ctate/tooly.git",
+    "directory": "packages/examples"
+  },
+  "homepage": "https://github.com/ctate/tooly#readme",
+  "devDependencies": {
+    "@private/typescript-config": "workspace:*",
+    "@types/node": "^22.15.3",
+    "tsx": "^4.20.3",
+    "typescript": "5.8.2"
+  },
+  "dependencies": {
+    "@ai-sdk/openai": "^1.3.22",
+    "@tooly/core": "workspace:*",
+    "@tooly/firecrawl": "workspace:*",
+    "@tooly/github": "workspace:*",
+    "@tooly/linear": "workspace:*",
+    "@tooly/notion": "workspace:*",
+    "@tooly/resend": "workspace:*",
+    "@tooly/supabase": "workspace:*",
+    "@tooly/twilio": "workspace:*",
+    "ai": "^4.3.16",
+    "dotenv": "^16.0.0"
+  }
+}
