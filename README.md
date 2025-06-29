@@ -46,6 +46,7 @@ const result = await generateText({
 
 - **[@tooly/resend](./packages/resend)** - Email tools powered by Resend API
 - **[@tooly/linear](./packages/linear)** - Project management tools powered by Linear API
+- **[@tooly/jira](./packages/jira)** - Issue tracking and project management tools powered by JIRA API
 - **[@tooly/notion](./packages/notion)** - Database and page management tools powered by Notion API
 - **[@tooly/github](./packages/github)** - Repository and issue management tools powered by GitHub API
 - **[@tooly/twilio](./packages/twilio)** - SMS, WhatsApp, and voice communication tools powered by Twilio API

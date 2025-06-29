@@ -14,7 +14,8 @@
     "example:resend": "tsx src/resend",
     "example:supabase": "tsx src/supabase",
     "example:twilio": "tsx src/twilio",
-    "example:firecrawl": "tsx src/firecrawl"
+    "example:firecrawl": "tsx src/firecrawl",
+    "example:jira": "tsx src/jira"
   },
   "keywords": [
     "tooly",
@@ -42,6 +43,7 @@
     "@tooly/core": "workspace:*",
     "@tooly/firecrawl": "workspace:*",
     "@tooly/github": "workspace:*",
+    "@tooly/jira": "workspace:*",
     "@tooly/linear": "workspace:*",
     "@tooly/notion": "workspace:*",
     "@tooly/resend": "workspace:*",

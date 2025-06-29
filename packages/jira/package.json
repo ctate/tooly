@@ -1,0 +1,65 @@
+{
+  "name": "@tooly/jira",
+  "version": "0.0.1",
+  "description": "JIRA API tools for OpenAI, Anthropic, and AI SDK",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": "./dist/index.js",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "check-types": "tsc --noEmit"
+  },
+  "keywords": [
+    "jira",
+    "issues",
+    "project-management",
+    "atlassian",
+    "openai",
+    "anthropic",
+    "ai",
+    "tools",
+    "vercel-ai-sdk"
+  ],
+  "author": "Tooly",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ctate/tooly.git",
+    "directory": "packages/jira"
+  },
+  "homepage": "https://github.com/ctate/tooly#readme",
+  "publishConfig": {
+    "access": "public"
+  },
+  "devDependencies": {
+    "@private/typescript-config": "workspace:*",
+    "@types/jira-client": "^7.1.9",
+    "@types/node": "^22.15.3",
+    "typescript": "5.8.2"
+  },
+  "dependencies": {
+    "@tooly/core": "workspace:*",
+    "jira-client": "^8.2.2",
+    "zod": "^3.23.8"
+  },
+  "peerDependencies": {
+    "ai": "^4.3.16",
+    "openai": "^5.8.2"
+  },
+  "peerDependenciesMeta": {
+    "ai": {
+      "optional": true
+    },
+    "openai": {
+      "optional": true
+    }
+  }
+}

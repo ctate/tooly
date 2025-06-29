@@ -1,0 +1,405 @@
+---
+title: JIRA
+description: Issue tracking and project management tools powered by JIRA API
+---
+
+The `@tooly/jira` package provides AI-ready tools for JIRA issue tracking and project management. Create issues, search tickets, manage projects, and automate your development workflow with AI assistance.
+
+## Installation
+
+```bash
+npm install @tooly/jira
+```
+
+## Quick Start
+
+```typescript
+import { generateText } from 'ai'
+import { openai } from '@ai-sdk/openai'
+import { createAITools } from '@tooly/jira'
+
+const jiraConfig = {
+  protocol: 'https',
+  host: 'your-domain.atlassian.net',
+  username: 'your-email@example.com',
+  password: 'your-api-token',
+  apiVersion: '2',
+  strictSSL: true,
+}
+
+const tools = createAITools(jiraConfig)
+
+const result = await generateText({
+  model: openai('gpt-4.1-nano'),
+  messages: [
+    {
+      role: 'user',
+      content: 'Create a bug report for the login timeout issue',
+    },
+  ],
+  tools,
+})
+
+console.log(result.text)
+```
+
+## Setup
+
+### 1. Get Your JIRA API Token
+
+**For JIRA Cloud:**
+
+1. Go to [Atlassian Account Settings](https://id.atlassian.com/manage-profile/security/api-tokens)
+2. Click "Create API token"
+3. Give it a label and create the token
+4. Copy the token for use in your application
+
+**For JIRA Server/Data Center:**
+Use your regular username and password.
+
+### 2. Environment Variables
+
+Store your JIRA credentials securely:
+
+```bash
+JIRA_HOST=your-domain.atlassian.net
+JIRA_USERNAME=your-email@example.com
+JIRA_API_TOKEN=your_api_token_here
+```
+
+### 3. Initialize the Tools
+
+```typescript
+import { createAITools } from '@tooly/jira'
+
+const jiraConfig = {
+  protocol: 'https',
+  host: process.env.JIRA_HOST!,
+  username: process.env.JIRA_USERNAME!,
+  password: process.env.JIRA_API_TOKEN!,
+  apiVersion: '2',
+  strictSSL: true,
+}
+
+const tools = createAITools(jiraConfig)
+```
+
+## Available Tools
+
+The JIRA package provides the following AI tools:
+
+### createIssue
+
+Creates a new issue in JIRA with the specified details.
+
+**Parameters:**
+
+- `projectKey` (string, required): Project key (e.g., "PROJ")
+- `summary` (string, required): Issue title/summary
+- `description` (string, optional): Issue description
+- `issueType` (string, required): Issue type name (e.g., "Bug", "Story", "Task")
+- `assignee` (string, optional): Account ID of the assignee
+- `priority` (string, optional): Priority name (e.g., "High", "Medium", "Low")
+- `labels` (array, optional): Array of labels to add to the issue
+- `components` (array, optional): Array of component names
+- `fixVersions` (array, optional): Array of fix version names
+- `dueDate` (string, optional): Due date in YYYY-MM-DD format
+- `parentKey` (string, optional): Parent issue key for subtasks
+
+**Example:**
+
+```typescript
+const result = await generateText({
+  model: openai('gpt-4.1-nano'),
+  messages: [
+    {
+      role: 'user',
+      content: 'Create a high priority bug report for the user login system with detailed steps to reproduce',
+    },
+  ],
+  tools,
+})
+```
+
+### getIssue
+
+Retrieves details of a specific JIRA issue by its key.
+
+**Parameters:**
+
+- `issueKey` (string, required): Issue key (e.g., "PROJ-123")
+
+**Example:**
+
+```typescript
+const result = await generateText({
+  model: openai('gpt-4.1-nano'),
+  messages: [
+    {
+      role: 'user',
+      content: 'Show me the details of issue PROJ-123',
+    },
+  ],
+  tools,
+})
+```
+
+### updateIssue
+
+Updates an existing issue in JIRA.
+
+**Parameters:**
+
+- `issueKey` (string, required): Key of the issue to update
+- `summary` (string, optional): New issue summary
+- `description` (string, optional): New issue description
+- `assignee` (string, optional): New assignee account ID
+- `priority` (string, optional): New priority name
+- `labels` (array, optional): New array of labels (replaces existing)
+- `components` (array, optional): New array of components (replaces existing)
+- `fixVersions` (array, optional): New array of fix versions (replaces existing)
+- `dueDate` (string, optional): New due date in YYYY-MM-DD format
+- `status` (string, optional): New status name to transition to
+
+**Example:**
+
+```typescript
+const result = await generateText({
+  model: openai('gpt-4.1-nano'),
+  messages: [
+    {
+      role: 'user',
+      content: 'Update issue PROJ-123 to mark it as in progress and assign it to John',
+    },
+  ],
+  tools,
+})
+```
+
+### searchIssues
+
+Searches for issues in JIRA using JQL or simple filters.
+
+**Parameters:**
+
+- `jql` (string, optional): JQL query string (if provided, other filters are ignored)
+- `projectKey` (string, optional): Filter by project key
+- `assignee` (string, optional): Filter by assignee account ID or "unassigned"
+- `status` (string, optional): Filter by status name
+- `issueType` (string, optional): Filter by issue type name
+- `priority` (string, optional): Filter by priority name
+- `labels` (array, optional): Filter by labels (issues must have ALL specified labels)
+- `createdAfter` (string, optional): Filter issues created after this date (ISO format)
+- `createdBefore` (string, optional): Filter issues created before this date (ISO format)
+- `maxResults` (number, optional): Maximum results to return (1-100, default 50)
+- `startAt` (number, optional): Starting index for pagination (default 0)
+
+**Example with JQL:**
+
+```typescript
+const result = await generateText({
+  model: openai('gpt-4.1-nano'),
+  messages: [
+    {
+      role: 'user',
+      content: 'Find all high priority bugs assigned to me using JQL',
+    },
+  ],
+  tools,
+})
+```
+
+**Example with filters:**
+
+```typescript
+const result = await generateText({
+  model: openai('gpt-4.1-nano'),
+  messages: [
+    {
+      role: 'user',
+      content: 'Find all open bugs in the MYPROJECT with high priority',
+    },
+  ],
+  tools,
+})
+```
+
+### getProjects
+
+Retrieves all JIRA projects accessible to the user.
+
+**Parameters:**
+
+- `maxResults` (number, optional): Maximum results to return (1-100, default 50)
+- `startAt` (number, optional): Starting index for pagination (default 0)
+
+**Example:**
+
+```typescript
+const result = await generateText({
+  model: openai('gpt-4.1-nano'),
+  messages: [
+    {
+      role: 'user',
+      content: 'Show me all projects in our JIRA instance',
+    },
+  ],
+  tools,
+})
+```
+
+### getUser
+
+Retrieves user details (current user if no accountId provided).
+
+**Parameters:**
+
+- `accountId` (string, optional): Account ID of the user to retrieve
+
+**Example:**
+
+```typescript
+const result = await generateText({
+  model: openai('gpt-4.1-nano'),
+  messages: [
+    {
+      role: 'user',
+      content: 'Show me my user profile information',
+    },
+  ],
+  tools,
+})
+```
+
+## Advanced Usage
+
+### Using JQL (JIRA Query Language)
+
+The `searchIssues` tool supports powerful JQL queries for complex searches:
+
+```typescript
+const result = await generateText({
+  model: openai('gpt-4.1-nano'),
+  messages: [
+    {
+      role: 'user',
+      content:
+        'Find all issues in MYPROJECT that are either In Progress or Open, assigned to me, with high or urgent priority, created in the last 30 days',
+    },
+  ],
+  tools,
+})
+```
+
+The AI will automatically construct the appropriate JQL query:
+
+```
+project = MYPROJECT AND status IN ("In Progress", "Open") AND assignee = currentUser() AND priority IN ("High", "Urgent") AND created >= -30d
+```
+
+### Bulk Operations
+
+You can ask the AI to perform multiple operations in sequence:
+
+```typescript
+const result = await generateText({
+  model: openai('gpt-4.1-nano'),
+  messages: [
+    {
+      role: 'user',
+      content:
+        'Create 3 bug reports for the login system: one for timeout issues, one for password reset problems, and one for 2FA failures. Assign them all to the security team.',
+    },
+  ],
+  tools,
+})
+```
+
+### Project Management Workflows
+
+The AI can help with common project management tasks:
+
+```typescript
+const result = await generateText({
+  model: openai('gpt-4.1-nano'),
+  messages: [
+    {
+      role: 'user',
+      content: 'Show me a summary of all open issues in the MOBILE project, grouped by assignee and priority',
+    },
+  ],
+  tools,
+})
+```
+
+## OpenAI & Anthropic Support
+
+The package also supports direct integration with OpenAI and Anthropic:
+
+### OpenAI Functions
+
+```typescript
+import { createOpenAIFunctions } from '@tooly/jira'
+
+const { tools, executeFunction } = createOpenAIFunctions(jiraConfig)
+
+const completion = await openai.chat.completions.create({
+  model: 'gpt-4',
+  messages: [{ role: 'user', content: 'Create a bug report' }],
+  tools,
+})
+
+// Execute the function calls
+for (const toolCall of completion.choices[0].message.tool_calls || []) {
+  const result = await executeFunction(toolCall.function.name, JSON.parse(toolCall.function.arguments))
+}
+```
+
+### Anthropic Tools
+
+```typescript
+import { createAnthropicTools } from '@tooly/jira'
+
+const { tools, executeFunction } = createAnthropicTools(jiraConfig)
+
+const message = await anthropic.messages.create({
+  model: 'claude-3-5-sonnet-20241022',
+  messages: [{ role: 'user', content: 'Search for critical bugs' }],
+  tools,
+})
+
+// Execute tool calls
+for (const toolUse of message.content.filter((c) => c.type === 'tool_use')) {
+  const result = await executeFunction(toolUse.name, toolUse.input)
+}
+```
+
+## Error Handling
+
+The package includes comprehensive error handling:
+
+```typescript
+try {
+  const result = await generateText({
+    model: openai('gpt-4.1-nano'),
+    messages: [{ role: 'user', content: 'Create an issue' }],
+    tools,
+  })
+} catch (error) {
+  if (error.message.includes('JIRA')) {
+    console.error('JIRA API error:', error.message)
+  }
+}
+```
+
+## Best Practices
+
+1. **Store credentials securely**: Use environment variables for API tokens
+2. **Use specific project keys**: Always specify project keys in prompts
+3. **Leverage JQL**: For complex searches, mention specific criteria to help the AI construct proper JQL
+4. **Handle pagination**: For large result sets, use the pagination parameters
+5. **Be specific with issue types**: Different JIRA instances may have different issue types
+
+## Examples
+
+Check out the [examples directory](https://github.com/ctate/tooly/tree/main/examples) for complete working examples with different AI providers.

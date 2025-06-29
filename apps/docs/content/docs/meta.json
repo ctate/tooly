@@ -6,6 +6,7 @@
     "examples",
     "---Tools---",
     "tools/linear",
+    "tools/jira",
     "tools/resend",
     "tools/notion",
     "tools/github",
