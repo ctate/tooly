@@ -1,0 +1,30 @@
+import { z } from 'zod'
+import {
+  {{#each operations}}
+  {{pascalCase operationId}}Schema,
+  {{/each}}
+} from '../types.js'
+
+// Export all tools
+{{#each operations}}
+export * from './{{camelToKebab operationId}}.js'
+{{/each}}
+
+// Import tool definitions
+{{#each operations}}
+import { {{camelCase operationId}}Tool } from './{{camelToKebab operationId}}.js'
+{{/each}}
+
+// Export all tools as an array
+export const {{packageName}}Tools = [
+  {{#each operations}}
+  {{camelCase operationId}}Tool,
+  {{/each}}
+] as const
+
+// Tool parameter validation schemas
+export const toolParameterSchemas = {
+  {{#each operations}}
+  {{camelCase operationId}}: {{pascalCase operationId}}Schema,
+  {{/each}}
+} as const 

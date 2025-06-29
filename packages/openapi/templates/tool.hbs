@@ -1,0 +1,107 @@
+import type { {{pascalCase operation.operationId}}Params, {{pascalCase operation.operationId}}Response } from '../types.js'
+
+export const {{camelCase operation.operationId}}Tool = {
+  name: '{{camelCase operation.operationId}}',
+  description: '{{#if operation.summary}}{{operation.summary}}{{else}}{{#if operation.description}}{{operation.description}}{{else}}Execute {{operation.operationId}} operation{{/if}}{{/if}}',
+  parameters: {
+    type: 'object',
+    properties: {
+      {{#each operation.parameters}}
+      {{name}}: {
+        type: '{{#if schema.type}}{{schema.type}}{{else}}string{{/if}}',
+        {{#if description}}description: '{{description}}',{{/if}}
+        {{#if (eq in "path")}}// Path parameter{{/if}}
+        {{#if (eq in "query")}}// Query parameter{{/if}}
+        {{#if (eq in "header")}}// Header parameter{{/if}}
+      },
+      {{/each}}
+      {{#if operation.requestBody}}
+      body: {
+        type: 'object',
+        description: 'Request body{{#if operation.requestBody.description}} - {{operation.requestBody.description}}{{/if}}',
+      },
+      {{/if}}
+    },
+    required: [
+      {{#each operation.parameters}}
+      {{#if required}}'{{name}}',{{/if}}
+      {{/each}}
+      {{#if operation.requestBody}}
+      {{#if operation.requestBody.required}}'body',{{/if}}
+      {{/if}}
+    ],
+  },
+} as const
+
+/**
+ * {{#if operation.summary}}{{operation.summary}}{{else}}{{#if operation.description}}{{operation.description}}{{else}}Execute {{operation.operationId}} operation{{/if}}{{/if}}
+ */
+export async function {{camelCase operation.operationId}}(
+  apiKey: string,
+  baseUrl: string,
+  params: {{pascalCase operation.operationId}}Params
+): Promise<{{pascalCase operation.operationId}}Response> {
+  try {
+    const url = new URL('{{operation.path}}', baseUrl)
+    
+    {{#each operation.parameters}}
+    {{#if (eq in "path")}}
+    // Replace path parameter {{paramName this}}
+    url.pathname = url.pathname.replace('{{{paramName this}}}', encodeURIComponent(String(params.{{name}})))
+    {{/if}}
+    {{#if (eq in "query")}}
+    // Add query parameter {{paramName this}}
+    if (params.{{name}} !== undefined) {
+      url.searchParams.set('{{paramName this}}', String(params.{{name}}))
+    }
+    {{/if}}
+    {{/each}}
+
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${apiKey}`,
+    }
+
+    {{#each operation.parameters}}
+    {{#if (eq in "header")}}
+    // Add header parameter {{paramName this}}
+    if (params.{{name}} !== undefined) {
+      headers['{{paramName this}}'] = String(params.{{name}})
+    }
+    {{/if}}
+    {{/each}}
+
+    const fetchOptions: RequestInit = {
+      method: '{{operation.method}}',
+      headers,
+    }
+
+    {{#if operation.requestBody}}
+    // Add request body
+    if (params.body !== undefined) {
+      fetchOptions.body = JSON.stringify(params.body)
+    }
+    {{/if}}
+
+    const response = await fetch(url.toString(), fetchOptions)
+    
+    if (!response.ok) {
+      return {
+        success: false,
+        error: `HTTP ${response.status}: ${response.statusText}`,
+      }
+    }
+
+    const data = await response.json()
+    
+    return {
+      success: true,
+      data,
+    }
+  } catch (error) {
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : String(error),
+    }
+  }
+} 

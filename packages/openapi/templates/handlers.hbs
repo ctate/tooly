@@ -1,0 +1,32 @@
+{{#each operations}}
+import { {{camelCase operationId}} } from './tools/index.js'
+{{/each}}
+import type {
+  {{#each operations}}
+  {{pascalCase operationId}}Params,
+  {{pascalCase operationId}}Response,
+  {{/each}}
+} from './types'
+
+export class {{capitalize packageName}}Handlers {
+  private apiKey: string
+  private baseUrl: string
+
+  constructor(apiKey: string, baseUrl?: string) {
+    this.apiKey = apiKey
+    this.baseUrl = baseUrl || '{{baseUrl}}'
+  }
+
+  {{#each operations}}
+  /**
+   * {{#if summary}}{{summary}}{{else}}{{capitalize operationId}}{{/if}}
+   {{#if description}}
+   * {{description}}
+   {{/if}}
+   */
+     async {{camelCase operationId}}(params: {{pascalCase operationId}}Params): Promise<{{pascalCase operationId}}Response> {
+     return {{camelCase operationId}}(this.apiKey, this.baseUrl, params)
+   }
+
+  {{/each}}
+} 

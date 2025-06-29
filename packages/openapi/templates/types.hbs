@@ -1,0 +1,39 @@
+import { z } from 'zod'
+
+// Base URL and configuration
+export const API_BASE_URL = '{{baseUrl}}'
+
+// Parameter schemas for each operation
+{{#each operations}}
+export const {{pascalCase operationId}}Schema = z.object({
+  {{#each parameters}}
+  {{name}}: z.{{#if schema.type}}{{#if (eq schema.type "string")}}string(){{else}}{{#if (eq schema.type "number")}}number(){{else}}{{#if (eq schema.type "integer")}}number(){{else}}{{#if (eq schema.type "boolean")}}boolean(){{else}}{{#if (eq schema.type "array")}}array(z.any()){{else}}any(){{/if}}{{/if}}{{/if}}{{/if}}{{/if}}{{else}}string(){{/if}}{{#unless required}}.optional(){{/unless}},
+  {{/each}}
+  {{#if requestBody}}
+  body: z.any(){{#unless requestBody.required}}.optional(){{/unless}},
+  {{/if}}
+})
+
+{{/each}}
+
+// Response types
+{{#each operations}}
+export interface {{pascalCase operationId}}Response {
+  success: boolean
+  data?: any
+  error?: string
+}
+
+{{/each}}
+
+// Parameter types
+{{#each operations}}
+export type {{pascalCase operationId}}Params = z.infer<typeof {{pascalCase operationId}}Schema>
+{{/each}}
+
+// Export all schemas for validation
+export const toolParameterSchemas = {
+  {{#each operations}}
+  {{camelCase operationId}}: {{pascalCase operationId}}Schema,
+  {{/each}}
+} as const 

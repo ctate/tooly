@@ -1,0 +1,92 @@
+import { {{capitalize packageName}}Handlers } from './handlers.js'
+import { {{packageName}}Tools, toolParameterSchemas } from './tools/index.js'
+import {
+  {{#each operations}}
+  {{pascalCase operationId}}Schema,
+  {{/each}}
+} from './types.js'
+import {
+  BaseToolManager,
+  createAITools as coreCreateVercelAITools,
+  createOpenAIFunctions as coreCreateOpenAIFunctions,
+  createAnthropicTools as coreCreateAnthropicTools,
+  bindHandlerMethods,
+} from '@tooly/core'
+
+export * from './types.js'
+export * from './tools/index.js'
+export * from './handlers.js'
+
+/**
+ * Main {{capitalize packageName}} Tools class for AI SDK integration
+ */
+export class {{capitalize packageName}}Tools extends BaseToolManager<typeof toolParameterSchemas, typeof {{packageName}}Tools> {
+  private handlers: {{capitalize packageName}}Handlers
+
+  constructor(apiKey: string, baseUrl?: string) {
+    super({{packageName}}Tools, toolParameterSchemas)
+    this.handlers = new {{capitalize packageName}}Handlers(apiKey, baseUrl)
+  }
+
+  /**
+   * Execute tool function implementation
+   */
+  protected async executeToolFunction(name: string, params: unknown): Promise<unknown> {
+    switch (name) {
+      {{#each operations}}
+      case '{{camelCase operationId}}':
+        return this.handlers.{{camelCase operationId}}({{pascalCase operationId}}Schema.parse(params))
+      {{/each}}
+      default:
+        throw new Error(`Unknown tool: ${name}`)
+    }
+  }
+
+  /**
+   * Get individual handlers for direct use
+   */
+  getHandlers() {
+    return this.handlers
+  }
+}
+
+/**
+ * Create AI SDK compatible tools
+ */
+export function createAITools(apiKey: string, baseUrl?: string) {
+  const {{packageName}}ToolsInstance = new {{capitalize packageName}}Tools(apiKey, baseUrl)
+  const handlers = {{packageName}}ToolsInstance.getHandlers()
+
+  const toolDescriptions = {
+    {{#each operations}}
+    {{camelCase operationId}}: '{{#if summary}}{{summary}}{{else}}{{pascalCase operationId}} operation{{/if}}',
+    {{/each}}
+  }
+
+  const boundMethods = bindHandlerMethods(handlers, [
+    {{#each operations}}
+    '{{camelCase operationId}}',
+    {{/each}}
+  ])
+
+  return coreCreateVercelAITools({{packageName}}ToolsInstance, boundMethods, toolDescriptions)
+}
+
+/**
+ * Helper function to create OpenAI function calling setup
+ */
+export function createOpenAIFunctions(apiKey: string, baseUrl?: string) {
+  const {{packageName}}ToolsInstance = new {{capitalize packageName}}Tools(apiKey, baseUrl)
+  return coreCreateOpenAIFunctions({{packageName}}ToolsInstance)
+}
+
+/**
+ * Helper function to create Anthropic function calling setup
+ */
+export function createAnthropicTools(apiKey: string, baseUrl?: string) {
+  const {{packageName}}ToolsInstance = new {{capitalize packageName}}Tools(apiKey, baseUrl)
+  return coreCreateAnthropicTools({{packageName}}ToolsInstance)
+}
+
+// Default export
+export default {{capitalize packageName}}Tools 

@@ -1,0 +1,119 @@
+# @tooly/{{packageName}}
+
+{{api.info.title}} API tools for OpenAI, Anthropic, and AI SDK integration.
+
+## Installation
+
+```bash
+npm install @tooly/{{packageName}}
+```
+
+## Usage
+
+### Basic Setup
+
+```typescript
+import { createAITools } from '@tooly/{{packageName}}'
+
+const tools = createAITools('your-{{packageName}}-api-key')
+```
+
+### With AI SDK
+
+```typescript
+import { createAITools } from '@tooly/{{packageName}}'
+import { generateText } from 'ai'
+import { openai } from '@ai-sdk/openai'
+
+const tools = createAITools(process.env.{{upper packageName}}_API_KEY!)
+
+const result = await generateText({
+  model: openai('gpt-4.1-nano'),
+  prompt: 'Help me with {{api.info.title}} API',
+  tools,
+})
+```
+
+### With OpenAI
+
+```typescript
+import { createOpenAIFunctions } from '@tooly/{{packageName}}'
+import OpenAI from 'openai'
+
+const openai = new OpenAI()
+const { functions, handleFunctionCall } = createOpenAIFunctions(process.env.{{upper packageName}}_API_KEY!)
+
+const response = await openai.chat.completions.create({
+  model: 'gpt-4',
+  messages: [{ role: 'user', content: 'Help me with {{api.info.title}}' }],
+  functions,
+})
+
+// Handle function calls
+const functionCall = response.choices[0].message.function_call
+if (functionCall) {
+  const result = await handleFunctionCall(functionCall.name, functionCall.arguments)
+}
+```
+
+### With Anthropic
+
+```typescript
+import { createAnthropicTools } from '@tooly/{{packageName}}'
+import Anthropic from '@anthropic-ai/sdk'
+
+const anthropic = new Anthropic()
+const { tools, handleToolCall } = createAnthropicTools(process.env.{{upper packageName}}_API_KEY!)
+
+const response = await anthropic.messages.create({
+  model: 'claude-3-5-sonnet-20241022',
+  max_tokens: 1000,
+  messages: [{ role: 'user', content: 'Help me with {{api.info.title}}' }],
+  tools,
+})
+
+// Handle tool calls
+for (const content of response.content) {
+  if (content.type === 'tool_use') {
+    const result = await handleToolCall(content.name, content.input)
+  }
+}
+```
+
+## Available Tools
+
+{{#each operations}}
+- **{{operationId}}**: {{#if summary}}{{summary}}{{else}}{{#if description}}{{description}}{{else}}{{capitalize operationId}} operation{{/if}}{{/if}}
+{{/each}}
+
+## Direct Usage
+
+```typescript
+import { {{capitalize packageName}}Tools } from '@tooly/{{packageName}}'
+
+const {{packageName}} = new {{capitalize packageName}}Tools('your-api-key')
+const handlers = {{packageName}}.getHandlers()
+
+{{#if exampleOperation}}
+// {{exampleOperation.summary}}
+const result = await handlers.{{exampleOperation.operationId}}({
+{{#each exampleOperation.parameters}}
+{{#if required}}
+  {{name}}: 'example-value',
+{{/if}}
+{{/each}}
+})
+{{/if}}
+```
+
+## Environment Variables
+
+Set your {{api.info.title}} API key as an environment variable:
+
+```bash
+{{upper packageName}}_API_KEY=your_api_key_here
+```
+
+## License
+
+MIT 
