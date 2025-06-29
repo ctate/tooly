@@ -24,6 +24,10 @@ export const baseOptions: BaseLayoutProps = {
       text: 'Docs',
       url: '/docs',
     },
+    // {
+    //   text: 'Playground',
+    //   url: '/playground',
+    // },
     {
       text: 'GitHub',
       url: 'https://github.com/ctate/tooly',
