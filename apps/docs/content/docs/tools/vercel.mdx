@@ -1,0 +1,393 @@
+---
+title: Vercel
+description: Deployment and hosting tools powered by Vercel API
+---
+
+The `@tooly/vercel` package provides AI-ready tools for Vercel deployment and hosting platform. Manage projects, deployments, domains, and teams with AI assistance.
+
+## Installation
+
+```bash
+npm install @tooly/vercel
+```
+
+## Quick Start
+
+```typescript
+import { generateText } from 'ai'
+import { openai } from '@ai-sdk/openai'
+import { createAITools } from '@tooly/vercel'
+
+const tools = createAITools(process.env.VERCEL_BEARER_TOKEN!)
+
+const result = await generateText({
+  model: openai('gpt-4.1-nano'),
+  messages: [
+    {
+      role: 'user',
+      content: 'List my Vercel projects and show me their latest deployments',
+    },
+  ],
+  tools,
+})
+
+console.log(result.text)
+```
+
+## Setup
+
+### 1. Get Your Vercel Bearer Token
+
+1. Go to [Vercel Account Settings](https://vercel.com/account/tokens)
+2. Create a new access token
+3. Copy the token for use in your application
+
+### 2. Environment Variables
+
+Store your bearer token securely:
+
+```bash
+VERCEL_BEARER_TOKEN=your_vercel_bearer_token_here
+```
+
+### 3. Initialize the Tools
+
+```typescript
+import { createAITools } from '@tooly/vercel'
+
+const tools = createAITools(process.env.VERCEL_BEARER_TOKEN!)
+```
+
+## Available Tools
+
+The Vercel package provides the following AI tools:
+
+### createProject
+
+Creates a new project in Vercel.
+
+**Parameters:**
+
+- `name` (string, required): Project name
+- `framework` (string, optional): Framework preset (e.g., "nextjs", "vite", "create-react-app")
+- `gitRepository` (object, optional): Git repository configuration
+  - `type` (string): Git provider ("github", "gitlab", "bitbucket")
+  - `repo` (string): Repository name (e.g., "username/repo-name")
+- `publicSource` (boolean, optional): Whether the project source code is public
+- `rootDirectory` (string, optional): Root directory relative to repository root
+- `teamId` (string, optional): Team ID to create the project under
+- `slug` (string, optional): Team slug to create the project under
+
+**Example:**
+
+```typescript
+const result = await generateText({
+  model: openai('gpt-4.1-nano'),
+  messages: [
+    {
+      role: 'user',
+      content: 'Create a new Next.js project called "my-app" connected to my GitHub repo',
+    },
+  ],
+  tools,
+})
+```
+
+### getProject
+
+Gets details of a specific Vercel project by ID or name.
+
+**Parameters:**
+
+- `idOrName` (string, required): Project ID or name
+- `teamId` (string, optional): Team ID that owns the project
+- `slug` (string, optional): Team slug that owns the project
+
+**Example:**
+
+```typescript
+const result = await generateText({
+  model: openai('gpt-4.1-nano'),
+  messages: [
+    {
+      role: 'user',
+      content: 'Show me details for my project called "portfolio"',
+    },
+  ],
+  tools,
+})
+```
+
+### listProjects
+
+Lists all Vercel projects.
+
+**Parameters:**
+
+- `teamId` (string, optional): Filter by team ID
+- `slug` (string, optional): Filter by team slug
+- `limit` (number, optional): Maximum number of projects to return (1-100)
+- `since` (number, optional): Get projects created after this timestamp
+- `until` (number, optional): Get projects created before this timestamp
+
+**Example:**
+
+```typescript
+const result = await generateText({
+  model: openai('gpt-4.1-nano'),
+  messages: [
+    {
+      role: 'user',
+      content: 'List all my Vercel projects',
+    },
+  ],
+  tools,
+})
+```
+
+### updateProject
+
+Updates an existing Vercel project.
+
+**Parameters:**
+
+- `idOrName` (string, required): Project ID or name to update
+- `name` (string, optional): New project name
+- `framework` (string, optional): New framework preset
+- `publicSource` (boolean, optional): Whether the project source code is public
+- `rootDirectory` (string, optional): New root directory
+- `teamId` (string, optional): Team ID that owns the project
+- `slug` (string, optional): Team slug that owns the project
+
+**Example:**
+
+```typescript
+const result = await generateText({
+  model: openai('gpt-4.1-nano'),
+  messages: [
+    {
+      role: 'user',
+      content: 'Update my project to use Vite framework and make the source public',
+    },
+  ],
+  tools,
+})
+```
+
+### deleteProject
+
+Deletes a Vercel project.
+
+**Parameters:**
+
+- `idOrName` (string, required): Project ID or name to delete
+- `teamId` (string, optional): Team ID that owns the project
+- `slug` (string, optional): Team slug that owns the project
+
+**Example:**
+
+```typescript
+const result = await generateText({
+  model: openai('gpt-4.1-nano'),
+  messages: [
+    {
+      role: 'user',
+      content: 'Delete my old test project',
+    },
+  ],
+  tools,
+})
+```
+
+### getDeployment
+
+Gets details of a specific deployment by ID or URL.
+
+**Parameters:**
+
+- `idOrUrl` (string, required): Deployment ID or URL
+- `teamId` (string, optional): Team ID that owns the deployment
+- `slug` (string, optional): Team slug that owns the deployment
+
+**Example:**
+
+```typescript
+const result = await generateText({
+  model: openai('gpt-4.1-nano'),
+  messages: [
+    {
+      role: 'user',
+      content: 'Show me details for deployment dpl_abc123',
+    },
+  ],
+  tools,
+})
+```
+
+### listDeployments
+
+Lists deployments for a project or team.
+
+**Parameters:**
+
+- `projectId` (string, optional): Filter by project ID
+- `teamId` (string, optional): Team ID to list deployments for
+- `slug` (string, optional): Team slug to list deployments for
+- `limit` (number, optional): Maximum number of deployments to return (1-100)
+- `since` (number, optional): Get deployments created after this timestamp
+- `until` (number, optional): Get deployments created before this timestamp
+- `state` (string, optional): Filter by deployment state (e.g., "BUILDING", "READY", "ERROR")
+- `target` (string, optional): Filter by deployment target ("staging", "production")
+
+**Example:**
+
+```typescript
+const result = await generateText({
+  model: openai('gpt-4.1-nano'),
+  messages: [
+    {
+      role: 'user',
+      content: 'Show me the latest production deployments for my project',
+    },
+  ],
+  tools,
+})
+```
+
+### listProjectDomains
+
+Lists domains for a specific project.
+
+**Parameters:**
+
+- `idOrName` (string, required): Project ID or name
+- `teamId` (string, optional): Team ID that owns the project
+- `slug` (string, optional): Team slug that owns the project
+
+**Example:**
+
+```typescript
+const result = await generateText({
+  model: openai('gpt-4.1-nano'),
+  messages: [
+    {
+      role: 'user',
+      content: 'Show me all domains configured for my portfolio project',
+    },
+  ],
+  tools,
+})
+```
+
+### getTeam
+
+Gets details of a specific team.
+
+**Parameters:**
+
+- `teamId` (string, required): Team ID
+
+**Example:**
+
+```typescript
+const result = await generateText({
+  model: openai('gpt-4.1-nano'),
+  messages: [
+    {
+      role: 'user',
+      content: 'Show me details for my team',
+    },
+  ],
+  tools,
+})
+```
+
+## Integration Examples
+
+### OpenAI SDK
+
+```typescript
+import OpenAI from 'openai'
+import { createOpenAIFunctions } from '@tooly/vercel'
+
+const openai = new OpenAI()
+const { functions, callFunction } = createOpenAIFunctions(process.env.VERCEL_BEARER_TOKEN!)
+
+const response = await openai.chat.completions.create({
+  model: 'gpt-4',
+  messages: [
+    {
+      role: 'user',
+      content: 'Create a new project for my portfolio website',
+    },
+  ],
+  functions,
+})
+
+if (response.choices[0].message.function_call) {
+  const result = await callFunction(response.choices[0].message.function_call)
+  console.log(result)
+}
+```
+
+### Anthropic SDK
+
+```typescript
+import { createAnthropicTools } from '@tooly/vercel'
+
+const { tools, callTool } = createAnthropicTools(process.env.VERCEL_BEARER_TOKEN!)
+
+// Use with Anthropic Claude API
+// Implementation depends on your Anthropic integration
+```
+
+## Error Handling
+
+All tools include built-in error handling and will throw descriptive errors for common issues:
+
+- Invalid bearer token
+- Missing required parameters
+- API rate limits
+- Network connectivity issues
+- Invalid project or deployment IDs
+
+```typescript
+try {
+  const result = await generateText({
+    model: openai('gpt-4.1-nano'),
+    messages: [{ role: 'user', content: 'List my projects' }],
+    tools,
+  })
+} catch (error) {
+  console.error('Vercel operation failed:', error.message)
+}
+```
+
+## Best Practices
+
+1. **Secure Token Storage**: Store your Vercel bearer token securely using environment variables
+2. **Rate Limiting**: Be mindful of Vercel API rate limits when making frequent requests
+3. **Error Handling**: Always implement proper error handling for production applications
+4. **Team Management**: Use team IDs and slugs to organize projects within team accounts
+5. **Deployment Monitoring**: Regularly check deployment status and logs for issues
+
+## Rate Limits
+
+Vercel API has rate limits that vary by plan:
+
+- **Hobby**: 100 requests per hour
+- **Pro**: 1,000 requests per hour
+- **Enterprise**: Custom limits
+
+The package automatically handles rate limiting errors and provides meaningful error messages.
+
+## Support
+
+For issues with the Vercel package:
+
+1. Check the [Vercel API documentation](https://vercel.com/docs/rest-api)
+2. Verify your bearer token permissions
+3. Review the error messages for specific guidance
+4. Open an issue on the [Tooly GitHub repository](https://github.com/ctate/tooly)
+
+For Vercel platform issues, contact [Vercel Support](https://vercel.com/support).

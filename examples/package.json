@@ -17,7 +17,8 @@
     "example:twilio": "tsx src/twilio",
     "example:firecrawl": "tsx src/firecrawl",
     "example:jira": "tsx src/jira",
-    "example:stripe": "tsx src/stripe"
+    "example:stripe": "tsx src/stripe",
+    "example:vercel": "tsx src/vercel"
   },
   "keywords": [
     "tooly",
