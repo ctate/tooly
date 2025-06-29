@@ -54,6 +54,7 @@
     "@tooly/stripe": "workspace:*",
     "@tooly/supabase": "workspace:*",
     "@tooly/twilio": "workspace:*",
+    "@tooly/vercel": "workspace:*",
     "ai": "^4.3.16",
     "dotenv": "^16.0.0"
   }

@@ -138,6 +138,9 @@ importers:
       '@tooly/twilio':
         specifier: workspace:*
         version: link:../packages/twilio
+      '@tooly/vercel':
+        specifier: workspace:*
+        version: link:../packages/vercel
       ai:
         specifier: ^4.3.16
         version: 4.3.16(react@19.1.0)(zod@3.25.67)
