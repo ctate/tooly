@@ -1,0 +1,346 @@
+---
+title: OpenAPI Generator
+description: Code generator for creating Tooly packages from OpenAPI specifications
+---
+
+The `@tooly/openapi` package is a powerful code generator that creates Tooly-compatible packages from OpenAPI specifications. It automatically generates TypeScript tools that integrate with AI SDKs and follow Tooly conventions.
+
+## Installation
+
+```bash
+npm install -g @tooly/openapi
+```
+
+## Quick Start
+
+Generate a new Tooly package from an OpenAPI specification:
+
+```bash
+npx @tooly/openapi generate openapi.json
+```
+
+This will generate a complete Tooly package with:
+
+- TypeScript types from your OpenAPI schema
+- Individual tool files for each API operation
+- AI SDK integration
+- Proper error handling and validation
+
+## Usage
+
+### Basic Generation
+
+```bash
+npx @tooly/openapi generate openapi.json
+```
+
+### With Options
+
+```bash
+npx @tooly/openapi generate twitter-api.json \
+  --package-name twitter \
+  --auth-type bearer \
+  --base-url https://api.twitter.com/2 \
+  --output src \
+  --verbose
+```
+
+## Options
+
+### `--output, -o`
+
+Output directory for generated code (default: `src`)
+
+### `--package-name`
+
+Package name used for class names and exports. If not provided, it will be inferred from the OpenAPI specification.
+
+### `--base-url`
+
+Base URL for the API. This overrides the URL specified in the OpenAPI spec.
+
+### `--auth-type`
+
+Authentication type for the API:
+
+- `apikey` - API key in Authorization header
+- `bearer` - Bearer token in Authorization header
+- `basic` - Basic authentication
+- `oauth2` - OAuth2 (requires additional setup)
+
+### `--verbose, -v`
+
+Enable verbose output for debugging
+
+## Generated Package Structure
+
+The generator creates a complete package structure following Tooly conventions:
+
+```
+src/
+├── tools/
+│   ├── index.ts          # Tool exports
+│   ├── create-user.ts    # Individual tool files
+│   ├── get-user.ts       # (one per API operation)
+│   └── update-user.ts
+├── handlers.ts           # API handler class
+├── index.ts              # Main exports and AI SDK integration
+└── types.ts              # Zod schemas and TypeScript types
+```
+
+### Generated Files
+
+#### `types.ts`
+
+Contains Zod schemas and TypeScript interfaces generated from your OpenAPI schema definitions:
+
+```typescript
+import { z } from 'zod'
+
+export const UserSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  email: z.string().email(),
+})
+
+export type User = z.infer<typeof UserSchema>
+```
+
+#### `handlers.ts`
+
+Contains the main handler class with methods for each API operation:
+
+```typescript
+export class TwitterHandler extends BaseToolManager {
+  async createUser(params: CreateUserParams): Promise<User> {
+    // Generated API call logic
+  }
+}
+```
+
+#### `index.ts`
+
+Main entry point with AI SDK integration:
+
+```typescript
+import { TwitterHandler } from './handlers.js'
+import { tools } from './tools/index.js'
+
+export function createAITools(apiKey: string) {
+  return tools(new TwitterHandler(apiKey))
+}
+```
+
+#### `tools/[operation].ts`
+
+Individual tool files for each API operation:
+
+```typescript
+import { tool } from 'ai'
+import { z } from 'zod'
+
+export const createUser = (handler: TwitterHandler) =>
+  tool({
+    description: 'Create a new user',
+    parameters: z.object({
+      name: z.string(),
+      email: z.string().email(),
+    }),
+    execute: async (params) => {
+      return await handler.createUser(params)
+    },
+  })
+```
+
+## Authentication Support
+
+### API Key Authentication
+
+For APIs that use API keys:
+
+```bash
+npx @tooly/openapi generate api.json --auth-type apikey
+```
+
+Generated code will include:
+
+```typescript
+export class APIHandler extends BaseToolManager {
+  constructor(private apiKey: string) {
+    super()
+  }
+
+  protected getHeaders(): Record<string, string> {
+    return {
+      Authorization: `Bearer ${this.apiKey}`,
+      'Content-Type': 'application/json',
+    }
+  }
+}
+```
+
+### Bearer Token Authentication
+
+For APIs that use bearer tokens:
+
+```bash
+npx @tooly/openapi generate api.json --auth-type bearer
+```
+
+### Basic Authentication
+
+For APIs that use basic authentication:
+
+```bash
+npx @tooly/openapi generate api.json --auth-type basic
+```
+
+### OAuth2
+
+For APIs that use OAuth2 (requires additional setup):
+
+```bash
+npx @tooly/openapi generate api.json --auth-type oauth2
+```
+
+## Example: Twitter API
+
+Let's create a Twitter API integration:
+
+1. **Download the OpenAPI spec**:
+
+   ```bash
+   curl -o twitter-api.json https://api.twitter.com/2/openapi.json
+   ```
+
+2. **Generate the package**:
+
+   ```bash
+   npx @tooly/openapi generate twitter-api.json \
+     --package-name twitter \
+     --auth-type bearer \
+     --base-url https://api.twitter.com/2
+   ```
+
+3. **Use in your AI application**:
+
+   ```typescript
+   import { createAITools } from './src/index.js'
+   import { generateText } from 'ai'
+   import { openai } from '@ai-sdk/openai'
+
+   const tools = createAITools(process.env.TWITTER_BEARER_TOKEN!)
+
+   const result = await generateText({
+     model: openai('gpt-4'),
+     messages: [{ role: 'user', content: 'Post a tweet about AI' }],
+     tools,
+   })
+   ```
+
+## Best Practices
+
+### OpenAPI Specification Quality
+
+- Ensure your OpenAPI spec has detailed descriptions for operations and parameters
+- Use proper HTTP status codes
+- Include examples in your schema definitions
+- Validate your OpenAPI spec before generating code
+
+### Package Organization
+
+- Keep your OpenAPI spec file in the root of your package
+- Use descriptive operation IDs in your OpenAPI spec
+- Group related operations with consistent naming
+
+### Error Handling
+
+The generated code includes proper error handling:
+
+```typescript
+// Generated error handling
+try {
+  const response = await fetch(url, options)
+  if (!response.ok) {
+    throw new Error(`API Error: ${response.status} ${response.statusText}`)
+  }
+  return await response.json()
+} catch (error) {
+  throw new Error(`Failed to ${operationId}: ${error.message}`)
+}
+```
+
+## Contributing to Tooly
+
+If you've generated a useful integration, consider contributing it back to the Tooly ecosystem:
+
+1. Create a new package in the `packages/` directory
+2. Generate the code using `@tooly/openapi`
+3. Add proper documentation
+4. Submit a pull request
+
+## Troubleshooting
+
+### Generation Errors
+
+**Invalid OpenAPI Spec:**
+
+```bash
+Error: Invalid OpenAPI specification
+```
+
+Validate your OpenAPI spec using online validators or `swagger-parser`.
+
+**Missing Operation IDs:**
+
+```bash
+Warning: Operation missing operationId, using generated name
+```
+
+Add explicit `operationId` fields to your OpenAPI operations.
+
+### Runtime Errors
+
+**Authentication Errors:**
+
+```bash
+Error: Unauthorized (401)
+```
+
+Verify your API key is correct and has proper permissions.
+
+**Network Errors:**
+
+```bash
+Error: Failed to fetch
+```
+
+Check your base URL and ensure the API is accessible.
+
+## Advanced Usage
+
+### Custom Templates
+
+You can customize the generated code by modifying the Handlebars templates in the `templates/` directory:
+
+```bash
+npx @tooly/openapi generate api.json --templates ./custom-templates
+```
+
+### Programmatic Usage
+
+```typescript
+import { generateFromOpenAPI } from '@tooly/openapi'
+
+await generateFromOpenAPI({
+  specPath: './openapi.json',
+  outputDir: './src',
+  packageName: 'myapi',
+  authType: 'bearer',
+  baseUrl: 'https://api.example.com',
+})
+```
+
+## License
+
+MIT License

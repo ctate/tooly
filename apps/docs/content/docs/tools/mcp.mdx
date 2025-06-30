@@ -1,0 +1,187 @@
+---
+title: MCP Server
+description: Universal MCP server that exposes Tooly integrations to AI applications
+---
+
+The `@tooly/mcp` package provides a universal MCP (Model Context Protocol) server that exposes all Tooly integrations to AI applications like Claude Desktop, making it easy to use Tooly tools in AI workflows.
+
+## What is MCP?
+
+The Model Context Protocol (MCP) is an open standard that enables AI applications to securely connect to external data sources and tools. It provides a standardized way for AI models to interact with various services and APIs.
+
+## Quick Start
+
+```bash
+# Run with all available integrations
+npx @tooly/mcp@latest run
+
+# List available integrations
+npx @tooly/mcp@latest list-integrations
+```
+
+## Claude Desktop Integration
+
+### Configuration
+
+Add the following to your `claude_desktop_config.json` file:
+
+```json
+{
+  "mcpServers": {
+    "tooly": {
+      "command": "npx",
+      "args": ["@tooly/mcp@latest", "run", "-i", "github,linear,resend"],
+      "env": {
+        "GITHUB_TOKEN": "your_github_token",
+        "LINEAR_API_KEY": "your_linear_api_key",
+        "RESEND_API_KEY": "your_resend_api_key"
+      }
+    }
+  }
+}
+```
+
+### Location of Configuration File
+
+The configuration file location depends on your operating system:
+
+- **macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
+- **Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
+- **Linux**: `~/.config/Claude/claude_desktop_config.json`
+
+## Supported Integrations
+
+The MCP server supports all Tooly integrations. Add the required environment variables for each integration you want to use:
+
+| Integration   | Environment Variables                       |
+| ------------- | ------------------------------------------- |
+| **GitHub**    | `GITHUB_TOKEN`                              |
+| **Linear**    | `LINEAR_API_KEY`                            |
+| **Notion**    | `NOTION_API_KEY`                            |
+| **Stripe**    | `STRIPE_SECRET_KEY`                         |
+| **Supabase**  | `SUPABASE_URL`, `SUPABASE_ANON_KEY`         |
+| **Resend**    | `RESEND_API_KEY`                            |
+| **Twilio**    | `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`   |
+| **Vercel**    | `VERCEL_TOKEN`                              |
+| **Jira**      | `JIRA_HOST`, `JIRA_EMAIL`, `JIRA_API_TOKEN` |
+| **PayPal**    | `PAYPAL_CLIENT_ID`, `PAYPAL_CLIENT_SECRET`  |
+| **Firecrawl** | `FIRECRAWL_API_KEY`                         |
+
+Only integrations with valid environment variables will be loaded.
+
+## Tool Naming Convention
+
+All tools are prefixed with their integration name to avoid conflicts:
+
+- `github_createIssue` - Create a GitHub issue
+- `linear_searchIssues` - Search Linear issues
+- `notion_createPage` - Create a Notion page
+- `stripe_createCustomer` - Create a Stripe customer
+- `resend_sendEmail` - Send email with Resend
+
+## CLI Commands
+
+### Run Server
+
+Start the MCP server with all available integrations:
+
+```bash
+npx @tooly/mcp run
+```
+
+Run with specific integrations only:
+
+```bash
+npx @tooly/mcp run --integrations github,linear,resend
+```
+
+### List Integrations
+
+View all available integrations:
+
+```bash
+npx @tooly/mcp list-integrations
+```
+
+## Environment Variables
+
+You can use environment variables or a `.env` file to configure your API keys:
+
+```bash
+# .env file
+GITHUB_TOKEN=ghp_your_github_token
+LINEAR_API_KEY=lin_your_linear_api_key
+RESEND_API_KEY=re_your_resend_api_key
+STRIPE_SECRET_KEY=sk_test_your_stripe_key
+```
+
+## Example Usage with Claude Desktop
+
+Once configured, you can use natural language to interact with your integrations through Claude Desktop:
+
+**Create GitHub Issues:**
+
+```
+"Create a GitHub issue titled 'Fix login bug' with description 'Users are unable to log in after the recent update'"
+```
+
+**Search Linear Issues:**
+
+```
+"Find all high-priority Linear issues assigned to me"
+```
+
+**Send Emails:**
+
+```
+"Send an email to john@example.com with subject 'Meeting Reminder' and body 'Don't forget about our meeting tomorrow at 2 PM'"
+```
+
+## Troubleshooting
+
+### Server Not Starting
+
+1. Check that all required environment variables are set
+2. Verify your API keys are valid
+3. Ensure you have the latest version: `npx @tooly/mcp@latest run`
+
+### Tools Not Available in Claude
+
+1. Restart Claude Desktop after updating the configuration
+2. Check the Claude Desktop logs for any error messages
+3. Verify the configuration file is in the correct location
+
+### Integration Errors
+
+1. Verify your API keys have the correct permissions
+2. Check the integration documentation for setup requirements
+3. Test the integration separately using the individual `@tooly/[integration]` package
+
+## Development
+
+### Installation
+
+```bash
+npm install @tooly/mcp
+```
+
+### Programmatic Usage
+
+```typescript
+import { ToolyMCPServer } from '@tooly/mcp'
+
+const server = new ToolyMCPServer({
+  integrations: ['github', 'linear', 'resend'],
+  env: {
+    GITHUB_TOKEN: process.env.GITHUB_TOKEN,
+    LINEAR_API_KEY: process.env.LINEAR_API_KEY,
+    RESEND_API_KEY: process.env.RESEND_API_KEY,
+  },
+})
+
+await server.start()
+```
+
+## License
+
+MIT License

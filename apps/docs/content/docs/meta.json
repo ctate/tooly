@@ -16,6 +16,9 @@
     "tools/firecrawl",
     "tools/paypal",
     "tools/vercel",
-    "tools/custom"
+    "tools/custom",
+    "---Advanced---",
+    "tools/mcp",
+    "tools/openapi"
   ]
 }

@@ -23,7 +23,7 @@ npx @tooly/mcp@latest list-integrations
   "mcpServers": {
     "tooly": {
       "command": "npx",
-      "args": ["@tooly/mcp@latest", "run"],
+      "args": ["@tooly/mcp@latest", "run", "-i", "github,linear"],
       "env": {
         "GITHUB_TOKEN": "your_github_token",
         "LINEAR_API_KEY": "your_linear_api_key"
