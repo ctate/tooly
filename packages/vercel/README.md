@@ -20,7 +20,7 @@ import { openai } from '@ai-sdk/openai'
 const tools = createAITools('your-vercel-bearer-token')
 
 const result = await generateText({
-  model: openai('gpt-4'),
+  model: openai('gpt-4.1-nano'),
   prompt: 'List my Vercel projects and their latest deployments',
   tools,
 })

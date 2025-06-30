@@ -232,7 +232,7 @@ Let's create a Twitter API integration:
    const tools = createAITools(process.env.TWITTER_BEARER_TOKEN!)
 
    const result = await generateText({
-     model: openai('gpt-4'),
+     model: openai('gpt-4.1-nano'),
      messages: [{ role: 'user', content: 'Post a tweet about AI' }],
      tools,
    })

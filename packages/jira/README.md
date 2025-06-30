@@ -86,7 +86,7 @@ const tools = createAITools({
 import { generateText } from 'ai'
 
 const result = await generateText({
-  model: openai('gpt-4'),
+  model: openai('gpt-4.1-nano'),
   messages: [{ role: 'user', content: 'Create a new issue' }],
   tools,
 })
