@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useToolkit, toolkits } from './toolkit-context'
 import ShikiHighlighter from 'react-shiki'
 import { AiLogo } from '@private/ui/logos/ai'
@@ -64,6 +64,7 @@ export function FrameworkSelector() {
   const [selectedFramework, setSelectedFramework] = useState(0)
   const [isDark, setIsDark] = useState(false)
   const { primaryToolkit } = useToolkit()
+  const codeContainerRef = useRef<HTMLDivElement>(null)
 
   // Detect theme changes
   useEffect(() => {
@@ -93,6 +94,37 @@ export function FrameworkSelector() {
     }
   }, [])
 
+  // Handle mobile width constraints
+  useEffect(() => {
+    const handleResize = () => {
+      if (codeContainerRef.current) {
+        const container = codeContainerRef.current
+        const pre = container.querySelector('pre')
+        if (pre) {
+          // Get the viewport width
+          const viewportWidth = window.innerWidth
+          // Set max width to viewport width minus some padding
+          const maxWidth = Math.max(300, viewportWidth - 32) // 32px for padding
+          pre.style.maxWidth = `${maxWidth}px`
+          pre.style.overflowX = 'auto'
+          pre.style.whiteSpace = 'pre'
+          pre.style.wordWrap = 'normal'
+        }
+      }
+    }
+
+    // Initial setup
+    const timer = setTimeout(handleResize, 100) // Small delay to ensure DOM is ready
+
+    // Listen for window resize
+    window.addEventListener('resize', handleResize)
+
+    return () => {
+      clearTimeout(timer)
+      window.removeEventListener('resize', handleResize)
+    }
+  }, [selectedFramework, primaryToolkit]) // Re-run when code changes
+
   const currentFramework = frameworks[selectedFramework]
 
   const generateCode = () => {
@@ -107,11 +139,11 @@ ${currentFramework.code.replace('{{useCase}}', primaryToolkit.useCase)}`
   return (
     <div className="space-y-6">
       {/* Code Display with Syntax Highlighting */}
-      <div className="relative">
+      <div ref={codeContainerRef} className="relative">
         <ShikiHighlighter
           language="typescript"
           theme={isDark ? 'github-dark' : 'github-light'}
-          className="rounded-lg border text-sm"
+          className="text-sm rounded-lg border"
           style={{
             fontSize: '0.875rem',
             lineHeight: '1.25rem',
