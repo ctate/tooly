@@ -9,19 +9,19 @@
     "postinstall": "fumadocs-mdx"
   },
   "dependencies": {
+    "@ai-sdk/openai": "^1.3.22",
     "@private/ui": "workspace:*",
     "@tooly/core": "workspace:*",
     "@tooly/github": "workspace:*",
+    "@tooly/jira": "workspace:*",
     "@tooly/linear": "workspace:*",
     "@tooly/notion": "workspace:*",
+    "@tooly/paypal": "workspace:*",
     "@tooly/resend": "workspace:*",
+    "@tooly/stripe": "workspace:*",
     "@tooly/supabase": "workspace:*",
     "@tooly/twilio": "workspace:*",
     "@tooly/vercel": "workspace:*",
-    "@tooly/stripe": "workspace:*",
-    "@tooly/paypal": "workspace:*",
-    "@tooly/jira": "workspace:*",
-    "@ai-sdk/openai": "^1.3.22",
     "ai": "^4.3.16",
     "fumadocs-core": "15.5.5",
     "fumadocs-mdx": "11.6.9",
@@ -29,7 +29,8 @@
     "lucide-react": "^0.525.0",
     "next": "15.3.4",
     "react": "^19.1.0",
-    "react-dom": "^19.1.0"
+    "react-dom": "^19.1.0",
+    "react-shiki": "^0.7.1"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.10",

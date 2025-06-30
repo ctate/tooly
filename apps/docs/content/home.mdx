@@ -57,6 +57,55 @@ import { Star } from 'lucide-react'
       <div className="mx-auto flex max-w-[58rem] flex-col items-center space-y-6 text-center">
 
 <h2 className="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl">
+  <span className="text-slate-900 dark:text-white">Ready in 30 Seconds</span>
+</h2>
+
+<div className="text-lg text-muted-foreground max-w-[46rem]">
+  Install any toolkit and start building AI agents with powerful integrations.
+</div>
+
+      </div>
+      <div className="mx-auto max-w-[64rem] space-y-8">
+
+import { ToolkitProvider } from '../app/components/toolkit-context'
+import { ToolkitSelector } from '../app/components/toolkit-selector'
+import { FrameworkSelector } from '../app/components/framework-selector'
+
+<ToolkitProvider>
+<div className="grid gap-8 md:grid-cols-2">
+  <div className="space-y-4">
+    <div className="flex items-center gap-3">
+      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-800 text-sm font-bold text-white dark:bg-slate-700">
+        1
+      </div>
+      <h3 className="text-xl font-semibold">Choose Your Toolkit</h3>
+    </div>
+
+<ToolkitSelector />
+
+  </div>
+  
+  <div className="space-y-4">
+    <div className="flex items-center gap-3">
+      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-700 text-sm font-bold text-white dark:bg-slate-600">
+        2
+      </div>
+      <h3 className="text-xl font-semibold">Use with Any AI Framework</h3>
+    </div>
+
+<FrameworkSelector />
+
+  </div>
+</div>
+</ToolkitProvider>
+
+      </div>
+    </section>
+
+    <section className="container space-y-8 py-16 md:py-20 lg:py-24">
+      <div className="mx-auto flex max-w-[58rem] flex-col items-center space-y-6 text-center">
+
+<h2 className="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl">
   <span className="text-slate-900 dark:text-white">Connect Your AI Agent to the World</span>
 </h2>
 
@@ -143,57 +192,6 @@ import { Star } from 'lucide-react'
           <div className="text-lg font-semibold relative z-10">OpenAPI</div>
           <div className="text-sm text-muted-foreground relative z-10">@tooly/openapi</div>
         </Link>
-      </div>
-    </section>
-
-    <section className="container space-y-8 py-16 md:py-20 lg:py-24">
-      <div className="mx-auto flex max-w-[58rem] flex-col items-center space-y-6 text-center">
-
-<h2 className="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl">
-  <span className="text-slate-900 dark:text-white">Ready in 30 Seconds</span>
-</h2>
-
-<div className="text-lg text-muted-foreground max-w-[46rem]">
-  Install any toolkit and start building AI agents with powerful integrations.
-</div>
-
-      </div>
-      <div className="mx-auto max-w-[64rem] space-y-8">
-
-import { ToolkitProvider } from '../app/components/toolkit-context'
-import { ToolkitSelector } from '../app/components/toolkit-selector'
-import { FrameworkSelector } from '../app/components/framework-selector'
-
-<ToolkitProvider>
-<div className="grid gap-8 md:grid-cols-2">
-  <div className="space-y-4">
-    <div className="flex items-center gap-3">
-      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-800 text-sm font-bold text-white dark:bg-slate-700">
-        1
-      </div>
-      <h3 className="text-xl font-semibold">Choose Your Toolkit</h3>
-    </div>
-
-<ToolkitSelector />
-
-  </div>
-  
-  <div className="space-y-4">
-    <div className="flex items-center gap-3">
-      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-slate-700 text-sm font-bold text-white dark:bg-slate-600">
-        2
-      </div>
-      <h3 className="text-xl font-semibold">Use with Any AI Framework</h3>
-    </div>
-
-<FrameworkSelector />
-
-<div>Your AI agent can now send emails, create issues, manage databases, and more—all through natural language.</div>
-
-  </div>
-</div>
-</ToolkitProvider>
-
       </div>
     </section>
 

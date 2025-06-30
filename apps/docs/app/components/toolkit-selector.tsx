@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { toolkits, useToolkit } from './toolkit-context'
 
 export function ToolkitSelector() {
@@ -23,7 +24,7 @@ export function ToolkitSelector() {
       </div>
 
       <label className="text-sm font-medium text-foreground">Choose your toolkit:</label>
-      <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
+      <div className="grid grid-cols-3 sm:grid-cols-5 gap-2 mt-2">
         {toolkits.map((toolkit, index) => (
           <button
             key={toolkit.name}
@@ -45,12 +46,19 @@ export function ToolkitSelector() {
             )}
           </button>
         ))}
+        <Link
+          href="/docs/tools/linear"
+          className="p-4 rounded-lg border transition-all flex flex-col items-center justify-center aspect-square bg-card border-border hover:bg-accent hover:border-accent-foreground/20"
+          title="View all tools"
+        >
+          <span className="text-sm font-medium text-muted-foreground">+ more</span>
+        </Link>
       </div>
 
-      <p className="text-xs text-muted-foreground">
+      {/* <p className="text-xs text-muted-foreground">
         Selected toolkit: {toolkits[selectedToolkit].name}. Each package includes authentication, error handling, and
         comprehensive TypeScript support.
-      </p>
+      </p> */}
     </div>
   )
 }

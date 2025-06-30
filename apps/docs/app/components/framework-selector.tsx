@@ -1,7 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useToolkit, toolkits } from './toolkit-context'
+import ShikiHighlighter from 'react-shiki'
 
 const frameworks = [
   {
@@ -55,7 +56,36 @@ const result = await anthropic.messages.create({
 
 export function FrameworkSelector() {
   const [selectedFramework, setSelectedFramework] = useState(0)
+  const [isDark, setIsDark] = useState(false)
   const { primaryToolkit } = useToolkit()
+
+  // Detect theme changes
+  useEffect(() => {
+    const checkTheme = () => {
+      const isDarkMode =
+        document.documentElement.classList.contains('dark') || window.matchMedia('(prefers-color-scheme: dark)').matches
+      setIsDark(isDarkMode)
+    }
+
+    // Initial check
+    checkTheme()
+
+    // Listen for theme changes
+    const observer = new MutationObserver(checkTheme)
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class'],
+    })
+
+    // Listen for system theme changes
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
+    mediaQuery.addEventListener('change', checkTheme)
+
+    return () => {
+      observer.disconnect()
+      mediaQuery.removeEventListener('change', checkTheme)
+    }
+  }, [])
 
   const currentFramework = frameworks[selectedFramework]
 
@@ -70,8 +100,23 @@ ${currentFramework.code.replace('{{useCase}}', primaryToolkit.useCase)}`
 
   return (
     <div className="space-y-6">
+      {/* Code Display with Syntax Highlighting */}
+      <div className="relative">
+        <ShikiHighlighter
+          language="typescript"
+          theme={isDark ? 'github-dark' : 'github-light'}
+          className="rounded-lg border text-sm"
+          style={{
+            fontSize: '0.875rem',
+            lineHeight: '1.25rem',
+          }}
+        >
+          {generateCode()}
+        </ShikiHighlighter>
+      </div>
+
       {/* Framework Selector */}
-      <div className="space-y-3">
+      {/* <div className="space-y-3">
         <label className="text-sm font-medium text-foreground">Choose an AI framework:</label>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
           {frameworks.map((framework, index) => (
@@ -88,14 +133,7 @@ ${currentFramework.code.replace('{{useCase}}', primaryToolkit.useCase)}`
             </button>
           ))}
         </div>
-      </div>
-
-      {/* Code Display */}
-      <div className="relative">
-        <pre className="bg-slate-50 dark:bg-slate-900 border rounded-lg p-4 overflow-x-auto text-sm">
-          <code className="text-slate-800 dark:text-slate-200">{generateCode()}</code>
-        </pre>
-      </div>
+      </div> */}
     </div>
   )
 }
