@@ -106,7 +106,7 @@ import { updateAnnotationTool } from './update-annotation.js'
 import { deleteAnnotationTool } from './delete-annotation.js'
 
 // Export all tools as an array
-export const Tools = [
+export const muxTools = [
   listVideoViewsTool,
   getVideoViewTool,
   listErrorsTool,
@@ -177,4 +177,4 @@ export const toolParameterSchemas = {
   getAnnotation: GetAnnotationSchema,
   updateAnnotation: UpdateAnnotationSchema,
   deleteAnnotation: DeleteAnnotationSchema,
-} as const 
+} as const

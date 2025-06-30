@@ -1,0 +1,69 @@
+{
+  "name": "@tooly/mcp",
+  "version": "0.0.1",
+  "description": "MCP server that exposes Tooly integrations to AI applications",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "bin": {
+    "tooly-mcp": "dist/cli.js"
+  },
+  "exports": {
+    ".": "./dist/index.js",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "check-types": "tsc --noEmit",
+    "start": "node dist/cli.js"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "ai",
+    "tools",
+    "tooly",
+    "server",
+    "anthropic",
+    "claude"
+  ],
+  "author": "Tooly",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ctate/tooly.git",
+    "directory": "packages/mcp"
+  },
+  "homepage": "https://github.com/ctate/tooly#readme",
+  "publishConfig": {
+    "access": "public"
+  },
+  "devDependencies": {
+    "@private/typescript-config": "workspace:*",
+    "@types/node": "^22.15.3",
+    "typescript": "5.8.2"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "@tooly/core": "workspace:*",
+    "@tooly/firecrawl": "workspace:*",
+    "@tooly/github": "workspace:*",
+    "@tooly/jira": "workspace:*",
+    "@tooly/linear": "workspace:*",
+    "@tooly/notion": "workspace:*",
+    "@tooly/paypal": "workspace:*",
+    "@tooly/resend": "workspace:*",
+    "@tooly/stripe": "workspace:*",
+    "@tooly/supabase": "workspace:*",
+    "@tooly/twilio": "workspace:*",
+    "@tooly/vercel": "workspace:*",
+    "commander": "^12.0.0",
+    "dotenv": "^16.4.5",
+    "zod": "^3.25.67"
+  }
+}

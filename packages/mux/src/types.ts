@@ -25,8 +25,7 @@ export const ListErrorsSchema = z.object({
   timeframe__: z.array(z.any()).optional(),
 })
 
-export const ListFiltersSchema = z.object({
-})
+export const ListFiltersSchema = z.object({})
 
 export const ListFilterValuesSchema = z.object({
   FILTER_ID: z.string(),
@@ -36,8 +35,7 @@ export const ListFilterValuesSchema = z.object({
   timeframe__: z.array(z.any()).optional(),
 })
 
-export const ListDimensionsSchema = z.object({
-})
+export const ListDimensionsSchema = z.object({})
 
 export const ListDimensionValuesSchema = z.object({
   DIMENSION_ID: z.string(),
@@ -48,11 +46,9 @@ export const ListDimensionValuesSchema = z.object({
   timeframe__: z.array(z.any()).optional(),
 })
 
-export const ListExportsSchema = z.object({
-})
+export const ListExportsSchema = z.object({})
 
-export const ListExportsViewsSchema = z.object({
-})
+export const ListExportsViewsSchema = z.object({})
 
 export const ListBreakdownValuesSchema = z.object({
   METRIC_ID: z.string(),
@@ -102,11 +98,9 @@ export const ListAllMetricValuesSchema = z.object({
   value: z.string().optional(),
 })
 
-export const ListMonitoringDimensionsSchema = z.object({
-})
+export const ListMonitoringDimensionsSchema = z.object({})
 
-export const ListMonitoringMetricsSchema = z.object({
-})
+export const ListMonitoringMetricsSchema = z.object({})
 
 export const GetMonitoringBreakdownSchema = z.object({
   MONITORING_METRIC_ID: z.string(),
@@ -138,11 +132,9 @@ export const GetMonitoringTimeseriesSchema = z.object({
   timestamp: z.number().optional(),
 })
 
-export const ListRealtimeDimensionsSchema = z.object({
-})
+export const ListRealtimeDimensionsSchema = z.object({})
 
-export const ListRealtimeMetricsSchema = z.object({
-})
+export const ListRealtimeMetricsSchema = z.object({})
 
 export const GetRealtimeBreakdownSchema = z.object({
   REALTIME_METRIC_ID: z.string(),
@@ -208,7 +200,6 @@ export const UpdateAnnotationSchema = z.object({
 export const DeleteAnnotationSchema = z.object({
   ANNOTATION_ID: z.string(),
 })
-
 
 // Response types
 export interface ListVideoViewsResponse {
@@ -409,7 +400,6 @@ export interface DeleteAnnotationResponse {
   error?: string
 }
 
-
 // Parameter types
 export type ListVideoViewsParams = z.infer<typeof ListVideoViewsSchema>
 export type GetVideoViewParams = z.infer<typeof GetVideoViewSchema>
@@ -444,40 +434,3 @@ export type CreateAnnotationParams = z.infer<typeof CreateAnnotationSchema>
 export type GetAnnotationParams = z.infer<typeof GetAnnotationSchema>
 export type UpdateAnnotationParams = z.infer<typeof UpdateAnnotationSchema>
 export type DeleteAnnotationParams = z.infer<typeof DeleteAnnotationSchema>
-
-// Export all schemas for validation
-export const toolParameterSchemas = {
-  listVideoViews: ListVideoViewsSchema,
-  getVideoView: GetVideoViewSchema,
-  listErrors: ListErrorsSchema,
-  listFilters: ListFiltersSchema,
-  listFilterValues: ListFilterValuesSchema,
-  listDimensions: ListDimensionsSchema,
-  listDimensionValues: ListDimensionValuesSchema,
-  listExports: ListExportsSchema,
-  listExportsViews: ListExportsViewsSchema,
-  listBreakdownValues: ListBreakdownValuesSchema,
-  getOverallValues: GetOverallValuesSchema,
-  listInsights: ListInsightsSchema,
-  getMetricTimeseriesData: GetMetricTimeseriesDataSchema,
-  listAllMetricValues: ListAllMetricValuesSchema,
-  listMonitoringDimensions: ListMonitoringDimensionsSchema,
-  listMonitoringMetrics: ListMonitoringMetricsSchema,
-  getMonitoringBreakdown: GetMonitoringBreakdownSchema,
-  getMonitoringBreakdownTimeseries: GetMonitoringBreakdownTimeseriesSchema,
-  getMonitoringHistogramTimeseries: GetMonitoringHistogramTimeseriesSchema,
-  getMonitoringTimeseries: GetMonitoringTimeseriesSchema,
-  listRealtimeDimensions: ListRealtimeDimensionsSchema,
-  listRealtimeMetrics: ListRealtimeMetricsSchema,
-  getRealtimeBreakdown: GetRealtimeBreakdownSchema,
-  getRealtimeHistogramTimeseries: GetRealtimeHistogramTimeseriesSchema,
-  getRealtimeTimeseries: GetRealtimeTimeseriesSchema,
-  listIncidents: ListIncidentsSchema,
-  getIncident: GetIncidentSchema,
-  listRelatedIncidents: ListRelatedIncidentsSchema,
-  listAnnotations: ListAnnotationsSchema,
-  createAnnotation: CreateAnnotationSchema,
-  getAnnotation: GetAnnotationSchema,
-  updateAnnotation: UpdateAnnotationSchema,
-  deleteAnnotation: DeleteAnnotationSchema,
-} as const 
