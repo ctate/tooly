@@ -1,6 +1,6 @@
 {
   "name": "@tooly/firecrawl",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Firecrawl API tools for OpenAI, Anthropic, and AI SDK",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

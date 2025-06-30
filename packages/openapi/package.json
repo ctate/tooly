@@ -1,6 +1,6 @@
 {
   "name": "@tooly/openapi",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "OpenAPI specification code generator for creating Tooly packages",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

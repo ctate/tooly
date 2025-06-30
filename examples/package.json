@@ -1,6 +1,6 @@
 {
   "name": "@private/examples",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Examples for trying out each Tooly toolkit",
   "private": true,
   "type": "module",

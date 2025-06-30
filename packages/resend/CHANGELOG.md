@@ -1,5 +1,13 @@
 # @tooly/resend
 
+## 0.0.7
+
+### Patch Changes
+
+- adds vercel, stripe, openapi generator, mcp server
+- Updated dependencies
+  - @tooly/core@0.0.7
+
 ## 0.0.6
 
 ### Patch Changes

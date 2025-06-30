@@ -1,6 +1,6 @@
 {
   "name": "@tooly/supabase",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Supabase API tools for OpenAI, Anthropic, and AI SDK",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

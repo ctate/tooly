@@ -1,6 +1,6 @@
 {
   "name": "@tooly/stripe",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Stripe API tools for OpenAI, Anthropic, and AI SDK",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

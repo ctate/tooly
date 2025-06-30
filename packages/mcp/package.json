@@ -1,6 +1,6 @@
 {
   "name": "@tooly/mcp",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "MCP server that exposes Tooly integrations to AI applications",
   "type": "module",
   "main": "dist/index.js",

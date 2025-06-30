@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.0.2
+
+### Patch Changes
+
+- adds vercel, stripe, openapi generator, mcp server
+
 ## [0.0.1] - 2024-01-01
 
 ### Added
