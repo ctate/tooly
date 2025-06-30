@@ -18,7 +18,7 @@
     "tools/vercel",
     "tools/custom",
     "---Advanced---",
-    "tools/mcp",
-    "tools/openapi"
+    "advanced/mcp",
+    "advanced/openapi"
   ]
 }
