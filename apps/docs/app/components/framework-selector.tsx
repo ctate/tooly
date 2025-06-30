@@ -3,10 +3,14 @@
 import { useState, useEffect } from 'react'
 import { useToolkit, toolkits } from './toolkit-context'
 import ShikiHighlighter from 'react-shiki'
+import { AiLogo } from '@private/ui/logos/ai'
+import { OpenAiLogo } from '@private/ui/logos/openai'
+import { AnthropicLogo } from '@private/ui/logos/anthropic'
 
 const frameworks = [
   {
     name: 'AI SDK',
+    logo: AiLogo,
     import: "import { generateText } from 'ai'\nimport { openai } from '@ai-sdk/openai'",
     code: `const result = await generateText({
   model: openai('gpt-4.1-nano'),
@@ -20,7 +24,8 @@ const frameworks = [
 })`,
   },
   {
-    name: 'OpenAI SDK',
+    name: 'OpenAI',
+    logo: OpenAiLogo,
     import: "import OpenAI from 'openai'",
     code: `const openai = new OpenAI()
 
@@ -36,7 +41,8 @@ const result = await openai.chat.completions.create({
 })`,
   },
   {
-    name: 'Anthropic SDK',
+    name: 'Anthropic',
+    logo: AnthropicLogo,
     import: "import Anthropic from '@anthropic-ai/sdk'",
     code: `const anthropic = new Anthropic()
 
@@ -116,24 +122,29 @@ ${currentFramework.code.replace('{{useCase}}', primaryToolkit.useCase)}`
       </div>
 
       {/* Framework Selector */}
-      {/* <div className="space-y-3">
-        <label className="text-sm font-medium text-foreground">Choose an AI framework:</label>
+      <div className="space-y-3">
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-          {frameworks.map((framework, index) => (
-            <button
-              key={framework.name}
-              onClick={() => setSelectedFramework(index)}
-              className={`p-3 rounded-lg border text-left transition-all ${
-                selectedFramework === index
-                  ? 'bg-slate-100 border-slate-400 text-slate-900 dark:bg-slate-800/50 dark:border-slate-600 dark:text-slate-100'
-                  : 'bg-card border-border hover:bg-accent hover:text-accent-foreground'
-              }`}
-            >
-              <div className="font-medium">{framework.name}</div>
-            </button>
-          ))}
+          {frameworks.map((framework, index) => {
+            const LogoComponent = framework.logo
+            return (
+              <button
+                key={framework.name}
+                onClick={() => setSelectedFramework(index)}
+                className={`p-3 rounded-lg border text-left transition-all ${
+                  selectedFramework === index
+                    ? 'bg-slate-100 border-slate-400 text-slate-900 dark:bg-slate-800/50 dark:border-slate-600 dark:text-slate-100'
+                    : 'bg-card border-border hover:bg-accent hover:text-accent-foreground'
+                }`}
+              >
+                <div className="flex items-center gap-2 justify-center">
+                  <LogoComponent className="w-5 h-5" />
+                  <div className="font-medium">{framework.name}</div>
+                </div>
+              </button>
+            )
+          })}
         </div>
-      </div> */}
+      </div>
     </div>
   )
 }
